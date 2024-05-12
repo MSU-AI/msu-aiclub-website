@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 function RightSideNav({
     userType
 } : {
-    userType: string | null
+    userType: string
 }) {
     if (userType == "admin") {
         return (
@@ -28,10 +28,12 @@ function RightSideNav({
         return (
             <NavbarItem>
                 <Link href="/member" className="text-white">
-                    Member Dashboard
+                    Dashboard
                 </Link>
             </NavbarItem>
         )
+    } else if (userType == "guest") {
+        return null;
     } else {
         return (
             <>
@@ -53,7 +55,7 @@ function RightSideNav({
 export default function PublicNav({
     userType
 } : {
-    userType: string | null
+    userType: string
 }) {
     const pathname = usePathname();
 

@@ -1,26 +1,30 @@
 "use server";
 
-import { Profile } from "~/types/profiles";
 import { db } from "..";
-import { Project } from "~/types/projects";
 import { Post } from "~/types/posts";
 
-export async function getUserPosts(userId: string) {
+/**
+ * Gets all the posts assocated with a user
+ * @param userId the supaId of the user
+ * @returns an array of Post objects
+ */
+export async function getUserPosts(userId: string) : Promise<Post[]> {
     if (!userId) {
         return [];
     }
     
-    const profile: Profile | null = await db.query.profiles.findFirst({
-        where: (model, { eq }) => eq(model.supaId, userId),
-        with: {
-            posts: true
-        }
-    }) ?? null;
+    const posts = await db.query.posts.findMany({
+        where: (model, { eq }) => eq(model.profileId, userId),
+    }) ?? [];
 
-    return profile?.posts ?? [];
+    return posts;
 }
 
-export async function getPosts() {
+/**
+ * Gets all posts
+ * @returns an array of Post objects
+ */
+export async function getPosts() : Promise<Post[]> {
     const posts: Post[] = await db.query.posts.findMany();
 
     return posts;

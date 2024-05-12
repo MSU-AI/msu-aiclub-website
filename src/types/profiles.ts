@@ -5,7 +5,6 @@ export enum userTypeEnum{
 }
 
 export interface Profile {
-    id: string;
     supaId: string;
     teamId: string | null;
     userType: string;

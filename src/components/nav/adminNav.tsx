@@ -6,7 +6,7 @@ import Link from 'next/link';
 export default function AdminNav({
     userType
 } : {
-    userType: string | null
+    userType: string
 }) {
     const pathname = usePathname();
 

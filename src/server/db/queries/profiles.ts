@@ -1,10 +1,19 @@
-import { Profile } from "~/types/profiles";
+import { Profile, userTypeEnum } from "~/types/profiles";
 import { db } from "..";
 
-export async function getProfileType(supaId: string) {
+/**
+ * Gets the user type of a user based on their supaId
+ * @param supaId the supaId of the user
+ * @returns the user type "guest" | "member" | "admin"
+ */
+export async function getProfileType(supaId: string) : Promise<string> {
+    if (!supaId) {
+        return "guest";
+    }
+
     const profile: Profile | null = await db.query.profiles.findFirst({
         where: (model, { eq }) => eq(model.supaId, supaId),
     }) ?? null;
 
-    return profile?.userType ?? null;
+    return profile?.userType ?? "guest";
 }

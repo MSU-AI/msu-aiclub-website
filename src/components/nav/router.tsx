@@ -6,11 +6,10 @@ import AdminNav from "./adminNav";
 import MemberNav from "./memberNav";
 import PublicNav from "./publicNav";
 
-
 export default function NavRouter({
     userType
 } : {
-    userType: string | null
+    userType: string
 }) {
     const path = usePathname();
 
