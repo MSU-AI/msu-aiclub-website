@@ -4,10 +4,18 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Tab, Tabs } from "@next
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+/**
+ * Determines the right side nav based on user type.
+ * @param userType the user type.
+ * - If user is an admin, show admin and member dashboards.
+ * - If user is a member, show member dashboard.
+ * - If user is a guest, show nothing (maybe mailing list later).
+ * - If user is not logged in, show login and register buttons.
+ */
 function RightSideNav({
     userType
 } : {
-    userType: string
+    userType: string | null
 }) {
     if (userType == "admin") {
         return (
@@ -55,7 +63,7 @@ function RightSideNav({
 export default function PublicNav({
     userType
 } : {
-    userType: string
+    userType: string | null
 }) {
     const pathname = usePathname();
 

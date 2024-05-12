@@ -9,7 +9,7 @@ import PublicNav from "./publicNav";
 export default function NavRouter({
     userType
 } : {
-    userType: string
+    userType: string | null
 }) {
     const path = usePathname();
 

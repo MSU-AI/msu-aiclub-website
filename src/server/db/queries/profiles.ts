@@ -6,9 +6,9 @@ import { db } from "..";
  * @param supaId the supaId of the user
  * @returns the user type "guest" | "member" | "admin"
  */
-export async function getProfileType(supaId: string) : Promise<string> {
+export async function getProfileType(supaId: string) : Promise<string | null> {
     if (!supaId) {
-        return "guest";
+        return null;
     }
 
     const profile: Profile | null = await db.query.profiles.findFirst({

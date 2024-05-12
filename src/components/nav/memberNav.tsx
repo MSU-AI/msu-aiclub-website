@@ -9,7 +9,7 @@ import Link from 'next/link';
 export default function MemberNav({
   userType
 } : {
-  userType: string
+  userType: string | null
 }) {
     const pathname = usePathname();
 
