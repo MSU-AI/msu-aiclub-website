@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getUserPosts } from "~/server/db/queries/posts";
 import type { Post } from "~/types/posts";
 import { createClient } from "~/utils/supabase/server";
+import MakePostButton from "./makePostButton";
 
 export default async function PostsPage() {
     const supabase = createClient();
@@ -20,6 +21,7 @@ export default async function PostsPage() {
                     <Link href={`/member/posts/${post.id}`}>{post.name}</Link>
                 </div>
             ))}
+            <MakePostButton />
         </div>
     )
 }
