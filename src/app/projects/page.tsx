@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getProjects } from "~/server/db/queries/projects";
 import type { Project } from "~/types/projects";
 
@@ -10,9 +11,9 @@ export default async function ProjectsPage() {
         <div>
             Projects
             {projects.map((project: Project) => (
-                <div key={project.id}>
+                <Link href={`/projects/${project.id}`} key={project.id}>
                     {project.name}
-                </div>
+                </Link>
             ))}
         </div>
     )

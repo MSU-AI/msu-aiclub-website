@@ -5,28 +5,43 @@ import { db } from "..";
 import { Project } from "~/types/projects";
 
 /**
- * Gets all projects assocated with a user
+ * Gets project assocated with a user
  * @param userId the supaId of the user
- * @returns an array of Project objects
+ * @returns Project associated with the user or null
  */
-export async function getUserProjects(supaId: string) : Promise<Project[]> {
+export async function getUserProject(supaId: string) : Promise<Project | null> {
     if (!supaId) {
-        return [];
+        return null;
     }
     
     const profile: Profile | null = await db.query.profiles.findFirst({
         where: (model, { eq }) => eq(model.supaId, supaId),
+        with: {
+            project: true
+        }
     }) ?? null;
 
-    if (profile == null || profile?.teamId == null) {
-        return [];
+    if (profile == null || profile.project == null) {
+        return null;
     }
 
-    const projects: Project[] = await db.query.projects.findMany({
-        where: (model, { eq }) => eq(model.teamId, profile!.teamId!),
-    })
+    return profile.project;
+}
 
-    return projects;
+/**
+ * Gets a project by its id
+ * @param projectId the id of the project
+ * @returns a Project object or null if not found
+ */
+export async function getProjectById(projectId: string) : Promise<Project | null> {
+    const project: Project | null = await db.query.projects.findFirst({
+        where: (model, { eq }) => eq(model.id, projectId),
+        with: {
+            profiles: true
+        }
+    }) ?? null;
+
+    return project;
 }
 
 /**

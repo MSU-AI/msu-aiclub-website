@@ -17,3 +17,14 @@ export async function getProfileType(supaId: string | undefined) : Promise<strin
 
     return profile?.userType ?? "guest";
 }
+
+/**
+ * Gets all profiles
+ * @param supaId the supaId of the user
+ * @returns the profile object
+ */
+export async function getAllProfiles() : Promise<Profile[]> {
+    const profiles: Profile[] = await db.query.profiles.findMany();
+
+    return profiles;
+}

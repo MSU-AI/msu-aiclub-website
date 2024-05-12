@@ -30,50 +30,32 @@ export const profiles = createTable(
   "profile",
   {
     supaId: uuid("supaId").notNull().primaryKey(),
-    teamId: uuid("teamId").references(() => teams.id),
+    projectId: uuid("projectId").references(() => projects.id, {onDelete: 'set null'}),
     userType: varchar("userType").notNull(),
   }
 );
 
 export const profileRelations = relations(profiles, ({one, many}) => ({
-  team: one(teams, {
-    fields: [profiles.teamId],
-    references: [teams.id],
+  project: one(projects, {
+    fields: [profiles.projectId],
+    references: [projects.id],
   }),
 
   posts: many(posts)
-}))
-
-export const teams = createTable(
-  "team",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-
-    name: varchar("name", { length: 256 }).notNull(),
-  }
-)
-
-export const teamRelations = relations(teams, ({ many }) => ({
-  users: many(profiles),
-  project: many(projects),
 }))
 
 export const projects = createTable(
   "project",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    teamId: uuid("teamId").notNull().references(() => teams.id),
 
     name: varchar("name", { length: 256 }).notNull(),
     description: varchar("description", { length: 256 }).notNull(),
   }
 );
 
-export const projectRelations = relations(projects, ({ one }) => ({
-  team: one(teams, {
-    fields: [projects.teamId],
-    references: [teams.id],
-  }),
+export const projectRelations = relations(projects, ({ one, many }) => ({
+  profiles: many(profiles)
 }))
 
 export const posts = createTable(

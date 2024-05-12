@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getPosts } from "~/server/db/queries/posts";
 import type { Post } from "~/types/posts";
 
@@ -8,9 +9,9 @@ export default async function PostsPage() {
         <div>
             Posts
             {posts.map((post: Post) => (
-                <div key={post.id}>
+                <Link href={`/member/posts/${post.id}`} key={post.id}>
                     {post.name}
-                </div>
+                </Link>
             ))}
         </div>
     )

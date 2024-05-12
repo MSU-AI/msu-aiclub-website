@@ -48,14 +48,14 @@ export async function register(email: string, password: string) {
 
     const { data, error } = await supabase.auth.signUp(userData);
 
+    if (error) {
+      redirect('/auth/register?message=' + error.message);
+    }
+
     await db.insert(profiles).values({
       supaId: data!.user!.id,
       userType: "member",
     });
-
-    if (error) {
-      redirect('/auth/register?message=' + error.message);
-    }
 
     const userType = await getProfileType(data!.user!.id);
   
