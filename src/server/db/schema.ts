@@ -23,11 +23,13 @@ export const createTable = pgTableCreator((name) => `msu-aiclub-website_${name}`
 /// Requires user type be added as an enum in supabase website
 // export const userTypeEnum = pgEnum("userType", ["guest", "member", "admin"]);
 
+// SupaId has a foreign key restraint on auth.user.id in supabase website
+// The supabase library does not support accessing the auth.user table directly
+
 export const profiles = createTable(
   "profile",
   {
-    id: uuid("id").primaryKey().defaultRandom(), 
-    supaId: varchar("supaId").notNull(),
+    supaId: uuid("supaId").notNull().primaryKey(),
     teamId: uuid("teamId").references(() => teams.id),
     userType: varchar("userType").notNull(),
   }
@@ -78,7 +80,7 @@ export const posts = createTable(
   "post",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    profileId: uuid("profileId").notNull().references(() => profiles.id),
+    profileId: uuid("profileId").notNull().references(() => profiles.supaId),
 
     name: varchar("name", { length: 256 }).notNull(),
     content: varchar("content", { length: 8192 }).notNull(),
@@ -88,6 +90,6 @@ export const posts = createTable(
 export const postRelations = relations(posts, ({ one }) => ({
   profile: one(profiles, {
     fields: [posts.profileId],
-    references: [profiles.id],
+    references: [profiles.supaId],
   }),
 }))
