@@ -6,8 +6,8 @@ import { db } from "..";
  * @param supaId the supaId of the user
  * @returns the user type "guest" | "member" | "admin"
  */
-export async function getProfileType(supaId: string) : Promise<string | null> {
-    if (!supaId) {
+export async function getProfileType(supaId: string | undefined) : Promise<string | null> {
+    if (supaId === undefined) {
         return null;
     }
 

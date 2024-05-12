@@ -21,7 +21,7 @@ export default async function RootLayout({
 
   const { data } = await supabase.auth.getUser();  
 
-  const userType: string | null = await getProfileType(data.user?.id ?? "");
+  const userType: string | null = await getProfileType(data.user?.id);
 
   return (
     <html lang="en" className={`${GeistSans.variable}`}>

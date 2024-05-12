@@ -2,6 +2,10 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/_next")) {
+    return NextResponse.next();
+    }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
