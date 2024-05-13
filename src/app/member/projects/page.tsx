@@ -1,4 +1,4 @@
-import { getUserProjects } from "~/server/db/queries/projects";
+import { getUserProject } from "~/server/db/queries/projects";
 import type { Project } from "~/types/projects";
 import { createClient } from "~/utils/supabase/server";
 
@@ -7,18 +7,30 @@ export default async function ProjectsPage() {
 
     const { data } = await supabase.auth.getUser();
 
-    const projects = await getUserProjects(data?.user?.id ?? "");
+    const project = await getUserProject(data?.user?.id ?? "");
+
+    if (project === null) {
+        return (
+            <div>
+                No project
+            </div>
+        )
+    }
 
 
-    console.log(projects);
+    console.log(project);
     return (
         <div>
             Projects
-            {projects.map((project: Project) => (
-                <div key={project.id}>
-                    {project.name}
-                </div>
-            ))}
+            {project?.name}
+            {project?.description}
+            {project?.profiles?.map((profile) => {
+                return (
+                    <div key={profile.supaId}>
+                        {profile.supaId}
+                    </div>
+                )
+            })}
         </div>
     )
 }
