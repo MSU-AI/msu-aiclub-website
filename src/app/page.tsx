@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center p-10 text-white gap-10 min-h-screen">
-      <div className="flex flex-col items-center justify-center gap-2 w-full h-screen">
+      <div className="flex flex-col items-center justify-center p-10 gap-2 w-full h-[80vh]">
         <Image src="/Symbol-Brand-Colors.png" alt="MSU AI Club Logo" width={200} height={200} />
         <div className="w-full flex flex-row items-center justify-center lg:text-5xl md:text-3xl sm:text-lg whitespace-nowrap">
           <p>Welcome to the</p>
