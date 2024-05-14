@@ -1,8 +1,8 @@
 'use client';
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Tab, Tabs } from "@nextui-org/react";
+import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 /**
  * Determines the right side nav based on user type.
@@ -21,12 +21,12 @@ function RightSideNav({
         return (
             <>
             <NavbarItem>
-                <Link href="/admin" className="text-white">
+                <Link href="/admin">
                     Admin Dashboard
                 </Link>
             </NavbarItem>
             <NavbarItem>
-                <Link href="/member" className="text-white">
+                <Link href="/member">
                     Member Dashboard
                 </Link>
             </NavbarItem>
@@ -35,7 +35,7 @@ function RightSideNav({
     } else if (userType == "member") {
         return (
             <NavbarItem>
-                <Link href="/member" className="text-white">
+                <Link href="/member">
                     Dashboard
                 </Link>
             </NavbarItem>
@@ -46,12 +46,12 @@ function RightSideNav({
         return (
             <>
             <NavbarItem>
-                <Link href="/auth/login" className="text-white">
+                <Link href="/auth/login">
                     Login
                 </Link>
             </NavbarItem>
             <NavbarItem>
-                <Link href="/auth/register" className="text-white">
+                <Link href="/auth/register">
                     Register
                 </Link>
             </NavbarItem>
@@ -65,27 +65,66 @@ export default function PublicNav({
 } : {
     userType: string | null
 }) {
-    const pathname = usePathname();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const menuItems = {
+        "posts": "Posts",
+        "projects": "Projects",
+        "about": "About",
+        "contact": "Contact",
+    }
 
     return (
-        <Navbar>
-        <NavbarBrand>
-          <Link href="/" className="text-white text-bold">
-            MSU AI Club
-          </Link>
-        </NavbarBrand>
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          <NavbarItem>
-            <Tabs aria-label="Options" selectedKey={pathname}>
-              <Tab as={Link} key="/posts" title="Posts" href="/posts"></Tab>
-              <Tab as={Link} key="/projects" title="Our Work" href="/projects"></Tab>
-              <Tab as={Link} key="/about" title="About" href="/about"></Tab>
-            </Tabs>
-          </NavbarItem>
-        </NavbarContent>
-        <NavbarContent justify="end">
-            <RightSideNav userType={userType} />
-        </NavbarContent>
-      </Navbar>
-    )
+        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white">
+            <NavbarContent>
+                <NavbarMenuToggle
+                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                    className="sm:hidden"
+                />
+                <NavbarBrand>
+                    <Link href="/">
+                        <p className="font-bold text-inherit">MSU AI CLUB</p>
+                    </Link>
+                </NavbarBrand>
+            </NavbarContent>
+
+            <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                <NavbarItem>
+                    <Link color="foreground" href="/posts">
+                        POSTS
+                    </Link>
+                </NavbarItem>
+                <NavbarItem isActive>
+                    <Link href="/projects" aria-current="page">
+                        PROJECTS
+                    </Link>
+                </NavbarItem>
+                <NavbarItem>
+                    <Link color="foreground" href="/about">
+                        ABOUT
+                    </Link>
+                </NavbarItem>
+            </NavbarContent>
+            
+            <NavbarContent justify="end">
+                <RightSideNav userType={userType} />
+            </NavbarContent>
+
+            <NavbarMenu>
+                {Object.entries(menuItems).map(([url, text], index) => (
+                    <NavbarMenuItem key={`${url}-${index}`}>
+                        <Link
+                            color={
+                                index === 2 ? "primary" : index === Object.entries(menuItems).length - 1 ? "danger" : "foreground"
+                            }
+                            className="w-full"
+                            href={`/${url}`}
+                        >
+                            {text}
+                        </Link>
+                    </NavbarMenuItem>
+                ))}
+            </NavbarMenu>
+        </Navbar>
+    );
 }

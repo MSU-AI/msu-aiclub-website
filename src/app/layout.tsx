@@ -25,7 +25,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="bg-slate-700 h-screen w-screen">
+      <body className="bg-msu-ai-background overflow-x-hi">
         <Providers>
           <NavRouter userType={userType} />
           {children}
