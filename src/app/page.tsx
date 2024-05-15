@@ -11,7 +11,7 @@ export default function HomePage() {
         </div>
         <p className="lg:text-base md:text-sm sm:text-xs">Exploring the boundless world of AI, together.</p>
       </div>
-      <div className="flex flex-row items-center justify-between gap-2 w-full h-[80vh]">
+      <div className="flex flex-row items-center justify-between gap-4 w-full h-[80vh]">
         <div className="w-1/2">
           <p className="lg:text-5xl md:text-3xl sm:text-lg">
             Who are we?
@@ -33,6 +33,29 @@ export default function HomePage() {
             alt="Workshop Presenter Standing"
             style={{ objectFit: 'cover', borderRadius: '0.5rem' }}
           />
+        </div>
+      </div>
+      <div className="flex flex-row items-center justify-between gap-4 w-full h-[80vh]">
+        <div className="w-1/2 relative rounded-lg overflow-hidden h-full">
+          <Image
+            fill
+            src="/standing.png"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            alt="Workshop Presenter Standing"
+            style={{ objectFit: 'cover', borderRadius: '0.5rem' }}
+          />
+        </div>
+        <div className="w-1/2">
+          <p className="lg:text-5xl md:text-3xl sm:text-lg">
+            Our Mission
+          </p>
+          <p>
+          Our mission is to empower students 
+          with the knowledge of Artificial 
+          Intelligence through an inclusive 
+          environment that closes the gap between 
+          curiosity and hands-on practice in the field.
+          </p>
         </div>
       </div>
     </div>
