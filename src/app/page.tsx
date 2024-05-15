@@ -1,6 +1,7 @@
-import { Card, CardHeader} from "@nextui-org/react";
+import { Button, Card, CardHeader} from "@nextui-org/react";
 import Image from "next/image";
 import AccordianComponent from "./accordianComponent";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -70,6 +71,15 @@ export default function HomePage() {
                   and hear from a range of speakers 
                   that work with AI everyday.
                 </p>
+                <Button 
+                as={Link}
+                color="default"
+                className="mt-4" 
+                variant="ghost"
+                href="/auth/register"
+                >
+                  Join Us
+                </Button>
               </CardHeader>
               <Image
                 fill
