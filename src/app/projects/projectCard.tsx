@@ -24,7 +24,7 @@ export async function ProjectCard({ project } : { project: any }) {
                             src={project.logo}
                         />
                     </div>
-                    <div className="flex flex-grow gap-2 items-center flex-wrap">
+                    <div className="flex-grow overflow-x-auto flex gap-2 items-center hide-scrollbar">
                         {project.skills.map((skill: string) => (
                             <Chip 
                                 key={skill} 
@@ -41,5 +41,5 @@ export async function ProjectCard({ project } : { project: any }) {
                 </div>
             </CardFooter>
         </Card>
-    )
+    );
 }

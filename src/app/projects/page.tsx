@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getProjects } from "~/server/db/queries/projects";
 import type { Project } from "~/types/projects";
 import { exampleProjects } from "./exampleProjects";
