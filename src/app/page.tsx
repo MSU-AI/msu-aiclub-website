@@ -81,6 +81,9 @@ export default function HomePage() {
           </p>
         </div>
       </div>
+      <div>
+        <p className="text-xs">Made by Imagine Software</p>
+      </div>
     </div>
   );
 }
