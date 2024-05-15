@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
-import NavRouter from "~/components/nav/router";
+import NavBar from "~/components/nav/NavBar";
 import { Providers } from "~/app/providers";
 import { createClient } from "~/utils/supabase/server";
 import { getProfileType } from "~/server/db/queries/profiles";
@@ -27,7 +27,7 @@ export default async function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="bg-slate-700 h-screen w-screen">
         <Providers>
-          <NavRouter userType={userType} />
+          <NavBar userType={userType} />
           {children}
         </Providers>
       </body>

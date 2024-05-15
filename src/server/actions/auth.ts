@@ -5,7 +5,6 @@ import { createClient } from "~/utils/supabase/server";
 import { db } from "../db";
 import { profiles } from "../db/schema";
 import { getProfileType } from "../db/queries/profiles";
-import { userTypeRedirect } from "~/constants/userTypeRedirect";
 
 /**
  * Logs a user in
@@ -30,7 +29,7 @@ export async function login(email: string, password: string) : Promise<void> {
 
     const userType = await getProfileType(data!.user!.id);
   
-    redirect(userTypeRedirect(userType));
+    redirect('/');
 }
 
 /**
@@ -59,7 +58,7 @@ export async function register(email: string, password: string) {
 
     const userType = await getProfileType(data!.user!.id);
   
-    redirect(userTypeRedirect(userType));
+    redirect('/');
 }
 
 /**
