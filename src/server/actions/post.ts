@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 import { Post } from "~/types/posts";
 import { revalidatePath } from "next/cache";
 
+
+import { createClient } from "~/utils/supabase/server";
 /**
  * Deletes a post
  * @param postId the id of the post
@@ -45,25 +47,34 @@ export async function deletePost(postId: string | null, userId: string) : Promis
  * @param content the content of the post
  * @returns the id of the post if it was created, null otherwise
  */
-export async function createPost(supaId: string | undefined, name: string, content: string) 
-: Promise<string | null> {
-    if (supaId === undefined) {
-        return null;
-    }
-    
-    const [ post ]: Post[] | undefined = await db.insert(posts).values({
-        profileId: supaId,
-        name,
-        content,
-    }).returning();
+export async function createPost(name: string, content: string): Promise<string | null> {
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();  
 
-    if (post === undefined) {
-        return null;
+  if (!data.user) {
+    console.error('No user logged in');
+    return null;
+  }
+
+  try {
+    const [post]: Post[] | undefined = await db.insert('posts').values({
+      profileId: data.user.id,
+      name,
+      content,
+    }).returning('*');
+
+    if (!post) {
+      console.error('Failed to insert the post into the database');
+      return null;
     }
 
     revalidatePath("/member/posts", "page");
 
     return post.id;
+  } catch (error) {
+    console.error('Database error:', error);
+    return null;
+  }
 }
 
 /**
