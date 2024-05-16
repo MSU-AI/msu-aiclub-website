@@ -1,17 +1,13 @@
-import { Card, CardFooter, CardHeader, Chip } from "@nextui-org/react";
+import { Button, Card, CardFooter, CardHeader, Chip } from "@nextui-org/react";
 import { Image } from "@nextui-org/react";
 import Link from "next/link";
 
-
-/// Edit it to be on hover for whole card
 export async function ProjectCard({ project } : { project: any }) {
-    
+    console.log(project);
+
     return (
-        <Link href={`/projects/${project.id}`}>
-            <Card 
-            isFooterBlurred 
-            className="w-full h-[300px] transform transition duration-500 hover:-translate-y-1 hover:cursor-pointer"
-            >
+        <Link href={`projects/${project.id}`}>
+            <Card isFooterBlurred className="w-full h-[300px] transform transition duration-500 hover:shadow-lg">
                 <CardHeader className="absolute z-10 top-1 flex-col items-start">
                     <p className="text-tiny text-white/60 uppercase font-bold">{project.name}</p>
                     <p className="text-tiny text-white/60 font-bold">{project.description}</p>
@@ -31,8 +27,8 @@ export async function ProjectCard({ project } : { project: any }) {
                                 src={project.logo}
                             />
                         </div>
-                        <div className="flex-grow overflow-x-auto flex gap-2 items-center hide-scrollbar">
-                            {project.skills.map((skill: string) => (
+                        <div className="flex flex-grow gap-2 items-center flex-wrap">
+                            {project.skills && project.skills.map((skill: string) => (
                                 <Chip 
                                     key={skill} 
                                     className="text-white/60 bg-black/40 rounded-full"
@@ -46,5 +42,5 @@ export async function ProjectCard({ project } : { project: any }) {
                 </CardFooter>
             </Card>
         </Link>
-    );
+    )
 }

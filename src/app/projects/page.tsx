@@ -13,24 +13,14 @@ export default async function ProjectsPage() {
 
     const userType: string | null = await getProfileType(data.user?.id);
 
-    const projects = await getProjects();
-/*
-    return (
-        <div>
-            {projects.map((project) => (
-                <Link href={`/projects/${project.id}`}>{project.name}</Link>
-            ))}
+    // const projects = await getProjects();
 
-            { userType === "admin" && <Link href="/projects/new">New Project</Link> } 
-        </div>
-    )
-*/
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
             <p className="text-white text-5xl">Our Projects</p>
             <div className="flex flex-col items-center justify-center p-10 text-black min-h-screen">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {exampleProjects.map((project: Project) => (
+                    {exampleProjects.map((project: any) => (
                         <ProjectCard key={project.id} project={project} />
                     ))}
                 </div>
