@@ -1,20 +1,25 @@
 import Link from "next/link";
 import { getProjects } from "~/server/db/queries/projects";
-import type { Project } from "~/types/projects";
+import { createClient } from "~/utils/supabase/server";
+import { getProfileType } from "~/server/db/queries/profiles";
 
-export default async function ProjectsPage() {
+export default async function AdminProjectsPage() {
+
+    const supabase = createClient();
+
+    const { data } = await supabase.auth.getUser();
+
+    const userType: string | null = await getProfileType(data.user?.id);
+
     const projects = await getProjects();
 
-
-    console.log(projects);
     return (
         <div>
-            Projects
-            {projects.map((project: Project) => (
-                <Link href={`/projects/${project.id}`} key={project.id}>
-                    {project.name}
-                </Link>
+            {projects.map((project) => (
+                <Link href={`/projects/${project.id}`}>{project.name}</Link>
             ))}
+
+            { userType === "admin" && <Link href="/projects/new">New Project</Link> } 
         </div>
     )
 }

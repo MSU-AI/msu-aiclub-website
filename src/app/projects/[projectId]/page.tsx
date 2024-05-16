@@ -1,13 +1,22 @@
-import { getProjectById } from "~/server/db/queries/projects"
+import { getProjectById } from "~/server/db/queries/projects";
+import { createClient } from "~/utils/supabase/server";
+import { getProfileType } from "~/server/db/queries/profiles";
+import DeleteProjectButton from "./deleteProjectButton";
 
-export default async function ProjectPage({
+export default async function AdminProjectPage({
     params
 } : {
     params: {
         projectId: string
     }
 }) {
+    const supabase = createClient();
+
+    const { data } = await supabase.auth.getUser();
+
     const project = await getProjectById(params.projectId);
+
+    const userType: string | null = await getProfileType(data.user?.id);
 
     console.log(project);
 
@@ -25,6 +34,11 @@ export default async function ProjectPage({
                     User {profile.supaId}
                 </div>
             ))}
+            {userType === "admin" && 
+            <DeleteProjectButton projectId={project.id} supaId={data!.user!.id} />
+            }
         </div>
+
+
     )
 }
