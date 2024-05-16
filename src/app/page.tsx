@@ -1,8 +1,11 @@
+import { Button, Card, CardHeader} from "@nextui-org/react";
 import Image from "next/image";
+import AccordianComponent from "./accordianComponent";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center justify-center p-10 text-white gap-10 min-h-screen">
+    <div className="flex flex-col items-center justify-center p-10 text-white gap-12 min-h-screen">
       <div className="flex flex-col items-center justify-center p-10 gap-2 w-full h-[80vh]">
         <Image src="/Symbol-Brand-Colors.png" alt="MSU AI Club Logo" width={200} height={200} />
         <div className="w-full flex flex-row items-center justify-center lg:text-5xl md:text-3xl sm:text-lg whitespace-nowrap">
@@ -57,6 +60,42 @@ export default function HomePage() {
           curiosity and hands-on practice in the field.
           </p>
         </div>
+      </div>
+      <div className="flex flex-row items-center justify-center gap-4 w-full h-[80vh]">
+            <Card className="col-span-12 sm:col-span-4 h-[80vh] w-[80vw] rounded-lg">
+              <CardHeader className="absolute z-10 top-1 flex-col items-center h-[80vh] justify-center">
+                <h4 className="text-white font-medium text-large">Join our community.</h4>
+                <p className="text-white text-sm">
+                  Learn about the latest AI developments, 
+                  how to use them, implement them, 
+                  and hear from a range of speakers 
+                  that work with AI everyday.
+                </p>
+                <Button 
+                as={Link}
+                color="default"
+                className="mt-4" 
+                variant="ghost"
+                href="/auth/register"
+                >
+                  Join Us
+                </Button>
+              </CardHeader>
+              <Image
+                fill
+                src="/standing.png"
+                sizes="80vw"
+                alt="Join us image"
+                style={{ objectFit: 'cover', borderRadius: '0.5rem' }}
+              />
+            </Card>
+      </div>
+      <div className="flex flex-col items-center justify-center p-10 gap-2 w-[60vw] h-[80vh]">
+           <p className="text-2xl font-bold text-white">FAQ</p>
+           <AccordianComponent />
+      </div>
+      <div>
+        <p className="text-xs">Made by Imagine Software</p>
       </div>
     </div>
   );

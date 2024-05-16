@@ -27,7 +27,6 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="bg-msu-ai-background overflow-x-hidden">
-
         <Providers>  
           <Toaster />
           <NavBar userType={userType} />
