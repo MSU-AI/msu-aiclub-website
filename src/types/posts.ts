@@ -3,5 +3,5 @@ export interface Post {
     profileId: string;
     name: string;
     content: string;
-    imageURL?: string;
+    imageURL?: string | null;
 }

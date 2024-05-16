@@ -55,7 +55,7 @@ export const projects = createTable(
     description: varchar("description", { length: 256 }).notNull(),
     imageURL: varchar("imageURL", { length: 256 }),
     videoURL: varchar("videoURL", { length: 256 }),
-    tags: text("tags", { length: 256 }).array(),
+    tags: varchar("tags", { length: 256 }).array(),
   }
 );
 

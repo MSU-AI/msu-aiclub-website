@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { getUserPosts } from "~/server/db/queries/posts";
-import type { Post } from "~/types/posts";
 import { createClient } from "~/utils/supabase/server";
 import MakePostButton from "./makePostButton";
 import { getProfileType } from "~/server/db/queries/profiles";
+import PostCard from "./postCard";
+import { examplePosts } from "./examplePosts";
 
 export default async function PostsPage() {
     const supabase = createClient();
