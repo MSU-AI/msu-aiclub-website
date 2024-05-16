@@ -35,7 +35,7 @@ export async function deletePost(postId: string | null, userId: string) : Promis
     .where(eq(posts.id, postId))
     .returning({ deletedId: posts.id }) ?? null;
 
-    revalidatePath("/member/posts", "page");
+    revalidatePath("/posts", "page");
     
     return deletedId !== null;
 }
@@ -47,34 +47,25 @@ export async function deletePost(postId: string | null, userId: string) : Promis
  * @param content the content of the post
  * @returns the id of the post if it was created, null otherwise
  */
-export async function createPost(name: string, content: string): Promise<string | null> {
-  const supabase = createClient();
-  const { data } = await supabase.auth.getUser();  
+export async function createPost(supaId: string | undefined, name: string, content: string) 
+: Promise<string | null> {
+    if (supaId === undefined) {
+        return null;
+    }
+    
+    const [ post ]: Post[] | undefined = await db.insert(posts).values({
+        profileId: supaId,
+        name,
+        content,
+    }).returning();
 
-  if (!data.user) {
-    console.error('No user logged in');
-    return null;
-  }
-
-  try {
-    const [post]: Post[] | undefined = await db.insert('posts').values({
-      profileId: data.user.id,
-      name,
-      content,
-    }).returning('*');
-
-    if (!post) {
-      console.error('Failed to insert the post into the database');
-      return null;
+    if (post === undefined) {
+        return null;
     }
 
-    revalidatePath("/member/posts", "page");
+    revalidatePath("/posts", "page");
 
     return post.id;
-  } catch (error) {
-    console.error('Database error:', error);
-    return null;
-  }
 }
 
 /**
@@ -101,7 +92,7 @@ export async function updatePost
         return null;
     }
 
-    revalidatePath("/member/posts", "page");
+    revalidatePath("/posts", "page");
 
     return post.id;
 }
