@@ -19,7 +19,7 @@ export default function EditPostForm({
         const res = await updatePost(supaId!, post?.id, name, content);
 
         if (res !== null) {
-            router.push(`/member/posts/${res}`);
+            router.push(`/posts/${res}`);
         } else {
             alert("Could not create post");
         }

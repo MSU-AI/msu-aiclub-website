@@ -1,10 +1,11 @@
 import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
-import NavRouter from "~/components/nav/router";
+import NavBar from "~/components/nav/NavBar";
 import { Providers } from "~/app/providers";
 import { createClient } from "~/utils/supabase/server";
 import { getProfileType } from "~/server/db/queries/profiles";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: "MSU AI Club",
@@ -26,8 +27,9 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="bg-msu-ai-background overflow-x-hidden">
-        <Providers>
-          <NavRouter userType={userType} />
+        <Providers>  
+          <Toaster />
+          <NavBar userType={userType} />
           {children}
         </Providers>
       </body>

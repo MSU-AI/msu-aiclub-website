@@ -16,9 +16,25 @@ export default function RegisterForm() {
         setMessage(params.get('message') ?? '');
     }, [params])
 
+    
     const handleSubmit = async () => {
         await register(email, password);
+        
+        // this is a hackish solution but it just checks if the params in url are empty (aka no error message)
+        if (params.size === 0) {
+            toast.success('Successfully logged in!', {
+            duration: 4000, 
+            position: 'bottom-right', 
+            style: {
+                border: '2px solid #333',
+                color: '#fff',
+                backgroundColor: '#333',
+            },
+            });
+        }
+
     }
+
 
     return (
         <Card className="min-w-[400px] p-4">

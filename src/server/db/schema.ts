@@ -10,6 +10,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  text
 } from "drizzle-orm/pg-core";
 
 /**
@@ -35,27 +36,50 @@ export const profiles = createTable(
   }
 );
 
-export const profileRelations = relations(profiles, ({one, many}) => ({
-  project: one(projects, {
-    fields: [profiles.projectId],
-    references: [projects.id],
-  }),
+export const profileRelations = relations(profiles, ({ many }) => ({
 
-  posts: many(posts)
+  // project: one(projects, {
+  //  fields: [profiles.projectId],
+  //  references: [projects.id],
+  //}),
+
+  posts: many(posts),
+  profileProject: many(profileOnProjects)
 }))
 
 export const projects = createTable(
   "project",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-
     name: varchar("name", { length: 256 }).notNull(),
     description: varchar("description", { length: 256 }).notNull(),
+    imageURL: varchar("imageURL", { length: 256 }),
+    videoURL: varchar("videoURL", { length: 256 }),
+    tags: text("tags", { length: 256 }).array(),
   }
 );
 
-export const projectRelations = relations(projects, ({ one, many }) => ({
-  profiles: many(profiles)
+export const projectRelations = relations(projects, ({ many }) => ({
+    profiles: many(profileOnProjects)
+}))
+
+export const profileOnProjects = createTable(
+    "profile_project",
+    {
+        profileId: uuid("profileId").notNull().references(() => profiles.supaId),
+        projectId: uuid("projectId").notNull().references(() => projects.id),
+    }
+);
+
+export const profileOnProjectRelations = relations(profileOnProjects, ({ one }) => ({
+    profile: one(profiles, {
+        fields: [profileOnProjects.profileId],
+        references: [profiles.supaId],
+    }),
+    project: one(projects, {
+        fields: [profileOnProjects.projectId],
+        references: [projects.id],
+    }),
 }))
 
 export const posts = createTable(
@@ -63,9 +87,9 @@ export const posts = createTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     profileId: uuid("profileId").notNull().references(() => profiles.supaId),
-
     name: varchar("name", { length: 256 }).notNull(),
     content: varchar("content", { length: 8192 }).notNull(),
+    imageURL: varchar("imageURL", { length: 256 })
   }
 );
 

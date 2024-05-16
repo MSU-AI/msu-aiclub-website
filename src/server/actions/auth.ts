@@ -5,8 +5,6 @@ import { createClient } from "~/utils/supabase/server";
 import { db } from "../db";
 import { profiles } from "../db/schema";
 import { getProfileType } from "../db/queries/profiles";
-import { userTypeRedirect } from "~/constants/userTypeRedirect";
-
 /**
  * Logs a user in
  * @param email the email of the user
@@ -14,23 +12,23 @@ import { userTypeRedirect } from "~/constants/userTypeRedirect";
  * Redirects to user's dashboard based on type
  * Defined in constants/userTypeRedirect.ts
  */
-export async function login(email: string, password: string) : Promise<void> {
-    const supabase = createClient();
-  
-    const userData = {
-      email,
-      password
-    };
-  
-    const { data, error } = await supabase.auth.signInWithPassword(userData);
-  
-    if (error) {
-      redirect('/auth/login?message=' + error.message);
-    }
+export async function login(email: string, password: string): Promise<b> {
 
-    const userType = await getProfileType(data!.user!.id);
+  const supabase = createClient();
   
-    redirect(userTypeRedirect(userType));
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    
+    if (error) throw error;
+
+    const userType = await getProfileType(data.user.id);
+    
+  } catch (error) {
+    result = { error };
+    redirect('/auth/login?message=' + encodeURIComponent(error.message));
+  }
+
+  redirect('/');
 }
 
 /**
@@ -59,7 +57,7 @@ export async function register(email: string, password: string) {
 
     const userType = await getProfileType(data!.user!.id);
   
-    redirect(userTypeRedirect(userType));
+    redirect('/');
 }
 
 /**

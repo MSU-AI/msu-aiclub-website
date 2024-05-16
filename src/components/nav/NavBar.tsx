@@ -2,21 +2,11 @@
 
 import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/react";
 import Link from "next/link";
+import { logout } from "~/server/actions/auth";
 import { useState } from "react";
 
-/**
- * Determines the right side nav based on user type.
- * @param userType the user type.
- * - If user is an admin, show admin and member dashboards.
- * - If user is a member, show member dashboard.
- * - If user is a guest, show nothing (maybe mailing list later).
- * - If user is not logged in, show login and register buttons.
- */
-function RightSideNav({
-    userType
-} : {
-    userType: string | null
-}) {
+function RightSideNav({ userType } : { userType: string | null }) {
+
     if (userType == "admin") {
         return (
             <>
@@ -30,18 +20,36 @@ function RightSideNav({
                     Member Dashboard
                 </Link>
             </NavbarItem>
+            <NavbarItem>
+            <Button 
+            variant="shadow" 
+            className="text-white"
+            onPress={async () => { await logout();}}
+            >
+              Logout
+            </Button>
+          </NavbarItem> 
             </>
         )
     } else if (userType == "member") {
         return (
+            <>
             <NavbarItem>
                 <Link href="/member">
                     Dashboard
                 </Link>
-            </NavbarItem>
+            </NavbarItem> 
+            <NavbarItem>
+            <Button 
+            variant="shadow" 
+            className="text-white"
+            onPress={async () => { await logout();}}
+            >
+              Logout
+            </Button>
+          </NavbarItem> 
+          </>
         )
-    } else if (userType == "guest") {
-        return null;
     } else {
         return (
             <>
@@ -60,7 +68,7 @@ function RightSideNav({
     }
 }
 
-export default function PublicNav({
+export default function NavBar({
     userType
 } : {
     userType: string | null

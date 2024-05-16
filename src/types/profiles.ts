@@ -10,5 +10,6 @@ export interface Profile {
     projectId: string | null;
     project?: Project | null;
     userType: string;
+    userImageURL?: string;
     posts?: Post[];
 }

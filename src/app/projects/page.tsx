@@ -1,12 +1,30 @@
 import { getProjects } from "~/server/db/queries/projects";
+import { createClient } from "~/utils/supabase/server";
+import { getProfileType } from "~/server/db/queries/profiles";
 import type { Project } from "~/types/projects";
 import { exampleProjects } from "./exampleProjects";
 import { ProjectCard } from "./projectCard";
 
 export default async function ProjectsPage() {
-    // const projects = await getProjects();
 
-    // console.log(projects);
+    const supabase = createClient();
+
+    const { data } = await supabase.auth.getUser();
+
+    const userType: string | null = await getProfileType(data.user?.id);
+
+    const projects = await getProjects();
+/*
+    return (
+        <div>
+            {projects.map((project) => (
+                <Link href={`/projects/${project.id}`}>{project.name}</Link>
+            ))}
+
+            { userType === "admin" && <Link href="/projects/new">New Project</Link> } 
+        </div>
+    )
+*/
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
             <p className="text-white text-5xl">Our Projects</p>
