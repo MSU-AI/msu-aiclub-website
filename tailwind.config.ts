@@ -13,6 +13,9 @@ export default {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
       },
+      colors: {
+        'msu-ai-background': '#151618' 
+      }
     },
   },
   darkMode: "class",
