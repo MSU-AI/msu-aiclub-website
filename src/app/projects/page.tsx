@@ -4,9 +4,9 @@ import { exampleProjects } from "./exampleProjects";
 import { ProjectCard } from "./projectCard";
 
 export default async function ProjectsPage() {
-    const projects = await getProjects();
+    // const projects = await getProjects();
 
-    console.log(projects);
+    // console.log(projects);
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
             <p className="text-white text-5xl">Our Projects</p>
