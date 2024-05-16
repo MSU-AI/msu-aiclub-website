@@ -5,6 +5,8 @@ export const exampleProjects = [
         description: "An AI powered stufy helper",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -12,6 +14,12 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "2",
+            "3",
+            "4"
         ]
     },
     {
@@ -20,6 +28,8 @@ export const exampleProjects = [
         description: "A Tiktok Clip Generator",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -27,6 +37,11 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "4",
+            "6"
         ]
     },
     {
@@ -35,6 +50,8 @@ export const exampleProjects = [
         description: "A recycling quality detection app",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -42,6 +59,11 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "5",
+            "2"
         ]
     },
     {
@@ -50,6 +72,8 @@ export const exampleProjects = [
         description: "An AI powered stufy helper",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -57,6 +81,11 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "2",
+            "3",
         ]
     },
     {
@@ -65,6 +94,8 @@ export const exampleProjects = [
         description: "A Tiktok Clip Generator",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -72,6 +103,11 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "2",
+            "3",
         ]
     },
     {
@@ -80,6 +116,8 @@ export const exampleProjects = [
         description: "A recycling quality detection app",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -87,6 +125,11 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "2",
+            "3",
         ]
     },
     {
@@ -95,6 +138,8 @@ export const exampleProjects = [
         description: "An AI powered stufy helper",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -102,6 +147,11 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "2",
+            "3",
         ]
     },
     {
@@ -110,6 +160,8 @@ export const exampleProjects = [
         description: "A Tiktok Clip Generator",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -117,6 +169,11 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "2",
+            "3",
         ]
     },
     {
@@ -125,6 +182,8 @@ export const exampleProjects = [
         description: "A recycling quality detection app",
         image: "/def-project.png",
         logo: "Symbol-Brand-Colors.png",
+        videoURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        gitHubURL: "https://github.com/MSU-AI/msu-aiclub-website",
         skills: [
             "Next.js",
             "Tailwind CSS",
@@ -132,6 +191,12 @@ export const exampleProjects = [
             "Vercel",
             "React",
             "Supabase",
+        ],
+        profileIds: [
+            "1",
+            "2",
+            "3",
+            "4"
         ]
     },
 ]
