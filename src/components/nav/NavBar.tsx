@@ -68,7 +68,7 @@ function RightSideNav({ userType } : { userType: string | null }) {
     }
 }
 
-export default function PublicNav({
+export default function NavBar({
     userType
 } : {
     userType: string | null
