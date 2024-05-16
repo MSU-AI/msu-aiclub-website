@@ -16,10 +16,9 @@ export default async function RootLayout({
 
   const userType: string | null = await getProfileType(data.user?.id);
 
-//   Doesn't load CSS for some reason
-//   if (userType !== "admin") {
-//     redirect("/");
-//   }
+  if (userType !== "admin") {
+     redirect("/");
+  }
 
   return children;
 }

@@ -5,4 +5,7 @@ export interface Project {
     name: string;
     profiles?: Profile[] | null;
     description: string;
+    imageURL?: string;
+    videoURL?: string;
+    tags?: string[];
 }

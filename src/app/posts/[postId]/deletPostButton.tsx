@@ -17,7 +17,7 @@ export default function DeletButton({
         const res = await deletePost(postId, userId!);
 
         if (res) {
-            router.push("/member/posts");
+            router.push("/posts");
         } else {
             alert("Could not delete post");
         }

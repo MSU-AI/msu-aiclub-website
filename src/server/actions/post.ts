@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 import { Post } from "~/types/posts";
 import { revalidatePath } from "next/cache";
 
+
+import { createClient } from "~/utils/supabase/server";
 /**
  * Deletes a post
  * @param postId the id of the post
@@ -33,7 +35,7 @@ export async function deletePost(postId: string | null, userId: string) : Promis
     .where(eq(posts.id, postId))
     .returning({ deletedId: posts.id }) ?? null;
 
-    revalidatePath("/member/posts", "page");
+    revalidatePath("/posts", "page");
     
     return deletedId !== null;
 }
@@ -61,7 +63,7 @@ export async function createPost(supaId: string | undefined, name: string, conte
         return null;
     }
 
-    revalidatePath("/member/posts", "page");
+    revalidatePath("/posts", "page");
 
     return post.id;
 }
@@ -90,7 +92,7 @@ export async function updatePost
         return null;
     }
 
-    revalidatePath("/member/posts", "page");
+    revalidatePath("/posts", "page");
 
     return post.id;
 }

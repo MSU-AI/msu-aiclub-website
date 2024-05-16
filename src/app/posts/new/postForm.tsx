@@ -1,25 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { updatePost } from "~/server/actions/post";
-import PostForm from "../../postForm";
-import { Post } from "~/types/posts";
+import { createPost } from "~/server/actions/post";
+import PostForm from "../postForm";
 
 
-export default function EditPostForm({
-    supaId,
-    post
+export default function NewPostForm({
+    supaId
 } : {
-    supaId: string | undefined,
-    post: Post
+    supaId: string | undefined
 }) {
     const router = useRouter();
 
     const handleSubmit = async (name: string, content: string) => {
-        const res = await updatePost(supaId!, post?.id, name, content);
+        const res = await createPost(supaId!, name, content);
 
         if (res !== null) {
-            router.push(`/member/posts/${res}`);
+            router.push(`/posts/${res}`);
         } else {
             alert("Could not create post");
         }
@@ -29,8 +26,6 @@ export default function EditPostForm({
         <div>
             <PostForm 
             supaId={supaId}
-            prevName={post?.name}
-            prevContent={post?.content}
             handleSubmit={handleSubmit}
             />
         </div>

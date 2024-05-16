@@ -4,6 +4,7 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Input, Link } from "@ne
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { login } from "~/server/actions/auth";
+import { toast } from "react-hot-toast";
 
 export default function LoginForm() {
     const [email, setEmail] = useState('');
@@ -18,6 +19,20 @@ export default function LoginForm() {
 
     const handleSubmit = async () => {
         await login(email, password);
+        
+        // this is a hackish solution but it just checks if the params in url are empty (aka no error message)
+        if (params.size === 0) {
+            toast.success('Successfully logged in!', {
+            duration: 4000, 
+            position: 'bottom-right', 
+            style: {
+                border: '2px solid #333',
+                color: '#fff',
+                backgroundColor: '#333',
+            },
+            });
+        }
+
     }
 
     return (

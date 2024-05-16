@@ -18,7 +18,7 @@ export default function DeleteProjectButton({
         const success = await deleteProject(projectId, supaId);
 
         if (success) {
-            router.push("/admin/projects");
+            router.push("/projects");
         } else {
             alert("Project deletion failed");
         }
