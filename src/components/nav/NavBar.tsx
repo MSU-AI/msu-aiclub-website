@@ -16,7 +16,7 @@ function RightSideNav({ userType } : { userType: string | null }) {
                 </Link>
             </NavbarItem>
             <NavbarItem>
-                <Link href="/member">
+                <Link href="/admin/users">
                     Member Dashboard
                 </Link>
             </NavbarItem>
@@ -34,11 +34,6 @@ function RightSideNav({ userType } : { userType: string | null }) {
     } else if (userType == "member") {
         return (
             <>
-            <NavbarItem>
-                <Link href="/member">
-                    Dashboard
-                </Link>
-            </NavbarItem> 
             <NavbarItem>
             <Button 
             variant="shadow" 

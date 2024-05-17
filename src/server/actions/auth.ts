@@ -24,7 +24,7 @@ export async function login(email: string, password: string): Promise<b> {
     const userType = await getProfileType(data.user.id);
     
   } catch (error) {
-    result = { error };
+    const result = { error };
     redirect('/auth/login?message=' + encodeURIComponent(error.message));
   }
 

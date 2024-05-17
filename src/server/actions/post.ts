@@ -40,6 +40,7 @@ export async function deletePost(postId: string | null, userId: string) : Promis
     return deletedId !== null;
 }
 
+
 /**
  * Creates a post
  * @param supaId the supaId of the user

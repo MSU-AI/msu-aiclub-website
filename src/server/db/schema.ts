@@ -86,7 +86,7 @@ export const posts = createTable(
   "post",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    profileId: uuid("profileId").notNull().references(() => profiles.supaId),
+    profileId: uuid("profileId").notNull().references(() => profiles.supaId, {onDelete: 'cascade'}),
     name: varchar("name", { length: 256 }).notNull(),
     content: varchar("content", { length: 8192 }).notNull(),
     imageURL: varchar("imageURL", { length: 256 })

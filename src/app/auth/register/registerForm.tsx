@@ -4,6 +4,7 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Input, Link } from "@ne
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { register } from "~/server/actions/auth";
+import { toast } from "react-hot-toast";
 
 export default function RegisterForm() {
     const [email, setEmail] = useState('');
