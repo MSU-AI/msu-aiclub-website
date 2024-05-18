@@ -8,47 +8,6 @@ import  Image  from "next/image";
 import { HoverBorderGradient } from "../ui/hover-border-gradient";
 import { AvatarDropDown } from "./avatar-dropdown";
 
-function RightSideNav({ userType } : { userType: string | null }) {
-
-    if (userType == "admin") {
-        return (
-            <>
-            <NavbarItem>
-                <Link href="/admin">
-                    Admin Dashboard
-                </Link>
-            </NavbarItem>
-            <NavbarItem>
-                <AvatarDropDown userType={userType}/>
-            </NavbarItem> 
-            </>
-        )
-    } else if (userType == "member") {
-        return (
-          <>
-            <NavbarItem>
-                <AvatarDropDown userType={userType}/>
-            </NavbarItem> 
-          </>
-        )
-    } else {
-        return (
-            <>
-            <NavbarItem>
-                <Link href="/auth/register">
-                    <HoverBorderGradient
-                        containerClassName="rounded-full"
-                        as="button"
-                        className="bg-black text-white flex items-center space-x-2"
-                    >
-                        <span>Join Us</span>
-                    </HoverBorderGradient>
-                </Link>
-            </NavbarItem>
-            </>
-        );
-    }
-}
 
 export default function NavBar({
     userType
@@ -67,10 +26,7 @@ export default function NavBar({
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white">
             <NavbarContent>
-                <NavbarMenuToggle
-                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                    className="sm:hidden"
-                />
+                
                 <NavbarItem>
                     <Link href="/">
                         <Image
@@ -81,6 +37,7 @@ export default function NavBar({
                         />
                     </Link>
                 </NavbarItem>
+                <div className="flex gap-6 max-sm:hidden">
                 <NavbarItem>
                     <Link color="foreground" href="/posts">
                         Posts
@@ -96,10 +53,32 @@ export default function NavBar({
                         About
                     </Link>
                 </NavbarItem>
+                </div>
             </NavbarContent>
 
             <NavbarContent justify="end">
-                <RightSideNav userType={userType} />
+                <NavbarMenuToggle
+                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                    className="sm:hidden"
+                />
+                {userType == "member" || userType == "admin" &&
+                <NavbarItem>
+                    <AvatarDropDown userType={userType}/>
+                </NavbarItem>
+                }
+                {userType != "member" && userType != "admin" &&
+                <NavbarItem>
+                    <Link href="/auth/register">
+                        <HoverBorderGradient
+                            containerClassName="rounded-full"
+                            as="button"
+                            className="bg-black text-white flex items-center space-x-2"
+                        >
+                        <span>Join Us</span>
+                    </HoverBorderGradient>
+                </Link>
+            </NavbarItem>
+            }
             </NavbarContent>
 
             <NavbarMenu>
