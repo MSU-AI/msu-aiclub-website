@@ -4,6 +4,9 @@ import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, Nav
 import Link from "next/link";
 import { logout } from "~/server/actions/auth";
 import { useState } from "react";
+import  Image  from "next/image";
+import { HoverBorderGradient } from "../ui/hover-border-gradient";
+import { AvatarDropDown } from "./avatar-dropdown";
 
 function RightSideNav({ userType } : { userType: string | null }) {
 
@@ -16,46 +19,30 @@ function RightSideNav({ userType } : { userType: string | null }) {
                 </Link>
             </NavbarItem>
             <NavbarItem>
-                <Link href="/admin/users">
-                    Member Dashboard
-                </Link>
-            </NavbarItem>
-            <NavbarItem>
-            <Button 
-            variant="shadow" 
-            className="text-white"
-            onPress={async () => { await logout();}}
-            >
-              Logout
-            </Button>
-          </NavbarItem> 
+                <AvatarDropDown userType={userType}/>
+            </NavbarItem> 
             </>
         )
     } else if (userType == "member") {
         return (
-            <>
+          <>
             <NavbarItem>
-            <Button 
-            variant="shadow" 
-            className="text-white"
-            onPress={async () => { await logout();}}
-            >
-              Logout
-            </Button>
-          </NavbarItem> 
+                <AvatarDropDown userType={userType}/>
+            </NavbarItem> 
           </>
         )
     } else {
         return (
             <>
             <NavbarItem>
-                <Link href="/auth/login">
-                    Login
-                </Link>
-            </NavbarItem>
-            <NavbarItem>
                 <Link href="/auth/register">
-                    Register
+                    <HoverBorderGradient
+                        containerClassName="rounded-full"
+                        as="button"
+                        className="bg-black text-white flex items-center space-x-2"
+                    >
+                        <span>Join Us</span>
+                    </HoverBorderGradient>
                 </Link>
             </NavbarItem>
             </>
@@ -84,31 +71,33 @@ export default function NavBar({
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     className="sm:hidden"
                 />
-                <NavbarBrand>
-                    <Link href="/">
-                        <p className="font-bold text-inherit">MSU AI CLUB</p>
-                    </Link>
-                </NavbarBrand>
-            </NavbarContent>
-
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarItem>
-                    <Link color="foreground" href="/posts">
-                        POSTS
+                    <Link href="/">
+                        <Image
+                            src="/logo.svg"
+                            alt="MSU AI Club Logo"
+                            width={35}
+                            height={35}
+                        />
                     </Link>
                 </NavbarItem>
-                <NavbarItem isActive>
+                <NavbarItem>
+                    <Link color="foreground" href="/posts">
+                        Posts
+                    </Link>
+                </NavbarItem>
+                <NavbarItem >
                     <Link href="/projects" aria-current="page">
-                        PROJECTS
+                        Projects
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="/about">
-                        ABOUT
+                        About
                     </Link>
                 </NavbarItem>
             </NavbarContent>
-            
+
             <NavbarContent justify="end">
                 <RightSideNav userType={userType} />
             </NavbarContent>

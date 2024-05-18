@@ -2,95 +2,62 @@ import { Button, Card, CardHeader} from "@nextui-org/react";
 import Image from "next/image";
 import AccordianComponent from "./accordianComponent";
 import Link from "next/link";
+import { HeroParallax } from "~/components/ui/hero-parallax";
+import { SparklesCore } from "~/components/ui/sparkles";
+import { InfiniteMovingCards } from "~/components/ui/infinite-moving-cards";
+import {HoverBorderGradient} from "~/components/ui/hover-border-gradient";
+
+
+
 
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center p-10 text-white gap-12 min-h-screen">
-      <div className="flex flex-col items-center justify-center p-10 gap-2 w-full h-[80vh]">
-        <Image src="/Symbol-Brand-Colors.png" alt="MSU AI Club Logo" width={200} height={200} />
-        <div className="w-full flex flex-row items-center justify-center lg:text-5xl md:text-3xl sm:text-lg whitespace-nowrap">
-          <p>Welcome to the</p>
-          <p className="font-bold ml-3">AI Club</p>
+      <div className="h-[40rem] w-full  flex flex-col items-center justify-center overflow-hidden rounded-md">
+      <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">
+        AI Club @ MSU
+      </h1>
+      <div className="flex flex-col items-center justify-center w-[40rem] h-40 relative">
+        {/* Gradients */}
+        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />
+        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4" />
+        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm" />
+        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4" />
+ 
+        {/* Core component */}
+        <SparklesCore
+          background="transparent"
+          minSize={0.4}
+          maxSize={1}
+          particleDensity={1200}
+          className="w-full h-full"
+          particleColor="#FFFFFF"
+        />
+        <div className="absolute top-[30%] left-[25%]">
+        <p className="text-2xl"> The hub for everything AI at MSU </p>
         </div>
-        <p className="lg:text-base md:text-sm sm:text-xs">Exploring the boundless world of AI, together.</p>
+
+        <Link href="/auth/register">
+                    <HoverBorderGradient
+                        containerClassName="rounded-full"
+                        as="button"
+                        className="bg-black text-white flex items-center space-x-2"
+                    >
+                        <span className="text-lg">Join our growing community {`>`} </span>
+                    </HoverBorderGradient>
+        </Link>
+ 
+        {/* Radial Gradient to prevent sharp edges */}
+        <div className="absolute inset-0 w-full h-full bg-[#121212] [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
       </div>
-      <div className="flex flex-row items-center justify-between gap-4 w-full h-[80vh]">
-        <div className="w-1/2">
-          <p className="lg:text-5xl md:text-3xl sm:text-lg">
-            Who are we?
-          </p>
-          <p>
-            The AI Club is a fast-growing 
-            student organization at 
-            Michigan State University driven 
-            by the passion and curiosity for 
-            one of the most promising branches 
-            of Computer Science: Artificial Intelligence.
-          </p>
-        </div>
-        <div className="w-1/2 relative rounded-lg overflow-hidden h-full">
-          <Image
-            fill
-            src="/standing.png"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            alt="Workshop Presenter Standing"
-            style={{ objectFit: 'cover', borderRadius: '0.5rem' }}
-          />
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-between gap-4 w-full h-[80vh]">
-        <div className="w-1/2 relative rounded-lg overflow-hidden h-full">
-          <Image
-            fill
-            src="/standing.png"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            alt="Workshop Presenter Standing"
-            style={{ objectFit: 'cover', borderRadius: '0.5rem' }}
-          />
-        </div>
-        <div className="w-1/2">
-          <p className="lg:text-5xl md:text-3xl sm:text-lg">
-            Our Mission
-          </p>
-          <p>
-          Our mission is to empower students 
-          with the knowledge of Artificial 
-          Intelligence through an inclusive 
-          environment that closes the gap between 
-          curiosity and hands-on practice in the field.
-          </p>
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-center gap-4 w-full h-[80vh]">
-            <Card className="col-span-12 sm:col-span-4 h-[80vh] w-[80vw] rounded-lg">
-              <CardHeader className="absolute z-10 top-1 flex-col items-center h-[80vh] justify-center">
-                <h4 className="text-white font-medium text-large">Join our community.</h4>
-                <p className="text-white text-sm">
-                  Learn about the latest AI developments, 
-                  how to use them, implement them, 
-                  and hear from a range of speakers 
-                  that work with AI everyday.
-                </p>
-                <Button 
-                as={Link}
-                color="default"
-                className="mt-4" 
-                variant="ghost"
-                href="/auth/register"
-                >
-                  Join Us
-                </Button>
-              </CardHeader>
-              <Image
-                fill
-                src="/standing.png"
-                sizes="80vw"
-                alt="Join us image"
-                style={{ objectFit: 'cover', borderRadius: '0.5rem' }}
-              />
-            </Card>
-      </div>
-      <div className="flex flex-col items-center justify-center p-10 gap-2 w-[60vw] h-[80vh]">
+    </div> 
+    <div className="h-[10rem] rounded-md flex flex-col antialiased bg-background dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+      <InfiniteMovingCards
+        direction="right"
+        speed="slow"
+      />
+    </div>
+          <div className="flex flex-col items-center justify-center p-10 gap-2 w-[60vw] h-[80vh]">
            <p className="text-2xl font-bold text-white">FAQ</p>
            <AccordianComponent />
       </div>
