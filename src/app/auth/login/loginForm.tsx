@@ -1,8 +1,8 @@
 "use client";
 
 import { Button, Card, CardBody, CardFooter, CardHeader, Input, Link } from "@nextui-org/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { login } from "~/server/actions/auth";
 import { toast } from "react-hot-toast";
 
