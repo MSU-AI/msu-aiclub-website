@@ -9,34 +9,23 @@ import { getProfileType } from "../db/queries/profiles";
  * Logs a user in
  * @param email the email of the user
  * @param password the password of the user
- * Redirects to user's dashboard based on type
- * Defined in constants/userTypeRedirect.ts
+ * returns null if successful, or an error message if not
  */
-export async function login(email: string, password: string): Promise<b> {
-
+export async function login(email: string, password: string): Promise<string | null> {
   const supabase = createClient();
   
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    
-    if (error) throw error;
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    const userType = await getProfileType(data.user.id);
-    
-  } catch (error) {
-    const result = { error };
-    redirect('/auth/login?message=' + encodeURIComponent(error.message));
-  }
-
-  redirect('/');
+  return error ? error.message : null;
 }
 
 /**
  * Registers a user
  * @param email the email of the user
  * @param password the password of the user
+ * @returns null if successful, or an error message if not
  */
-export async function register(email: string, password: string) {
+export async function register(email: string, password: string) : Promise<string | null> {
     const supabase = createClient();
 
     const userData = {
@@ -47,17 +36,10 @@ export async function register(email: string, password: string) {
     const { data, error } = await supabase.auth.signUp(userData);
 
     if (error) {
-      redirect('/auth/register?message=' + error.message);
+      return error.message;
     }
-
-    await db.insert(profiles).values({
-      supaId: data!.user!.id,
-      userType: "member",
-    });
-
-    const userType = await getProfileType(data!.user!.id);
   
-    redirect('/');
+    return null;
 }
 
 /**
