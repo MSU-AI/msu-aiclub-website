@@ -26,7 +26,7 @@ export default async function RootLayout({
       <body className="bg-msu-ai-background overflow-x-hidden">
         <Providers>  
           <Toaster />
-          <NavBar userType={"member"} />
+          <NavBar userType={data.user ? "member" : null} />
           {children}
         </Providers>
       </body>

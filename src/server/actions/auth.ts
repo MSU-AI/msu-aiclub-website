@@ -53,4 +53,20 @@ export async function logout() {
     }
 
     redirect('/');
-  }
+}
+
+/**
+ * Placeholder function for completing the account
+ */
+export async function completeAccount() {
+    const supabase = createClient();
+
+    await supabase.auth.updateUser({
+      data: {
+        memberType: 'member',
+        name: 'John Jones'
+      }
+    })
+
+    return null;
+}

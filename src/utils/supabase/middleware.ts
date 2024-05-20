@@ -1,5 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { AUTH_URLS } from '~/constants/urls';
+import { isProfileComplete } from '~/helpers/metaDataChecker';
 
 export async function updateSession(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/_next")) {
@@ -58,7 +60,15 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  const {data, error} = await supabase.auth.getUser();
+
+  console.log(request.nextUrl.pathname)
+
+  console.log(!AUTH_URLS.includes(request.nextUrl.pathname))
+
+  if (!AUTH_URLS.includes(request.nextUrl.pathname) && data.user && !isProfileComplete(data.user)) {
+    return NextResponse.redirect(new URL('/auth/complete-profile', request.url));
+  }
 
   return response
 }
