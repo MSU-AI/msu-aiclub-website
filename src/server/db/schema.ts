@@ -1,16 +1,14 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { desc, relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
-  index,
-  pgEnum,
   pgTableCreator,
-  serial,
   timestamp,
   uuid,
-  varchar,
-  text
+  text,
+  pgSchema,
+  integer
 } from "drizzle-orm/pg-core";
 
 /**
@@ -21,81 +19,143 @@ import {
  */
 export const createTable = pgTableCreator((name) => `msu-aiclub-website_${name}`);
 
-/// Requires user type be added as an enum in supabase website
-// export const userTypeEnum = pgEnum("userType", ["guest", "member", "admin"]);
+const authSchema = pgSchema("auth");
 
-// SupaId has a foreign key restraint on auth.user.id in supabase website
-// The supabase library does not support accessing the auth.user table directly
+export const users = authSchema.table("users", {
+  id: uuid("id").primaryKey(),
+});
 
-export const profiles = createTable(
-  "profile",
-  {
-    supaId: uuid("supaId").notNull().primaryKey(),
-    projectId: uuid("projectId").references(() => projects.id, {onDelete: 'set null'}),
-    userType: varchar("userType").notNull(),
-  }
-);
-
-export const profileRelations = relations(profiles, ({ many }) => ({
-
-  // project: one(projects, {
-  //  fields: [profiles.projectId],
-  //  references: [projects.id],
-  //}),
-
+export const userRelations = relations(users, ({ many }) => ({
   posts: many(posts),
-  profileProject: many(profileOnProjects)
-}))
 
-export const projects = createTable(
-  "project",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    name: varchar("name", { length: 256 }).notNull(),
-    description: varchar("description", { length: 256 }).notNull(),
-    imageURL: varchar("imageURL", { length: 256 }),
-    videoURL: varchar("videoURL", { length: 256 }),
-    tags: varchar("tags", { length: 256 }).array(),
-  }
-);
+  projects: many(userProjects),
+
+  comments: many(comments),
+
+  roles: many(userRoles),
+}));
+
+export const projects = createTable("projects", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  videoUrl: text("video_url"),
+  githubUrl: text("github_url"),
+  liveSiteUrl: text("live_site"),
+});
 
 export const projectRelations = relations(projects, ({ many }) => ({
-    profiles: many(profileOnProjects)
-}))
+  users: many(userProjects),
 
-export const profileOnProjects = createTable(
-    "profile_project",
-    {
-        profileId: uuid("profileId").notNull().references(() => profiles.supaId),
-        projectId: uuid("projectId").notNull().references(() => projects.id),
-    }
-);
+  skills: many(projectSkills),
+}));
 
-export const profileOnProjectRelations = relations(profileOnProjects, ({ one }) => ({
-    profile: one(profiles, {
-        fields: [profileOnProjects.profileId],
-        references: [profiles.supaId],
-    }),
-    project: one(projects, {
-        fields: [profileOnProjects.projectId],
-        references: [projects.id],
-    }),
-}))
+export const userProjects = createTable("userProjects", {
+  userId: uuid("id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  projectId: uuid("id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+});
 
-export const posts = createTable(
-  "post",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    profileId: uuid("profileId").notNull().references(() => profiles.supaId, {onDelete: 'cascade'}),
-    name: varchar("name", { length: 256 }).notNull(),
-    content: varchar("content", { length: 8192 }).notNull(),
-    imageURL: varchar("imageURL", { length: 256 })
-  }
-);
-
-export const postRelations = relations(posts, ({ one }) => ({
-  profile: one(profiles, {
-    fields: [posts.profileId],
-    references: [profiles.supaId],
+export const userProjectRelations = relations(userProjects, ({ one }) => ({
+  user: one(users, {
+    fields: [userProjects.userId],
+    references: [users.id],
   }),
-}))
+
+  project: one(projects, {
+    fields: [userProjects.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export const skills = createTable("skills", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+});
+
+export const skillRelations = relations(skills, ({ many }) => ({
+  projects: many(projectSkills),
+}));
+
+export const projectSkills = createTable("projectSkills", {
+  projectId: uuid("id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  skillId: uuid("id").notNull().references(() => skills.id, { onDelete: "cascade" }),
+})
+
+export const projectSkillRelations = relations(projectSkills, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectSkills.projectId],
+    references: [projects.id],
+  }),
+
+  skill: one(skills, {
+    fields: [projectSkills.skillId],
+    references: [skills.id],
+  }),
+}));
+
+export const posts = createTable("posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  content: text("content").notNull(),
+  likes: integer("likes").notNull().default(0),
+  thumbnailUrl: text("thumbnailUrl"),
+  createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
+  userId: uuid("userId").notNull().references(() => users.id),
+});
+
+export const postRelations = relations(posts, ({ one, many }) => ({
+  user: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+
+  comments: many(comments),
+}));
+
+export const comments = createTable("comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+  userId: uuid("profileId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  postId: uuid("postId").notNull().references(() => posts.id, { onDelete: "cascade" }),
+});
+
+export const commentRelations = relations(comments, ({ one }) => ({
+  user: one(users, {
+    fields: [comments.userId],
+    references: [users.id]
+  }),
+
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+}));
+
+export const roles = createTable("roles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+});
+
+export const roleRelations = relations(roles, ({ many }) => ({
+  users: many(userRoles),
+}));
+
+export const userRoles = createTable("userRoles", {
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  roleId: uuid("roleId").notNull().references(() => roles.id, { onDelete: "cascade" }),
+});
+
+export const userRoleRelations = relations(userRoles, ({ one }) => ({
+  user: one(users, {
+    fields: [userRoles.userId],
+    references: [users.id],
+  }),
+
+  role: one(roles, {
+    fields: [userRoles.roleId],
+    references: [roles.id],
+  }),
+}));

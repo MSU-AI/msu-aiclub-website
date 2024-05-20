@@ -1,7 +1,10 @@
 export interface Post {
     id: string;
-    profileId: string;
-    name: string;
+    userId: string;
+    title: string;
+    description: string;
+    likes: number;
     content: string;
-    imageURL?: string | null;
+    thumbnailUrl?: string | null;
+    createdAt: Date
 }

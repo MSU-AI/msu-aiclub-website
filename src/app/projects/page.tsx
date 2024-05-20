@@ -1,7 +1,4 @@
-import { getProjects } from "~/server/db/queries/projects";
 import { createClient } from "~/utils/supabase/server";
-import { getProfileType } from "~/server/db/queries/profiles";
-import type { Project } from "~/types/projects";
 import { exampleProjects } from "./exampleProjects";
 import { ProjectCard } from "./projectCard";
 
@@ -11,7 +8,7 @@ export default async function ProjectsPage() {
 
     const { data } = await supabase.auth.getUser();
 
-    const userType: string | null = await getProfileType(data.user?.id);
+    // const userType: string | null = await getProfileType(data.user?.id);
 
     // const projects = await getProjects();
 

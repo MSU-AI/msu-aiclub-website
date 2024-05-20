@@ -6,8 +6,6 @@ import { eq } from "drizzle-orm";
 import { Post } from "~/types/posts";
 import { revalidatePath } from "next/cache";
 
-
-import { createClient } from "~/utils/supabase/server";
 /**
  * Deletes a post
  * @param postId the id of the post
@@ -27,7 +25,7 @@ export async function deletePost(postId: string | null, userId: string) : Promis
         return false;
     }
 
-    if (post.profileId !== userId) {
+    if (post.userId !== userId) {
         return false;
     }
 
@@ -48,16 +46,22 @@ export async function deletePost(postId: string | null, userId: string) : Promis
  * @param content the content of the post
  * @returns the id of the post if it was created, null otherwise
  */
-export async function createPost(supaId: string | undefined, name: string, content: string) 
-: Promise<string | null> {
+export async function createPost(
+    supaId: string | undefined, 
+    title: string, 
+    content: string, 
+    description: string
+) : Promise<string | null> {
     if (supaId === undefined) {
         return null;
     }
     
     const [ post ]: Post[] | undefined = await db.insert(posts).values({
-        profileId: supaId,
-        name,
+        userId: supaId,
+        title,
+        description,
         content,
+        likes: 0,
     }).returning();
 
     if (post === undefined) {
@@ -77,15 +81,18 @@ export async function createPost(supaId: string | undefined, name: string, conte
  * @param content the content of the post
  * @returns the id of the post if it was updated, null otherwise
  */
-export async function updatePost
-(supaId: string | undefined, postId: string, name: string, content: string) 
-: Promise<string | null> {
+export async function updatePost(
+    supaId: string | undefined, 
+    postId: string, 
+    title: string, 
+    content: string
+) : Promise<string | null> {
     if (postId === null || supaId === undefined) {
         return null;
     }
 
     const [ post ]: Post[] | undefined = await db.update(posts)
-    .set({ name, content })
+    .set({ title, content })
     .where(eq(posts.id, postId))
     .returning();
 

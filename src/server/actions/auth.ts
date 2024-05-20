@@ -2,9 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "~/utils/supabase/server";
-import { db } from "../db";
-import { profiles } from "../db/schema";
-import { getProfileType } from "../db/queries/profiles";
+
 /**
  * Logs a user in
  * @param email the email of the user

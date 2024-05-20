@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { createClient } from "~/utils/supabase/server";
-import { getProfileType } from "~/server/db/queries/profiles";
+import { getProfileType } from "~/server/db/queries/users";
 import { redirect } from "next/navigation";
 
 

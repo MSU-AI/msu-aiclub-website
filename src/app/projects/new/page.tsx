@@ -1,4 +1,4 @@
-import { getAllProfiles } from "~/server/db/queries/profiles";
+import { getAllProfiles } from "~/server/db/queries/users";
 import NewProjectForm from "./newProjectForm";
 
 export default async function NewProjectPage() {

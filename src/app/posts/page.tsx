@@ -1,7 +1,6 @@
 import { getUserPosts } from "~/server/db/queries/posts";
 import { createClient } from "~/utils/supabase/server";
 import MakePostButton from "./makePostButton";
-import { getProfileType } from "~/server/db/queries/profiles";
 import PostCard from "./postCard";
 import { examplePosts } from "./examplePosts";
 
@@ -10,9 +9,7 @@ export default async function PostsPage() {
 
     const { data } = await supabase.auth.getUser();
 
-    const userType: string | null = await getProfileType(data.user?.id);
-
-    const posts = await getUserPosts(data?.user?.id ?? null);
+    // const posts = await getUserPosts(data?.user?.id ?? null);
     
 
     const workshopPosts = examplePosts.filter((post: any) => post.type === "workshop");
@@ -36,7 +33,7 @@ export default async function PostsPage() {
                             <PostCard post={post} />
                         </div>
                     ))}
-                  {  userType === "admin" && <MakePostButton /> }
+                  <MakePostButton />
                 </div>
             </div>
         </div>

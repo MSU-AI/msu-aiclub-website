@@ -1,4 +1,4 @@
-import { getAllProfiles } from '~/server/db/queries/profiles'
+import { getAllProfiles } from '~/server/db/queries/users'
 import MembersTable from './membersTable'
 import type { Profile } from "~/types/profiles";
 

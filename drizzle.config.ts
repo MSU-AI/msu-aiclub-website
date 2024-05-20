@@ -8,5 +8,6 @@ export default {
   dbCredentials: {
     url: env.DATABASE_URL,
   },
-  tablesFilter: ["msu-aiclub-website_*"],
+  tablesFilter: ["msu-aiclub-website*"],
+  schemaFilter: ["public"],
 } satisfies Config;
