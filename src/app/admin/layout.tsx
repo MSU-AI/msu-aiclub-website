@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { createClient } from "~/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { adminCheck } from "~/server/actions/role";
 
 
 export default async function RootLayout({
@@ -13,11 +14,11 @@ export default async function RootLayout({
 
   const { data } = await supabase.auth.getUser();  
 
-  // const userType: string | null = await getProfileType(data.user?.id);
+  const isAdmin = await adminCheck(data?.user?.id);
 
-  // if (userType !== "admin") {
-  //    redirect("/");
-  // }
+   if (!isAdmin) {
+      redirect("/");
+   }
 
   return children;
 }
