@@ -24,7 +24,7 @@ export default function NavBar({
     }
 
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white">
+        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white z-[1000]">
             <NavbarContent>
                 
                 <NavbarItem>

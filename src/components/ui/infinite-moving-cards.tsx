@@ -38,11 +38,11 @@ const items: Item[] = [
 
 export const InfiniteMovingCards = ({
   direction = "left",
-  speed = "fast",
+  speed = "slow",
   pauseOnHover = true,
   className,
 }: {
-  items: {
+  items?: {
     image: string;
     name: string;
   }[];
@@ -109,7 +109,7 @@ export const InfiniteMovingCards = ({
     <div
       ref={containerRef}
       className={cn(
-        "scroller relative z-20  max-w-7xl overflow-hidden  [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
+        "scroller relative z-20 overflow-hidden   w-screen md:w-fit max-w-[1024px] [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
         className
       )}
     >

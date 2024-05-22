@@ -1,3 +1,5 @@
+import { type RefObject } from "react";
+
 export const getURL = (path: string = '') => {
     // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
     let url =
@@ -23,3 +25,11 @@ export const getURL = (path: string = '') => {
     // Concatenate the URL and the path.
     return path ? `${url}/${path}` : url;
 };
+
+export function scrollDown(ref: RefObject<HTMLDivElement>) {
+  if (!ref.current) return;
+  ref.current.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+}

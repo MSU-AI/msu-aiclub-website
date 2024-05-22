@@ -25,13 +25,11 @@ export default async function RootLayout({
   const userType: string | null = await getProfileType(data.user?.id);
 
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="overflow-x-hidden">
-        <Providers>  
+    <html lang="en" className={`${GeistSans.variable} dark`}>
+      <body className="">
           <Toaster />
           <NavBar userType={userType} />
           {children}
-        </Providers>
       </body>
     </html>
   );
