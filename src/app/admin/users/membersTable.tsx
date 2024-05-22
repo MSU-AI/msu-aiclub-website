@@ -2,10 +2,13 @@
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { Button } from "@nextui-org/react";
 import type { Profile } from "~/types/profiles";
-import { deleteProfile } from "~/server/actions/profile";
+
+{ /* import { deleteProfile } from "~/server/actions/profile"; */}O
+
 import { revalidatePath } from "next/cache"
 
 export default function MembersTable({ profiles }: { profiles: Profile[] }) {
+    /*
     
     const handleDelete = async (supaId) => {
         const success = await deleteProfile(supaId);
@@ -30,7 +33,7 @@ export default function MembersTable({ profiles }: { profiles: Profile[] }) {
           <TableBody>
             {profiles.map((profile, index) => (
               <TableRow key={index}>
-                <TableCell>{profile.supaId /* Replace this with the email associated with the supaId */}</TableCell>
+                <TableCell>{profile.supaId /* Replace this with the email associated with the supaId }</TableCell>
                 <TableCell>{profile.projectId}</TableCell>
                 <TableCell>{profile.userType}</TableCell>
                 <TableCell>
@@ -44,5 +47,13 @@ export default function MembersTable({ profiles }: { profiles: Profile[] }) {
       </div>
     </div>
   );
+  */
+  return (
+    <>
+        <p className="text-8xl">HI</p>
+    </>
+  );
+
+
 }
 

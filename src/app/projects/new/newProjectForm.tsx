@@ -3,9 +3,22 @@
 import React, { useState } from "react";
 import { Button, Input, Select, SelectItem, Textarea, Selection as NextUISelection } from "@nextui-org/react";
 import { Profile } from "~/types/profiles";
-import { createProject } from "~/server/actions/project";
+
+{/* import { createProject } from "~/server/actions/project"; */}
+
 import { useRouter } from "next/navigation";
 
+export default function NewProjectForm(){
+    return (
+        <>
+            <p className="text-8xl">HI</p>
+        </>
+    );
+    )
+}
+/*
+ 
+ 
 export default function NewProjectForm({
     profiles
 } : {
@@ -65,3 +78,6 @@ export default function NewProjectForm({
         </div>
     );
 }
+
+*/
+
