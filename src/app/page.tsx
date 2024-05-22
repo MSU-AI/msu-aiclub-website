@@ -65,7 +65,7 @@ export default function HomePage() {
               <p className="text-lg md:text-2xl absolute bottom-[50%] "> The hub for everything AI at MSU </p>
 
 
-              <div className="absolute inset-0 w-full h-full bg-[#121212] [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
+             <div className="absolute inset-0 w-full h-full bg-[#121212] [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
             </div>
             <div className="flex items-center justify-center gap-6 px-4">
               <Link className="" href="/auth/register">
