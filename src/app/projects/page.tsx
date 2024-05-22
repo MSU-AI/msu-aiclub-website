@@ -1,9 +1,10 @@
 import { createClient } from "~/utils/supabase/server";
 import { exampleProjects } from "./exampleProjects";
 import { ProjectCard } from "./projectCard";
+import { ComingSoon } from "~/components/coming-soon";
 
 export default async function ProjectsPage() {
-
+    /*
     const supabase = createClient();
 
     const { data } = await supabase.auth.getUser();
@@ -23,5 +24,12 @@ export default async function ProjectsPage() {
                 </div>
             </div>
         </div>
+    );
+    */
+
+    return (
+      <>
+        <ComingSoon />
+      </>
     );
 }
