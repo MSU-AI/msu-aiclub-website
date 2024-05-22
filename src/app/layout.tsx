@@ -22,13 +22,11 @@ export default async function RootLayout({
   const { data } = await supabase.auth.getUser();  
 
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="bg-msu-ai-background overflow-x-hidden">
-        <Providers>  
+    <html lang="en" className={`${GeistSans.variable} dark`}>
+      <body className="">
           <Toaster />
           <NavBar userType={data.user ? "member" : null} />
           {children}
-        </Providers>
       </body>
     </html>
   );

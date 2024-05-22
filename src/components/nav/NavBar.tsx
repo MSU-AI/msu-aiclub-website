@@ -4,64 +4,10 @@ import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, Nav
 import Link from "next/link";
 import { logout } from "~/server/actions/auth";
 import { useState } from "react";
+import  Image  from "next/image";
+import { HoverBorderGradient } from "../ui/hover-border-gradient";
+import { AvatarDropDown } from "./avatar-dropdown";
 
-function RightSideNav({ userType } : { userType: string | null }) {
-
-    if (userType == "admin") {
-        return (
-            <>
-            <NavbarItem>
-                <Link href="/admin">
-                    Admin Dashboard
-                </Link>
-            </NavbarItem>
-            <NavbarItem>
-                <Link href="/admin/users">
-                    Member Dashboard
-                </Link>
-            </NavbarItem>
-            <NavbarItem>
-            <Button 
-            variant="shadow" 
-            className="text-white"
-            onPress={async () => { await logout();}}
-            >
-              Logout
-            </Button>
-          </NavbarItem> 
-            </>
-        )
-    } else if (userType == "member") {
-        return (
-            <>
-            <NavbarItem>
-            <Button 
-            variant="shadow" 
-            className="text-white"
-            onPress={async () => { await logout();}}
-            >
-              Logout
-            </Button>
-          </NavbarItem> 
-          </>
-        )
-    } else {
-        return (
-            <>
-            <NavbarItem>
-                <Link href="/auth/login">
-                    Login
-                </Link>
-            </NavbarItem>
-            <NavbarItem>
-                <Link href="/auth/register">
-                    Register
-                </Link>
-            </NavbarItem>
-            </>
-        );
-    }
-}
 
 export default function NavBar({
     userType
@@ -78,39 +24,61 @@ export default function NavBar({
     }
 
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white">
+        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white z-[1000]">
             <NavbarContent>
-                <NavbarMenuToggle
-                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                    className="sm:hidden"
-                />
-                <NavbarBrand>
-                    <Link href="/">
-                        <p className="font-bold text-inherit">MSU AI CLUB</p>
-                    </Link>
-                </NavbarBrand>
-            </NavbarContent>
-
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                
                 <NavbarItem>
-                    <Link color="foreground" href="/posts">
-                        POSTS
+                    <Link href="/">
+                        <Image
+                            src="/logo.svg"
+                            alt="MSU AI Club Logo"
+                            width={35}
+                            height={35}
+                        />
                     </Link>
                 </NavbarItem>
-                <NavbarItem isActive>
+                <div className="flex gap-6 max-sm:hidden">
+                <NavbarItem>
+                    <Link color="foreground" href="/posts">
+                        Posts
+                    </Link>
+                </NavbarItem>
+                <NavbarItem >
                     <Link href="/projects" aria-current="page">
-                        PROJECTS
+                        Projects
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="/about">
-                        ABOUT
+                        About
                     </Link>
                 </NavbarItem>
+                </div>
             </NavbarContent>
-            
+
             <NavbarContent justify="end">
-                <RightSideNav userType={userType} />
+                <NavbarMenuToggle
+                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                    className="sm:hidden"
+                />
+                {userType == "member" || userType == "admin" &&
+                <NavbarItem>
+                    <AvatarDropDown userType={userType}/>
+                </NavbarItem>
+                }
+                {userType != "member" && userType != "admin" &&
+                <NavbarItem>
+                    <Link href="/auth/register">
+                        <HoverBorderGradient
+                            containerClassName="rounded-full"
+                            as="button"
+                            className="bg-black text-white flex items-center space-x-2"
+                        >
+                        <span>Join Us</span>
+                    </HoverBorderGradient>
+                </Link>
+            </NavbarItem>
+            }
             </NavbarContent>
 
             <NavbarMenu>
