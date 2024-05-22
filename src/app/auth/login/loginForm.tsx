@@ -1,6 +1,17 @@
 "use client";
+import Link from "next/link";
 
-import { Button, Card, CardBody, CardFooter, CardHeader, Input, Link } from "@nextui-org/react";
+import { Button } from "~/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card"
+import { Input } from "~/components/ui/input"
+
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { login } from "~/server/actions/auth";
@@ -41,13 +52,14 @@ export default function LoginForm() {
                 <div className="flex flex-col">Login</div>
                 {message && <p className="text-red-500">{message}</p>}
             </CardHeader>
-            <CardBody className="gap-3">
+            <CardContent className="flex flex-col gap-3">
                 <Input 
                 size="sm" 
                 type="email" 
                 label="Email" 
                 name="email" 
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="email@xyz.com"
                 />
                 <Input 
                 size="sm" 
@@ -55,8 +67,9 @@ export default function LoginForm() {
                 label="Password" 
                 name="password" 
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="********"
                 />
-            </CardBody>
+            </CardContent>
             <CardFooter className="flex flex-col gap-3">
                 <p>Don&apos;t have an account</p>      
                 <Link href="/auth/register" className="underline">
