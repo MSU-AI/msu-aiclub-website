@@ -1,10 +1,12 @@
+import { getAllProfiles } from "~/server/db/queries/profiles";
 import NewProjectForm from "./newProjectForm";
 
 export default async function NewProjectPage() {
+    const profiles = await getAllProfiles();
 
     return (
         <div>
-            <p className="text-8xl">HI</p>
+            <NewProjectForm profiles={profiles} />
         </div>
     )
 }
