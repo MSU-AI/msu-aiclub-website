@@ -1,9 +1,10 @@
 "use client"
+import { ComingSoon } from "~/components/coming-soon";
 
 export default function AboutPage(){
     return (
         <>
-            <p>about page</p>
+            <ComingSoon />
         </>
     );
 }

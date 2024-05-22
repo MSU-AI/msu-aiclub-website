@@ -4,9 +4,12 @@ import MakePostButton from "./makePostButton";
 import { getProfileType } from "~/server/db/queries/profiles";
 import PostCard from "./postCard";
 import { examplePosts } from "./examplePosts";
+import { ComingSoon } from "~/components/coming-soon";
 
 export default async function PostsPage() {
-    const supabase = createClient();
+    
+    /*
+     const supabase = createClient();
 
     const { data } = await supabase.auth.getUser();
 
@@ -17,7 +20,7 @@ export default async function PostsPage() {
 
     const workshopPosts = examplePosts.filter((post: any) => post.type === "workshop");
     const memberPosts = examplePosts.filter((post: any) => post.type === "member");
-
+    
     return (
         <div className="min-h-screen w-screen p-10 flex flex-row gap-10">
             <div className="flex flex-col gap-10 w-[65vw]">
@@ -41,4 +44,13 @@ export default async function PostsPage() {
             </div>
         </div>
     );
+    */
+
+    return (
+      <>
+        <ComingSoon />
+      </>
+
+    )
 }
+
