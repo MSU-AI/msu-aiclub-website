@@ -1,13 +1,15 @@
-import { getAllProfiles } from '~/server/db/queries/users'
+import { getUsers } from '~/server/actions/users';
 import MembersTable from './membersTable'
-import type { Profile } from "~/types/profiles";
+import { getRoles } from '~/server/actions/role';
 
 export default async function AdminUsersPage() {
+    const users = await getUsers();
+    const roles = await getRoles();
 
-    const profiles = await getAllProfiles();
+    console.log(users);
 
     return (
-        <MembersTable profiles={profiles} />
+        <MembersTable profiles={users} roles={roles} />
     );
 }
 
