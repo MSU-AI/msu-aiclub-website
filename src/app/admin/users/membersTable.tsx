@@ -2,20 +2,19 @@
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { Button } from "@nextui-org/react";
 import type { Profile } from "~/types/profiles";
-import { deleteProfile } from "~/server/actions/profile";
 import { revalidatePath } from "next/cache"
 
 export default function MembersTable({ profiles }: { profiles: Profile[] }) {
     
-    const handleDelete = async (supaId) => {
-        const success = await deleteProfile(supaId);
+    // const handleDelete = async (supaId: string) => {
+    //     // const success = await deleteProfile(supaId);
 
-        if (success) {
-            revalidatePath("/admin/users", "page");
-        } else {
-            alert("Profile deletion failed");
-        }
-    }
+    //     if (success) {
+    //         revalidatePath("/admin/users", "page");
+    //     } else {
+    //         alert("Profile deletion failed");
+    //     }
+    // }
 
   return (
     <div className="flex w-screen h-screen justify-center">
@@ -35,7 +34,7 @@ export default function MembersTable({ profiles }: { profiles: Profile[] }) {
                 <TableCell>{profile.userType}</TableCell>
                 <TableCell>
                     <Button> Edit </Button>
-                    <Button onClick={() => handleDelete(profile.supaId)}> Delete </Button>
+                    <Button onClick={() => (console.log("Delete profile", profile.supaId))}> Delete </Button>
                 </TableCell>
               </TableRow>
             ))}
