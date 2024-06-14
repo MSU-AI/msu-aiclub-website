@@ -1,13 +1,16 @@
-import { getAllProfiles } from '~/server/db/queries/users'
-import MembersTable from './membersTable'
-import type { Profile } from "~/types/profiles";
+import { getAllUsers } from "~/server/db/queries/users";
+import UserView from "./userView";
 
 export default async function AdminUsersPage() {
 
-    const profiles = await getAllProfiles();
+    const users = await getAllUsers();
 
     return (
-        <MembersTable profiles={profiles} />
+        users.map((user) => (
+            <div key={user.id} className="flex flex-row justify-between items-center">
+                <UserView userId={user.id} />
+            </div>
+        ))
     );
 }
 

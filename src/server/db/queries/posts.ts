@@ -14,7 +14,7 @@ export async function getUserPosts(supaId: string | null) : Promise<Post[]> {
     }
     
     const posts = await db.query.posts.findMany({
-        where: (model, { eq }) => eq(model.profileId, supaId),
+        where: (model, { eq }) => eq(model.userId, supaId),
     }) ?? [];
 
     return posts;
