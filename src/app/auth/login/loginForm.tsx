@@ -3,7 +3,7 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Input, Link } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { login } from "~/server/actions/auth";
+import { login, loginWithGoogle } from "~/server/actions/auth";
 import { toast } from "react-hot-toast";
 
 export default function LoginForm() {
@@ -68,6 +68,9 @@ export default function LoginForm() {
                 </Link>
                 <Button onPress={() => handleSubmit()} className="w-full">
                     Login
+                </Button>
+                <Button onPress={() => loginWithGoogle()} className="w-full">
+                    Login With Google
                 </Button>
             </CardFooter>
         </Card>

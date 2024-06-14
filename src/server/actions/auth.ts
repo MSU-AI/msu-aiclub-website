@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "~/utils/supabase/server";
+import { getURL } from "../helpers";
 
 /**
  * Logs a user in
@@ -69,4 +70,28 @@ export async function completeAccount() {
     })
 
     return null;
+}
+
+/**
+ * Logs in a user with Google
+ * @returns redirects to the home page if successful, and back to login page if not
+ */
+export async function loginWithGoogle(
+) : Promise<void> {
+  const supabase = createClient();
+
+  const redirectUrl = getURL('/auth/callback');
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: redirectUrl,
+    },
+  })
+
+  if (error) {
+    redirect('/login?message=' + error.message);
+  }
+
+  redirect(data.url)
 }
