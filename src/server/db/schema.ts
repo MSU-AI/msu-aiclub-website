@@ -8,7 +8,8 @@ import {
   uuid,
   text,
   pgSchema,
-  integer
+  integer,
+  unique
 } from "drizzle-orm/pg-core";
 
 /**
@@ -54,7 +55,9 @@ export const projectRelations = relations(projects, ({ many }) => ({
 export const userProjects = createTable("userProjects", {
   userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
   projectId: uuid("projectId").notNull().references(() => projects.id, { onDelete: "cascade" }),
-});
+}, (t) => ({
+  unq: unique().on(t.userId, t.projectId),
+}));
 
 export const userProjectRelations = relations(userProjects, ({ one }) => ({
   user: one(users, {
@@ -80,7 +83,9 @@ export const skillRelations = relations(skills, ({ many }) => ({
 export const projectSkills = createTable("projectSkills", {
   projectId: uuid("projectId").notNull().references(() => projects.id, { onDelete: "cascade" }),
   skillId: uuid("skillId").notNull().references(() => skills.id, { onDelete: "cascade" }),
-})
+}, (t) => ({
+  unq: unique().on(t.projectId, t.skillId),
+}))
 
 export const projectSkillRelations = relations(projectSkills, ({ one }) => ({
   project: one(projects, {
@@ -146,7 +151,9 @@ export const roleRelations = relations(roles, ({ many }) => ({
 export const userRoles = createTable("userRoles", {
   userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
   roleId: uuid("roleId").notNull().references(() => roles.id, { onDelete: "cascade" }),
-});
+}, (t) => ({
+  unq: unique().on(t.userId, t.roleId),
+}));
 
 export const userRoleRelations = relations(userRoles, ({ one }) => ({
   user: one(users, {
