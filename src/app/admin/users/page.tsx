@@ -1,5 +1,6 @@
 import { getAllUsers } from "~/server/db/queries/users";
-import UserView from "./userView";
+import { Link as LinkIcon } from "lucide-react";
+import Link from "next/link";
 
 export default async function AdminUsersPage() {
 
@@ -7,8 +8,11 @@ export default async function AdminUsersPage() {
 
     return (
         users.map((user) => (
-            <div key={user.id} className="flex flex-row justify-between items-center">
-                <UserView userId={user.id} />
+            <div key={user.id} className="flex flex-col justify-between items-center">
+                <Link href={`/admin/users/${user.id}`} className="flex flex-row justify-between items-center">
+                    {user.id}
+                    <LinkIcon/>
+                </Link>
             </div>
         ))
     );

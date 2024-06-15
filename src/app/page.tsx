@@ -4,6 +4,7 @@ import { type RefObject } from "react";
 
 import { Card, CardHeader } from "@nextui-org/react";
 import { Button } from "~/components/ui/button";
+import { Button as NextButton } from "@nextui-org/react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -28,6 +29,7 @@ import { Footer } from "~/components/landing/footer";
 import { parallaxImages } from "~/data/data";
 
 import { scrollDown } from "~/utils/helpers";
+import Logout from "./admin/logout";
 
 export default function HomePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,7 +46,8 @@ export default function HomePage() {
             <h1 className="text-5xl md:text-7xl lg:text-9xl font-bold text-center text-white">
               AI Club @ MSU
             </h1>
-            
+            <Logout />
+
             <div className="flex flex-col items-center justify-center h-40 relative w-screen md:w-[40rem]">
 
               <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />

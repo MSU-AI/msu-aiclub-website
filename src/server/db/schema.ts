@@ -52,8 +52,8 @@ export const projectRelations = relations(projects, ({ many }) => ({
 }));
 
 export const userProjects = createTable("userProjects", {
-  userId: uuid("id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  projectId: uuid("id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  projectId: uuid("projectId").notNull().references(() => projects.id, { onDelete: "cascade" }),
 });
 
 export const userProjectRelations = relations(userProjects, ({ one }) => ({
@@ -78,8 +78,8 @@ export const skillRelations = relations(skills, ({ many }) => ({
 }));
 
 export const projectSkills = createTable("projectSkills", {
-  projectId: uuid("id").notNull().references(() => projects.id, { onDelete: "cascade" }),
-  skillId: uuid("id").notNull().references(() => skills.id, { onDelete: "cascade" }),
+  projectId: uuid("projectId").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  skillId: uuid("skillId").notNull().references(() => skills.id, { onDelete: "cascade" }),
 })
 
 export const projectSkillRelations = relations(projectSkills, ({ one }) => ({
