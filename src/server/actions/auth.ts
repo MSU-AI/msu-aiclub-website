@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "~/utils/supabase/server";
 import { getURL } from "../helpers";
-
+import { AccountData } from "~/types/profiles";
 /**
  * Logs a user in
  * @param email the email of the user
@@ -57,19 +57,37 @@ export async function logout() {
 }
 
 /**
- * Placeholder function for completing the account
+ * Completes a user's account
  */
-export async function completeAccount() {
+export async function completeAccount(data: AccountData) {
     const supabase = createClient();
+    
+    if (!data.firstName || !data.lastName) {
+        return 'Please enter your first and last name';
+    }
 
-    await supabase.auth.updateUser({
+    const {error} = await supabase.auth.updateUser({
       data: {
         memberType: 'member',
-        name: 'John Jones'
+        firstName: data.firstName,
+        lastName: data.lastName,
+        fullName: `${data.firstName} ${data.lastName}`,
+        country: data.country,
+        university: data.university,
+        major: data.major,
+        schoolYear: data.schoolYear,
+        discordUsername: data.discordUsername,
+        githubUrl: data.githubUrl,
+        linkedinUrl: data.linkedinUrl,
+        personalWebsite: data.personalWebsite
       }
-    })
+    });
 
-    return null;
+    if (error) {
+        return error.message;
+    }
+
+    return null
 }
 
 /**

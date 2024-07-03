@@ -23,6 +23,8 @@ export default function NavBar({
         "contact": "Contact",
     }
 
+    console.log("user type from nav",userType)
+
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white z-[1000]">
             <NavbarContent>
@@ -30,14 +32,20 @@ export default function NavBar({
                 <NavbarItem>
                     <Link href="/">
                         <Image
-                            src="/logo.svg"
+                            src="/logo.png"
                             alt="MSU AI Club Logo"
-                            width={35}
-                            height={35}
+                            width={55}
+                            height={55}
                         />
                     </Link>
                 </NavbarItem>
-                <div className="flex gap-6 max-sm:hidden">
+                <div className="px-6 flex gap-12 max-lg:hidden">
+                <NavbarItem>
+                    <Link color="foreground" href="/about">
+                        About
+                    </Link>
+                </NavbarItem>
+
                 <NavbarItem>
                     <Link color="foreground" href="/posts">
                         Posts
@@ -48,11 +56,11 @@ export default function NavBar({
                         Projects
                     </Link>
                 </NavbarItem>
-                <NavbarItem>
-                    <Link color="foreground" href="/about">
-                        About
+                <NavbarItem >
+                    <Link href="/events" aria-current="page">
+                        Events
                     </Link>
-                </NavbarItem>
+                </NavbarItem> 
                 </div>
             </NavbarContent>
 
@@ -61,12 +69,12 @@ export default function NavBar({
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     className="sm:hidden"
                 />
-                {userType == "member" || userType == "admin" &&
+                {(userType == "member" || userType == "admin") &&
                 <NavbarItem>
                     <AvatarDropDown userType={userType}/>
                 </NavbarItem>
                 }
-                {userType != "member" && userType != "admin" &&
+                {(userType != "member" && userType != "admin") &&
                 <NavbarItem>
                     <Link href="/auth/register">
                         <HoverBorderGradient

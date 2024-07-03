@@ -7,3 +7,16 @@ export interface Profile {
     projectId: string | null;
     userType: string;
 }
+
+export interface AccountData {
+  firstName: string;
+  lastName: string;
+  country: string;
+  university: string;
+  major: string;
+  schoolYear: string;
+  discordUsername: string;
+  githubUrl: string;
+  linkedinUrl: string;
+  personalWebsite: string;
+}

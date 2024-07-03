@@ -21,11 +21,13 @@ export default async function RootLayout({
 
   const { data } = await supabase.auth.getUser();  
 
+  console.log('user data', data.user?.user_metadata?.memberType)
+
   return (
     <html lang="en" className={`${GeistSans.variable} dark`}>
       <body className="">
           <Toaster />
-          <NavBar userType={data.user ? "member" : null} />
+          <NavBar userType={data.user?.user_metadata?.memberType ? "member" : null} />
           {children}
       </body>
     </html>
