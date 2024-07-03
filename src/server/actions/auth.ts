@@ -65,7 +65,6 @@ export async function completeAccount(data: AccountData) {
     if (!data.firstName || !data.lastName) {
         return 'Please enter your first and last name';
     }
-
     const {error} = await supabase.auth.updateUser({
       data: {
         memberType: 'member',
@@ -79,16 +78,17 @@ export async function completeAccount(data: AccountData) {
         discordUsername: data.discordUsername,
         githubUrl: data.githubUrl,
         linkedinUrl: data.linkedinUrl,
-        personalWebsite: data.personalWebsite
+        personalWebsite: data.personalWebsite,
+        flowerProfile: data.flowerProfile
       }
     });
-
     if (error) {
         return error.message;
     }
-
-    return null
+    return null;
 }
+
+
 
 /**
  * Logs in a user with Google

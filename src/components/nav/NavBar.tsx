@@ -8,11 +8,12 @@ import  Image  from "next/image";
 import { HoverBorderGradient } from "../ui/hover-border-gradient";
 import { AvatarDropDown } from "./avatar-dropdown";
 
+import {AccountData} from "~/types/profiles";
 
 export default function NavBar({
-    userType
+    userMetadata
 } : {
-    userType: string | null
+    userMetadata: AccountData | null
 }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -23,7 +24,7 @@ export default function NavBar({
         "contact": "Contact",
     }
 
-    console.log("user type from nav",userType)
+    const userType = userMetadata?.memberType;
 
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white z-[1000]">
@@ -71,7 +72,7 @@ export default function NavBar({
                 />
                 {(userType == "member" || userType == "admin") &&
                 <NavbarItem>
-                    <AvatarDropDown userType={userType}/>
+                    <AvatarDropDown userMetadata={userMetadata}/>
                 </NavbarItem>
                 }
                 {(userType != "member" && userType != "admin") &&

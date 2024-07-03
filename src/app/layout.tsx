@@ -23,11 +23,13 @@ export default async function RootLayout({
 
   console.log('user data', data.user?.user_metadata?.memberType)
 
+  const userMetadata = data.user?.user_metadata;
+
   return (
     <html lang="en" className={`${GeistSans.variable} dark`}>
       <body className="">
           <Toaster />
-          <NavBar userType={data.user?.user_metadata?.memberType ? "member" : null} />
+          <NavBar userMetadata={userMetadata ??  null} />
           {children}
       </body>
     </html>

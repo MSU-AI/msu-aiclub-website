@@ -9,6 +9,7 @@ export interface Profile {
 }
 
 export interface AccountData {
+  memberType: string;
   firstName: string;
   lastName: string;
   country: string;
@@ -19,4 +20,36 @@ export interface AccountData {
   githubUrl: string;
   linkedinUrl: string;
   personalWebsite: string;
+  flowerProfile: string;
+}
+
+export interface FormData {
+  firstName: string;
+  lastName: string;
+  country: string;
+  university: string;
+  major: string;
+  schoolYear: string;
+  discordUsername: string;
+  githubUrl: string;
+  linkedinUrl: string;
+  personalWebsite: string;
+}
+
+
+export interface Country {
+  name: {
+    common: string;
+    official: string;
+    nativeName: Record<string, { official: string; common: string }>;
+  };
+}
+
+export interface University {
+  name: string;
+  country: string;
+}
+
+export interface Major {
+  name: string;
 }
