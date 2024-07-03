@@ -103,7 +103,7 @@ export function CompleteForm() {
   };
 
   const handleFlowerSelection = async (flowerNumber: number) => {
-    const updatedFormData = { ...formData, flowerProfile: `flowers/${flowerNumber}/lvl1.png` };
+    const updatedFormData = { ...formData, flowerProfile: `/flowers/${flowerNumber}/lvl1.png` };
     const res = await completeAccount(updatedFormData);
     if (res) {
       toast.error('Error completing profile', {

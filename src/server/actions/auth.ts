@@ -65,6 +65,7 @@ export async function completeAccount(data: AccountData) {
     if (!data.firstName || !data.lastName) {
         return 'Please enter your first and last name';
     }
+
     const {error} = await supabase.auth.updateUser({
       data: {
         memberType: 'member',
@@ -85,6 +86,7 @@ export async function completeAccount(data: AccountData) {
     if (error) {
         return error.message;
     }
+
     return null;
 }
 
