@@ -91,6 +91,36 @@ export async function completeAccount(data: AccountData) {
 }
 
 
+/**
+ * Updates a user's profile
+ * @param data The updated user data
+ * @returns null if successful, or an error message if not
+ */
+export async function updateProfile(data: Partial<AccountData>): Promise<string | null> {
+    const supabase = createClient();
+    
+    const { error } = await supabase.auth.updateUser({
+        data: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            fullName: data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : undefined,
+            country: data.country,
+            university: data.university,
+            major: data.major,
+            schoolYear: data.schoolYear,
+            discordUsername: data.discordUsername,
+            githubUrl: data.githubUrl,
+            linkedinUrl: data.linkedinUrl,
+            personalWebsite: data.personalWebsite,
+            profilePictureUrl: data.profilePictureUrl
+        }
+    });
+
+    if (error) {
+        return error.message;
+    }
+    return null;
+}
 
 /**
  * Logs in a user with Google

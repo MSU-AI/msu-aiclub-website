@@ -149,6 +149,7 @@ export function CompleteForm() {
                 name="firstName"
                 placeholder="Aidan"
                 value={formData.firstName}
+                inputType="aceternity"
                 onChange={(value) => handleChange("firstName", value)}
               />
               <LabeledInput
@@ -157,6 +158,7 @@ export function CompleteForm() {
                 name="lastName"
                 placeholder="Alsaikhusain"
                 value={formData.lastName}
+                inputType="aceternity"
                 onChange={(value) => handleChange("lastName", value)}
               />
             </div>
@@ -212,6 +214,7 @@ export function CompleteForm() {
                 name="discordUsername"
                 placeholder="malshaik"
                 value={formData.discordUsername}
+                inputType="aceternity"
                 onChange={(value) => handleChange("discordUsername", value)}
               />
             </div>
@@ -224,6 +227,7 @@ export function CompleteForm() {
               name="githubUrl"
               placeholder="github.com/malshaik"
               value={formData.githubUrl}
+              inputType="aceternity" 
               onChange={(value) => handleChange("githubUrl", value)}
               type="url"
             />
@@ -234,6 +238,7 @@ export function CompleteForm() {
               name="linkedinUrl"
               placeholder="linkedin.com/in/malshaik/"
               value={formData.linkedinUrl}
+              inputType="aceternity"
               onChange={(value) => handleChange("linkedinUrl", value)}
               type="url"
             />
@@ -244,6 +249,7 @@ export function CompleteForm() {
               name="personalWebsite"
               placeholder="malshaik.com"
               value={formData.personalWebsite}
+              inputType="aceternity"
               onChange={(value) => handleChange("personalWebsite", value)}
               type="url"
             />

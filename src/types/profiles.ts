@@ -21,6 +21,7 @@ export interface AccountData {
   linkedinUrl: string;
   personalWebsite: string;
   flowerProfile: string;
+  profilePictureUrl?: string;
 }
 
 export interface FormData {

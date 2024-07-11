@@ -14,12 +14,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 import { AccountData } from "~/types/profiles";
+import { useRouter } from 'next/navigation';
 
 export function AvatarDropDown({ userMetadata } : { userMetadata: AccountData | null}) {
-  const handleProfileClick = () => {
-    console.log("Profile clicked");
-    // Add your navigation logic or any other action here
-  };
+  
+  const router = useRouter();
 
   const userType = userMetadata?.memberType;
 
@@ -33,11 +32,13 @@ export function AvatarDropDown({ userMetadata } : { userMetadata: AccountData | 
       }
   }
 
+  const avatarSrc = userMetadata?.profilePictureUrl || userMetadata?.flowerProfile || "https://github.com/shadcn.png";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarImage src={userMetadata?.flowerProfile ?? "https://github.com/shadcn.png"} />
+          <AvatarImage src={avatarSrc} />
           <AvatarFallback>PF</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -45,7 +46,7 @@ export function AvatarDropDown({ userMetadata } : { userMetadata: AccountData | 
         <DropdownMenuLabel>Level {level}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={handleProfileClick}>
+          <DropdownMenuItem onClick={() => router.push("/profile")}>
             Profile
           </DropdownMenuItem>
           {userType === "admin" && 
