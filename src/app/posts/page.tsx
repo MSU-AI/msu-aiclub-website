@@ -1,53 +1,25 @@
-import { getUserPosts } from "~/server/db/queries/posts";
-import { createClient } from "~/utils/supabase/server";
-import MakePostButton from "./makePostButton";
-import PostCard from "./postCard";
-import { examplePosts } from "./examplePosts";
-import { ComingSoon } from "~/components/coming-soon";
+import { Suspense } from 'react';
+import { getPostsWithUserInfo } from '~/server/db/queries/posts';
+import PostList from './postList';
+import CreatePostButton from './createPostButton';
+import { createClient } from '~/utils/supabase/server';
 
 export default async function PostsPage() {
-    
-    /*
-     const supabase = createClient();
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const posts = await getPostsWithUserInfo(50);
+  
+  const isAdmin = user?.user_metadata?.memberType === 'admin';
 
-    const { data } = await supabase.auth.getUser();
-
-    // const posts = await getUserPosts(data?.user?.id ?? null);
-    
-
-    const workshopPosts = examplePosts.filter((post: any) => post.type === "workshop");
-    const memberPosts = examplePosts.filter((post: any) => post.type === "member");
-    
-    return (
-        <div className="min-h-screen w-screen p-10 flex flex-row gap-10">
-            <div className="flex flex-col gap-10 w-[65vw]">
-                <p className="text-2xl font-bold text-white">Our Posts</p>
-                {workshopPosts.map((post: any) => (
-                    <div className="w-[60vw] h-[20vh]">
-                        <PostCard post={post} />
-                    </div>
-                ))}
-            </div>
-            <div className="fixed right-10 w-[30vw] h-[80vh] bg-stone-700 rounded-lg p-3">
-                <p className="text-2xl font-bold text-white">Member Posts</p>
-                <div className="overflow-y-scroll flex flex-col gap-5 h-[70vh] hide-scrollbar">
-                    {memberPosts.map((post: any) => (
-                        <div className="">
-                            <PostCard post={post} />
-                        </div>
-                    ))}
-                  <MakePostButton />
-                </div>
-            </div>
-        </div>
-    );
-    */
-
-    return (
-      <>
-        <ComingSoon />
-      </>
-
-    )
+  return (
+    <div className="max-w-[1024px] mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Posts</h1>
+        {isAdmin && <CreatePostButton />}
+      </div>
+      <Suspense fallback={<div>Loading posts...</div>}>
+        <PostList posts={posts} isAdmin={isAdmin} />
+      </Suspense>
+    </div>
+  );
 }
-

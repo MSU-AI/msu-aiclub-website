@@ -27,12 +27,8 @@ export const users = authSchema.table("users", {
 
 export const userRelations = relations(users, ({ many }) => ({
   posts: many(posts),
-
-  projects: many(userProjects),
-
   comments: many(comments),
-
-  roles: many(userRoles),
+  likes: many(likes),
 }));
 
 export const projects = createTable("projects", {
@@ -110,8 +106,26 @@ export const postRelations = relations(posts, ({ one, many }) => ({
     fields: [posts.userId],
     references: [users.id],
   }),
-
   comments: many(comments),
+  likes: many(likes),
+}));
+
+export const likes = createTable("likes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  postId: uuid("postId").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const likeRelations = relations(likes, ({ one }) => ({
+  user: one(users, {
+    fields: [likes.userId],
+    references: [users.id],
+  }),
+  post: one(posts, {
+    fields: [likes.postId],
+    references: [posts.id],
+  }),
 }));
 
 export const comments = createTable("comments", {

@@ -78,9 +78,9 @@ export default function RegisterForm() {
                 />
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
-                <p>Don&apos;t have an account</p>      
+                <p>Already have an account?</p>      
                 <Link href="/auth/login" className="underline">
-                    Sign up
+                    Login
                 </Link>
                 <Button onClick={() => handleSubmit()} className="w-full">
                     Register

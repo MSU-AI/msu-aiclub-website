@@ -13,7 +13,12 @@ const config = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['drive.google.com', 'images.unsplash.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
 };
 

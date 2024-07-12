@@ -27,7 +27,7 @@ export default function NavBar({
     const userType = userMetadata?.memberType;
 
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white z-[1000]">
+        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-inherit text-white z-[1000] border-b ">
             <NavbarContent>
                 
                 <NavbarItem>

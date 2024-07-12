@@ -145,3 +145,22 @@ export async function loginWithGoogle(
 
   redirect(data.url)
 }
+
+/**
+ * make current user an admin (this is for development purposes only)
+ */
+export async function makeAdmin() {
+    const supabase = createClient();
+    
+    const { error } = await supabase.auth.updateUser({
+        data: {
+           memberType: 'admin'
+        }
+    });
+
+    if (error) {
+        return error.message;
+    }
+    return null;
+}
+

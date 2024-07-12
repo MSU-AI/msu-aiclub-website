@@ -4,7 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import NavBar from "~/components/nav/NavBar";
 import { Providers } from "~/app/providers";
 import { createClient } from "~/utils/supabase/server";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "~/components/ui/toaster";
 
 export const metadata = {
   title: "MSU AI Club",

@@ -1,44 +1,161 @@
-"use server";
+import { db } from "~/server/db";
+import { posts, users, comments, likes } from "~/server/db/schema";
+import { eq, desc, count, exists, and } from "drizzle-orm";
+import { createClient } from "~/utils/supabase/server";
 
-import { db } from "..";
-import { Post } from "~/types/posts";
+export async function getPostById(postId: string) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-/**
- * Gets all the posts assocated with a user
- * @param supaId the supaId of the user or null
- * @returns an array of Post objects
- */
-export async function getUserPosts(supaId: string | null) : Promise<Post[]> {
-    if (supaId === null) {
-        return [];
-    }
-    
-    const posts = await db.query.posts.findMany({
-        where: (model, { eq }) => eq(model.profileId, supaId),
-    }) ?? [];
+  const [post] = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      description: posts.description,
+      content: posts.content,
+      likes: posts.likes,
+      thumbnailUrl: posts.thumbnailUrl,
+      createdAt: posts.createdAt,
+      userId: posts.userId,
+      user: {
+        id: users.id,
+      },
+      commentCount: count(comments.id),
+      liked: exists(
+        db.select()
+          .from(likes)
+          .where(and(
+            eq(likes.postId, posts.id),
+            eq(likes.userId, user?.id || '')
+          ))
+      ),
+    })
+    .from(posts)
+    .leftJoin(users, eq(posts.userId, users.id))
+    .leftJoin(comments, eq(posts.id, comments.postId))
+    .groupBy(posts.id, users.id)
+    .where(eq(posts.id, postId));
 
-    return posts;
+  if (!post) return null;
+
+  let userFullName = '';
+  if (post.user) {
+    const { data: userData } = await supabase.auth.admin.getUserById(post.user.id);
+    userFullName = userData?.user?.user_metadata
+      ? `${userData.user.user_metadata.firstName || ''} ${userData.user.user_metadata.lastName || ''}`.trim()
+      : '';
+  }
+  
+  return {
+    ...post,
+    liked: !!post.liked,
+    user: post.user ? {
+      ...post.user,
+      fullName: userFullName
+    } : null
+  };
 }
 
-/**
- * Gets a post by its id
- * @param postId the id of the post
- * @returns a Post object or null if not found
- */
-export async function getPostById(postId: string) : Promise<Post | null> {
-    const post = await db.query.posts.findFirst({
-        where: (model, { eq }) => eq(model.id, postId),
-    }) ?? null;
+export async function getPostsWithUserInfo(limit: number = 10, offset: number = 0) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-    return post;
+  const postsWithCounts = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      description: posts.description,
+      content: posts.content,
+      likes: posts.likes,
+      thumbnailUrl: posts.thumbnailUrl,
+      createdAt: posts.createdAt,
+      userId: posts.userId,
+      user: {
+        id: users.id,
+      },
+      commentCount: count(comments.id),
+      liked: exists(
+        db.select()
+          .from(likes)
+          .where(and(
+            eq(likes.postId, posts.id),
+            eq(likes.userId, user?.id || '')
+          ))
+      ),
+    })
+    .from(posts)
+    .leftJoin(users, eq(posts.userId, users.id))
+    .leftJoin(comments, eq(posts.id, comments.postId))
+    .groupBy(posts.id, users.id)
+    .orderBy(desc(posts.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  // Fetch user metadata for all posts
+  const userMetadata = await Promise.all(
+    postsWithCounts.map(post => post.user ? supabase.auth.admin.getUserById(post.user.id) : null)
+  );
+
+  // Combine post data with user metadata
+  return postsWithCounts.map((post, index) => ({
+    ...post,
+    liked: !!post.liked,
+    user: post.user ? {
+      ...post.user,
+      fullName: userMetadata[index]?.data?.user?.user_metadata
+        ? `${userMetadata[index]?.data?.user?.user_metadata.firstName || ''} ${userMetadata[index]?.data?.user?.user_metadata.lastName || ''}`.trim()
+        : ''
+    } : null
+  }));
 }
 
-/**
- * Gets all posts
- * @returns an array of Post objects
- */
-export async function getPosts() : Promise<Post[]> {
-    const posts: Post[] = await db.query.posts.findMany();
+export async function getPostWithComments(postId: string) {
+  const post = await getPostById(postId);
+  
+  if (!post) return null;
 
-    return posts;
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const postComments = await db
+    .select({
+      id: comments.id,
+      content: comments.content,
+      createdAt: comments.createdAt,
+      userId: comments.userId,
+      user: {
+        id: users.id,
+      },
+      liked: exists(
+        db.select()
+          .from(likes)
+          .where(and(
+            eq(likes.postId, comments.id),
+            eq(likes.userId, user?.id || '')
+          ))
+      ),
+    })
+    .from(comments)
+    .leftJoin(users, eq(comments.userId, users.id))
+    .where(eq(comments.postId, postId))
+    .orderBy(desc(comments.createdAt));
+
+  // Fetch user metadata for all comments
+  const userMetadata = await Promise.all(
+    postComments.map(comment => comment.user ? supabase.auth.admin.getUserById(comment.user.id) : null)
+  );
+
+  // Combine comment data with user metadata
+  const commentsWithUserInfo = postComments.map((comment, index) => ({
+    ...comment,
+    liked: !!comment.liked,
+    user: comment.user ? {
+      ...comment.user,
+      fullName: userMetadata[index]?.data?.user?.user_metadata
+        ? `${userMetadata[index]?.data?.user?.user_metadata.firstName || ''} ${userMetadata[index]?.data?.user?.user_metadata.lastName || ''}`.trim()
+        : ''
+    } : null
+  }));
+
+  return { ...post, comments: commentsWithUserInfo };
 }
