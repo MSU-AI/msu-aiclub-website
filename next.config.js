@@ -20,6 +20,9 @@ const config = {
       },
     ],
   },
+  experimental: {
+    serverComponentsExternalPackages: ['drizzle-orm'],
+  },
 };
 
 export default config;

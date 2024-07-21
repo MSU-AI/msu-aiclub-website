@@ -27,6 +27,7 @@ import { Footer } from "~/components/landing/footer";
 
 import { parallaxImages } from "~/data/data";
 
+
 import { scrollDown } from "~/utils/helpers";
 
 export default function HomePage() {

@@ -2,6 +2,7 @@ import { db } from "~/server/db";
 import { comments, users } from "~/server/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { createClient } from "~/utils/supabase/server";
+import { CommentWithReplies } from "~/types/comments";
 
 export async function getCommentById(commentId: string) {
   const [comment] = await db.select()
@@ -41,7 +42,7 @@ export async function getCommentsByPostId(postId: string) {
   .orderBy(desc(comments.createdAt));
 
   const supabase = createClient();
-
+  
   // Fetch user metadata for all comments
   const userMetadata = await Promise.all(
     commentsData.map(comment => comment.user ? supabase.auth.admin.getUserById(comment.user.id) : null)
@@ -57,4 +58,66 @@ export async function getCommentsByPostId(postId: string) {
         : ''
     } : null
   }));
+}
+
+export async function getCommentsWithReplies(postId: string): Promise<CommentWithReplies[]> {
+  const allComments = await db.select({
+    id: comments.id,
+    content: comments.content,
+    createdAt: comments.createdAt,
+    userId: comments.userId,
+    postId: comments.postId,
+    parentId: comments.parentId,
+    upvotes: comments.upvotes,
+    downvotes: comments.downvotes,
+    user: {
+      id: users.id,
+    },
+  })
+  .from(comments)
+  .where(eq(comments.postId, postId))
+  .leftJoin(users, eq(comments.userId, users.id))
+  .orderBy(desc(comments.createdAt));
+
+  const supabase = createClient();
+  
+  // Fetch user metadata for all comments
+  const userMetadata = await Promise.all(
+    allComments.map(comment => comment.user ? supabase.auth.admin.getUserById(comment.user.id) : null)
+  );
+
+  // Combine comment data with user metadata
+  const commentsWithUserData = allComments.map((comment, index) => ({
+    ...comment,
+    user: comment.user ? {
+      ...comment.user,
+      fullName: userMetadata[index]?.data?.user?.user_metadata
+        ? `${userMetadata[index]?.data?.user?.user_metadata.firstName || ''} ${userMetadata[index]?.data?.user?.user_metadata.lastName || ''}`.trim()
+        : ''
+    } : null,
+    replies: [],
+  }));
+
+  // Build the comment tree
+  const commentMap = new Map<string, CommentWithReplies>();
+  const rootComments: CommentWithReplies[] = [];
+
+  commentsWithUserData.forEach(comment => {
+    commentMap.set(comment.id, comment as CommentWithReplies);
+  });
+
+  commentsWithUserData.forEach(comment => {
+    if (comment.parentId) {
+      const parentComment = commentMap.get(comment.parentId);
+      if (parentComment) {
+        parentComment.replies.push(comment as CommentWithReplies);
+      }
+    } else {
+      rootComments.push(comment as CommentWithReplies);
+    }
+  });
+  
+  console.log(JSON.stringify(rootComments));
+
+  return rootComments;
 }

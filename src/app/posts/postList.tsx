@@ -57,7 +57,7 @@ export default function PostList({ posts: initialPosts, isAdmin }: { posts: any[
     <div className="space-y-6">
       {posts.map((post) => (
       <>
-        <Card key={post.id} className="flex overflow-hidden bg-background border-none rounded-lg hover:shadow-md transition-shadow duration-300">
+        <Card key={post.id} className="flex overflow-hidden bg-background border-none hover:shadow-md transition-shadow duration-300">
           <Link href={`/posts/${post.id}`} className="flex-grow flex">
             {post.thumbnailUrl && (
               <div className="w-1/4 relative">
@@ -67,6 +67,7 @@ export default function PostList({ posts: initialPosts, isAdmin }: { posts: any[
                   width={200}
                   height={200}
                   objectFit="cover"
+                  className="rounded-none"
                 />
               </div>
             )}

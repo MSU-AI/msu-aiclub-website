@@ -42,4 +42,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-codebase.md
+globe.json

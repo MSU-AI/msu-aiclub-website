@@ -1,55 +1,116 @@
-"use server";
+"use server"
 
-import { Profile } from "~/types/profiles";
-import { db } from "..";
-import { Project } from "~/types/projects";
+import { db } from "~/server/db";
+import { projects } from "~/server/db/schema";
+import { eq, desc } from "drizzle-orm";
+import { createClient } from "~/utils/supabase/server";
 
-/**
- * Gets project assocated with a user
- * @param userId the supaId of the user
- * @returns Project associated with the user or null
- */
-export async function getUserProject(supaId: string) : Promise<Project | null> {
-    if (!supaId) {
-        return null;
-    }
-    
-    const profile: Profile | null = await db.query.profiles.findFirst({
-        where: (model, { eq }) => eq(model.supaId, supaId),
-        with: {
-            project: true
-        }
-    }) ?? null;
 
-    if (profile == null || profile.project == null) {
-        return null;
-    }
+export async function getPendingProjects() {
+  const pendingProjects = await db.query.projects.findMany({
+    where: eq(projects.status, "pending"),
+    orderBy: [desc(projects.createdAt)],
+    with: {
+      projectSkills: true,
+      userProjects: true,
+    },
+  });
 
-    return profile.project;
+  const supabase = createClient();
+
+  const projectsWithUserData = await Promise.all(
+    pendingProjects.map(async (project) => {
+      const users = await Promise.all(
+        project.userProjects.map(async (pu) => {
+          const { data: userData } = await supabase.auth.admin.getUserById(pu.userId);
+          return userData?.user ? {
+            id: userData.user.id,
+            email: userData.user.email,
+            fullName: `${userData.user.user_metadata.firstName || ''} ${userData.user.user_metadata.lastName || ''}`.trim(),
+            memberType: userData.user.user_metadata.memberType,
+            role: pu.role,
+          } : null;
+        })
+      );
+
+      return {
+        ...project,
+        users: users.filter(Boolean),
+        skills: project.projectSkills.map(ps => ps.skillName),
+      };
+    })
+  );
+
+  return projectsWithUserData;
 }
 
-/**
- * Gets a project by its id
- * @param projectId the id of the project
- * @returns a Project object or null if not found
- */
-export async function getProjectById(projectId: string) : Promise<Project | null> {
-    const project: Project | null = await db.query.projects.findFirst({
-        where: (model, { eq }) => eq(model.id, projectId),
-        with: {
-            profiles: true
-        }
-    }) ?? null;
+export async function getProjectById(projectId: string) {
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, projectId),
+    with: {
+      projectSkills: true,
+      userProjects: true,
+    },
+  });
 
-    return project;
+  if (!project) return null;
+
+  const supabase = createClient();
+
+  const users = await Promise.all(
+    project.userProjects.map(async (pu) => {
+      const { data: userData } = await supabase.auth.admin.getUserById(pu.userId);
+      return userData?.user ? {
+        id: userData.user.id,
+        email: userData.user.email,
+        fullName: `${userData.user.user_metadata.firstName || ''} ${userData.user.user_metadata.lastName || ''}`.trim(),
+        memberType: userData.user.user_metadata.memberType,
+        role: pu.role,
+      } : null;
+    })
+  );
+
+  return {
+    ...project,
+    skills: project.projectSkills.map(ps => ps.skillName),
+    users: users.filter(Boolean),
+  };
 }
 
-/**
- * Gets all projects
- * @returns an array of Project objects
- */
-export async function getProjects() : Promise<Project[]> {
-    const projects: Project[] = await db.query.projects.findMany();
+export async function getApprovedProjects() {
+  const approvedProjects = await db.query.projects.findMany({
+    where: eq(projects.status, "approved"),
+    orderBy: [desc(projects.createdAt)],
+    with: {
+      projectSkills: true,
+      userProjects: true,
+    },
+  });
 
-    return projects;
+  const supabase = createClient();
+
+  const projectsWithUserData = await Promise.all(
+    approvedProjects.map(async (project) => {
+      const users = await Promise.all(
+        project.userProjects.map(async (pu) => {
+          const { data: userData } = await supabase.auth.admin.getUserById(pu.userId);
+          return userData?.user ? {
+            id: userData.user.id,
+            email: userData.user.email,
+            fullName: `${userData.user.user_metadata.firstName || ''} ${userData.user.user_metadata.lastName || ''}`.trim(),
+            memberType: userData.user.user_metadata.memberType,
+            role: pu.role,
+          } : null;
+        })
+      );
+
+      return {
+        ...project,
+        users: users.filter(Boolean),
+        skills: project.projectSkills.map(ps => ps.skillName),
+      };
+    })
+  );
+
+  return projectsWithUserData;
 }

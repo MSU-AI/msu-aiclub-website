@@ -1,47 +1,42 @@
-// server/actions/comment.tsx
-
 "use server";
+
 import { db } from "~/server/db"
-import { comments } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { comments, commentVotes } from "../db/schema";
+import { eq, and, sql } from "drizzle-orm";
 import { Comment } from "~/types/comments";
 import { revalidatePath } from "next/cache";
 
-/**
- * Deletes a comment
- * @param commentId the id of the comment
- * @param userId the supaId of the user
- * @returns true if the comment was deleted, false otherwise
- */
 export async function deleteComment(commentId: string | null, userId: string): Promise<boolean> {
     if (commentId === null) {
         return false;
     }
-    const comment: Comment | null = await db.query.comments.findFirst({
-        where: (model, { eq }) => eq(model.id, commentId),
-    }) ?? null;
-    if (comment === null || comment.userId !== userId) {
+
+    const comment = await db.query.comments.findFirst({
+        where: eq(comments.id, commentId),
+        columns: {
+            id: true,
+            userId: true,
+        }
+    });
+
+    if (!comment || comment.userId !== userId) {
         return false;
     }
-    const deletedId = await db.delete(comments)
+
+    const result = await db.delete(comments)
         .where(eq(comments.id, commentId))
-        .returning({ deletedId: comments.id }) ?? null;
+        .returning({ deletedId: comments.id });
+
     revalidatePath("/posts", "page");
     
-    return deletedId !== null;
+    return result.length > 0;
 }
 
-/**
- * Creates a comment
- * @param supaId the supaId of the user
- * @param postId the id of the post
- * @param content the content of the comment
- * @returns the id of the comment if it was created, null otherwise
- */
 export async function createComment(
     supaId: string | undefined,
     postId: string,
-    content: string
+    content: string,
+    parentId?: string
 ): Promise<string | null> {
     if (supaId === undefined) {
         return null;
@@ -51,22 +46,18 @@ export async function createComment(
         userId: supaId,
         postId,
         content,
+        parentId,
         createdAt: new Date(),
     }).returning();
+
     if (comment === undefined) {
         return null;
     }
+
     revalidatePath("/posts", "page");
     return comment.id;
 }
 
-/**
- * Updates a comment
- * @param supaId the supaId of the user
- * @param commentId the id of the comment
- * @param content the content of the comment
- * @returns the id of the comment if it was updated, null otherwise
- */
 export async function updateComment(
     supaId: string | undefined,
     commentId: string,
@@ -75,13 +66,60 @@ export async function updateComment(
     if (commentId === null || supaId === undefined) {
         return null;
     }
+
     const [ comment ]: Comment[] | undefined = await db.update(comments)
         .set({ content })
         .where(eq(comments.id, commentId))
         .returning();
+
     if (comment === undefined) {
         return null;
     }
+
     revalidatePath("/posts", "page");
     return comment.id;
+}
+
+export async function voteComment(
+  userId: string,
+  commentId: string,
+  voteType: 1 | -1
+): Promise<boolean> {
+  const existingVote = await db.query.commentVotes.findFirst({
+    where: and(
+      eq(commentVotes.userId, userId),
+      eq(commentVotes.commentId, commentId)
+    ),
+  });
+
+  if (existingVote) {
+    if (existingVote.voteType === voteType) {
+      // Remove the vote if it's the same type
+      await db.delete(commentVotes)
+        .where(eq(commentVotes.id, existingVote.id));
+    } else {
+      // Update the vote type if it's different
+      await db.update(commentVotes)
+        .set({ voteType })
+        .where(eq(commentVotes.id, existingVote.id));
+    }
+  } else {
+    // Create a new vote
+    await db.insert(commentVotes).values({
+      userId,
+      commentId,
+      voteType,
+    });
+  }
+
+  // Update the comment's vote counts
+  await db.update(comments)
+    .set({
+      upvotes: sql`${comments.upvotes} + CASE WHEN ${voteType} = 1 THEN 1 ELSE 0 END`,
+      downvotes: sql`${comments.downvotes} + CASE WHEN ${voteType} = -1 THEN 1 ELSE 0 END`,
+    })
+    .where(eq(comments.id, commentId));
+
+  revalidatePath("/posts", "page");
+  return true;
 }

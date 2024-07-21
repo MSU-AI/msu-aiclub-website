@@ -70,6 +70,10 @@
       --radius: 0.5rem;
  
     }
+    .bn-container[data-color-scheme]{
+      --bn-colors-editor-background: 0 0% 7% !important;
+    }
+    
   }
 
   @layer base {

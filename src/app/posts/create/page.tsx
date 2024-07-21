@@ -1,25 +1,42 @@
 "use client";
-import { useState } from 'react';
+import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { EditorContent, EditorRoot } from "novel";
-import { defaultExtensions } from "./extensions";
+import { useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
 import { createPost } from '~/server/actions/post';
-import ReactMarkdown from 'react-markdown';
 import { toast } from "~/components/ui/use-toast";
+import PostPreview from './postPreview';
+import './postStyles.css'
 
 export default function CreatePostPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
-  const [content, setContent] = useState<any>(null);
+  const [html, setHTML] = useState('');
   const router = useRouter();
+
+  const editor = useCreateBlockNote({
+    initialContent: [
+      {
+        type: "paragraph",
+        content: "Start writing your post here...",
+      },
+    ],
+  });
+
+  const onChange = async () => {
+    // Converts the editor's contents from Block objects to HTML and store to state.
+    const htmlContent = await editor.blocksToHTMLLossy(editor.document);
+    setHTML(htmlContent);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const markdownContent = content ? JSON.stringify(content) : '';
-    const result = await createPost(title, markdownContent, description, thumbnailUrl);
+    const result = await createPost(title, html, description, thumbnailUrl);
     if (result) {
       toast({
         title: "Post created",
@@ -35,17 +52,6 @@ export default function CreatePostPage() {
     }
   };
 
-  const getMarkdownContent = (content: any): string => {
-    if (!content || !content.content) return '';
-    return content.content.map((block: any) => {
-      if (block.type === 'paragraph') {
-        return block.content?.map((item: any) => item.text).join('') || '';
-      }
-      // Add more conditions here for other block types if needed
-      return '';
-    }).join('\n\n');
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <form onSubmit={handleSubmit} className="container mx-auto py-8">
@@ -55,7 +61,7 @@ export default function CreatePostPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="text-2xl font-bold"
+            className="text-4xl font-bold bg-background text-white w-full p-2 focus:outline-0 outline-0"
           />
           <Input
             placeholder="Description"
@@ -69,37 +75,22 @@ export default function CreatePostPage() {
             onChange={(e) => setThumbnailUrl(e.target.value)}
           />
         </div>
-        <div className="flex space-x-4">
-          <div className="w-1/2 h-[calc(100vh-300px)] overflow-y-auto border rounded-md">
-            <EditorRoot>
-              <EditorContent
-                extensions={defaultExtensions}
-                initialContent={content}
-                onUpdate={({ editor }) => {
-                  const json = editor.getJSON();
-                  setContent(json);
-                }}
-              />
-            </EditorRoot>
+        <div className="flex flex-col md:flex-row space-x-4 h-[calc(100vh-300px)]">
+          <div className="w-full md:w-1/2 overflow-y-auto border rounded-md">
+            <BlockNoteView
+              editor={editor}
+              onChange={onChange}
+              theme="dark"
+              className="h-full bg-background"
+            />
           </div>
-          <div className="w-1/2 h-[calc(100vh-300px)] overflow-y-auto border rounded-md p-4">
-            <ReactMarkdown 
-              className="prose max-w-none"
-              components={{
-                img: ({node, ...props}) => (
-                  <div className="flex justify-center">
-                    <img {...props} className="rounded-lg" />
-                  </div>
-                ),
-                video: ({node, ...props}) => (
-                  <div className="flex justify-center">
-                    <video {...props} className="rounded-lg" />
-                  </div>
-                ),
-              }}
-            >
-              {getMarkdownContent(content)}
-            </ReactMarkdown>
+          <div className="w-full md:w-1/2 overflow-y-auto border rounded-md md:p-4">
+            <PostPreview 
+              title={title}
+              description={description}
+              thumbnailUrl={thumbnailUrl}
+              content={html}
+            />
           </div>
         </div>
         <div className="flex justify-end space-x-2 mt-4">

@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 import { posts, users, comments, likes } from "~/server/db/schema";
-import { eq, desc, count, exists, and } from "drizzle-orm";
+import { eq, desc, count,sql} from "drizzle-orm";
 import { createClient } from "~/utils/supabase/server";
 
 export async function getPostById(postId: string) {
@@ -21,14 +21,11 @@ export async function getPostById(postId: string) {
         id: users.id,
       },
       commentCount: count(comments.id),
-      liked: exists(
-        db.select()
-          .from(likes)
-          .where(and(
-            eq(likes.postId, posts.id),
-            eq(likes.userId, user?.id || '')
-          ))
-      ),
+      liked: user ? sql<boolean>`EXISTS (
+        SELECT 1 FROM ${likes}
+        WHERE ${likes.postId} = ${posts.id}
+        AND ${likes.userId} = ${user.id}
+      )`.as('liked') : sql<null>`NULL`.as('liked'),
     })
     .from(posts)
     .leftJoin(users, eq(posts.userId, users.id))
@@ -48,7 +45,7 @@ export async function getPostById(postId: string) {
   
   return {
     ...post,
-    liked: !!post.liked,
+    liked: post.liked,
     user: post.user ? {
       ...post.user,
       fullName: userFullName
@@ -74,14 +71,11 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
         id: users.id,
       },
       commentCount: count(comments.id),
-      liked: exists(
-        db.select()
-          .from(likes)
-          .where(and(
-            eq(likes.postId, posts.id),
-            eq(likes.userId, user?.id || '')
-          ))
-      ),
+      liked: user ? sql<boolean>`EXISTS (
+        SELECT 1 FROM ${likes}
+        WHERE ${likes.postId} = ${posts.id}
+        AND ${likes.userId} = ${user.id}
+      )`.as('liked') : sql<null>`NULL`.as('liked'),
     })
     .from(posts)
     .leftJoin(users, eq(posts.userId, users.id))
@@ -99,7 +93,7 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
   // Combine post data with user metadata
   return postsWithCounts.map((post, index) => ({
     ...post,
-    liked: !!post.liked,
+    liked: post.liked,
     user: post.user ? {
       ...post.user,
       fullName: userMetadata[index]?.data?.user?.user_metadata
@@ -126,14 +120,11 @@ export async function getPostWithComments(postId: string) {
       user: {
         id: users.id,
       },
-      liked: exists(
-        db.select()
-          .from(likes)
-          .where(and(
-            eq(likes.postId, comments.id),
-            eq(likes.userId, user?.id || '')
-          ))
-      ),
+      liked: user ? sql<boolean>`EXISTS (
+        SELECT 1 FROM ${likes}
+        WHERE ${likes.postId} = ${comments.id}
+        AND ${likes.userId} = ${user.id}
+      )`.as('liked') : sql<null>`NULL`.as('liked'),
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
@@ -148,7 +139,7 @@ export async function getPostWithComments(postId: string) {
   // Combine comment data with user metadata
   const commentsWithUserInfo = postComments.map((comment, index) => ({
     ...comment,
-    liked: !!comment.liked,
+    liked: comment.liked,
     user: comment.user ? {
       ...comment.user,
       fullName: userMetadata[index]?.data?.user?.user_metadata
