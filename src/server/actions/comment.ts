@@ -83,7 +83,7 @@ export async function updateComment(
 export async function voteComment(
   userId: string,
   commentId: string,
-  voteType: 1 | -1
+  voteType: 1 | -1 | 0
 ): Promise<boolean> {
   const existingVote = await db.query.commentVotes.findFirst({
     where: and(
@@ -97,13 +97,14 @@ export async function voteComment(
       // Remove the vote if it's the same type
       await db.delete(commentVotes)
         .where(eq(commentVotes.id, existingVote.id));
+      voteType = 0;
     } else {
       // Update the vote type if it's different
       await db.update(commentVotes)
         .set({ voteType })
         .where(eq(commentVotes.id, existingVote.id));
     }
-  } else {
+  } else if (voteType !== 0) {
     // Create a new vote
     await db.insert(commentVotes).values({
       userId,
@@ -115,8 +116,8 @@ export async function voteComment(
   // Update the comment's vote counts
   await db.update(comments)
     .set({
-      upvotes: sql`${comments.upvotes} + CASE WHEN ${voteType} = 1 THEN 1 ELSE 0 END`,
-      downvotes: sql`${comments.downvotes} + CASE WHEN ${voteType} = -1 THEN 1 ELSE 0 END`,
+      upvotes: sql`(SELECT COUNT(*) FROM ${commentVotes} WHERE ${commentVotes.commentId} = ${commentId} AND ${commentVotes.voteType} = 1)`,
+      downvotes: sql`(SELECT COUNT(*) FROM ${commentVotes} WHERE ${commentVotes.commentId} = ${commentId} AND ${commentVotes.voteType} = -1)`,
     })
     .where(eq(comments.id, commentId));
 

@@ -57,23 +57,22 @@ export default function PostList({ posts: initialPosts, isAdmin }: { posts: any[
     <div className="space-y-6">
       {posts.map((post) => (
       <>
-        <Card key={post.id} className="flex overflow-hidden bg-background border-none hover:shadow-md transition-shadow duration-300">
-          <Link href={`/posts/${post.id}`} className="flex-grow flex">
+        <div key={post.id} className="flex">
+          <Link href={`/posts/${post.id}`} className="flex-grow flex items-center justify-center">
             {post.thumbnailUrl && (
-              <div className="w-1/4 relative">
+              <div className="w-52 h-32 flex justify-center relative">
                 <Image 
                   src={post.thumbnailUrl}
                   alt={post.title}
-                  width={200}
-                  height={200}
+                  fill
+                  className='rounded-sm'
                   objectFit="cover"
-                  className="rounded-none"
                 />
               </div>
             )}
             <div className="w-3/4 p-4">
-              <h2 className="text-2xl font-bold mb-2">{post.title}</h2>
-              <p className="text-gray-400 mb-4">{post.description}</p>
+              <h2 className="text-2xl font-bold mb-2 line-clamp-1">{post.title}</h2>
+              <p className="text-gray-400 mb-4 line-clamp-2">{post.description}</p>
               <div className="flex items-center text-sm text-gray-500">
                 <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                 <span className="mx-2">•</span>
@@ -118,7 +117,7 @@ export default function PostList({ posts: initialPosts, isAdmin }: { posts: any[
               </AlertDialog>
             </div>
           )}
-        </Card>
+        </div>
         <div className="h-0.5 bg-gradient-to-r from-foreground to-background"></div>
       </>
       ))}

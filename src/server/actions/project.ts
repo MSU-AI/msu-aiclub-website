@@ -60,3 +60,52 @@ export async function rejectProject(projectId: string) {
 }
 
 
+export async function deleteProject(projectId: string) {
+  // Start a transaction to ensure all operations succeed or fail together
+  return await db.transaction(async (tx) => {
+    await tx.delete(userProjects)
+      .where(eq(userProjects.projectId, projectId));
+
+    await tx.delete(projectSkills)
+      .where(eq(projectSkills.projectId, projectId));
+
+    await tx.delete(projects)
+      .where(eq(projects.id, projectId));
+  });
+}
+
+
+export async function updateProject(
+  projectId: string,
+  title: string,
+  description: string,
+  imageUrl: string,
+  videoUrl: string,
+  techStack: string[],
+  githubUrl: string,
+  liveSiteUrl: string
+) {
+  return await db.transaction(async (tx) => {
+    // Update the project
+    await tx.update(projects)
+      .set({
+        name: title,
+        description,
+        thumbnailUrl: imageUrl,
+        videoUrl,
+        githubUrl,
+        liveSiteUrl,
+      })
+      .where(eq(projects.id, projectId));
+
+    // Delete existing skills and insert new ones
+    await tx.delete(projectSkills)
+      .where(eq(projectSkills.projectId, projectId));
+
+    await tx.insert(projectSkills)
+      .values(techStack.map(skill => ({
+        projectId,
+        skillName: skill,
+      })));
+  });
+}

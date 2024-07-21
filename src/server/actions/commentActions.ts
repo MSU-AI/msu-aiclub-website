@@ -7,7 +7,7 @@ export async function createCommentAction(userId: string, postId: string, conten
   return createComment(userId, postId, content, parentId);
 }
 
-export async function voteCommentAction(userId: string, commentId: string, voteType: 1 | -1) {
+export async function voteCommentAction(userId: string, commentId: string, voteType: 1 | -1 | 0) {
   return voteComment(userId, commentId, voteType);
 }
 

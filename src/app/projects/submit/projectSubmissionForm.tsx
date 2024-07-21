@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,20 +6,37 @@ import { createProject } from '~/server/actions/project';
 import { createClient } from '~/utils/supabase/client';
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
 import { toast } from "react-hot-toast";
-import { TagInput } from "~/components/ui/tag-input"; // Assuming you've created this component
+import { TagInput } from "~/components/ui/tag-input";
+import { useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
 
 export function ProjectSubmissionForm() {
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [liveSiteUrl, setLiveSiteUrl] = useState('');
   const [techStack, setTechStack] = useState<string[]>([]);
   const [collaborators, setCollaborators] = useState('');
+  const [html, setHTML] = useState('');
   const router = useRouter();
+
+  const editor = useCreateBlockNote({
+    initialContent: [
+      {
+        type: "paragraph",
+        content: "Start writing your project description here...",
+      },
+    ],
+  });
+
+  const onChange = async () => {
+    const htmlContent = await editor.blocksToHTMLLossy(editor.document);
+    setHTML(htmlContent);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,17 +52,17 @@ export function ProjectSubmissionForm() {
     const userIds = [user.id, ...collaboratorArray];
 
     try {
-        const newProject = await createProject(
-            title,
-            description,
-            imageUrl,
-            videoUrl,
-            techStack,
-            userIds,
-            githubUrl,
-            liveSiteUrl
-        );
-      
+      const newProject = await createProject(
+        title,
+        html, // Use the HTML content from the markdown editor
+        imageUrl,
+        videoUrl,
+        techStack,
+        userIds,
+        githubUrl,
+        liveSiteUrl
+      );
+
       if (newProject) {
         toast.success("Project submitted successfully!");
         router.push('/projects');
@@ -66,12 +83,13 @@ export function ProjectSubmissionForm() {
         onChange={(e) => setTitle(e.target.value)}
         required
       />
-      <Textarea
-        placeholder="Project Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
-      />
+      <div className="overflow-y-auto rounded">
+        <BlockNoteView
+          editor={editor}
+          onChange={onChange}
+          theme="dark"
+        />
+      </div>
       <Input
         placeholder="Image URL"
         value={imageUrl}

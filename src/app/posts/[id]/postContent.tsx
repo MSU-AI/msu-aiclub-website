@@ -4,9 +4,10 @@ import Image from 'next/image';
 import { likePost } from '~/server/actions/post';
 import { Card, CardHeader, CardTitle, CardDescription } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { HeartFilledIcon, HeartIcon, ChatBubbleIcon } from "@radix-ui/react-icons";
+import { HeartFilledIcon, HeartIcon, ChatBubbleIcon, Pencil1Icon} from "@radix-ui/react-icons";
 import { toast } from "~/components/ui/use-toast";
 import '../create/postStyles.css';
+import Link from 'next/link';
 
 
 type PostData = {

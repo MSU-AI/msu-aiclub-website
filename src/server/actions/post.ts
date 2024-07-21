@@ -68,18 +68,20 @@ export async function createPost(title: string, content: string, description: st
  * @returns the id of the post if it was updated, null otherwise
  */
 export async function updatePost(
-    supaId: string | undefined, 
+    userId: string, 
     postId: string, 
     title: string, 
-    content: string
+    content: string,
+    description: string,
+    thumbnailUrl: string
 ) : Promise<string | null> {
-    if (postId === null || supaId === undefined) {
+    if (postId === null || userId === undefined) {
         return null;
     }
 
-    const [ post ]: Post[] | undefined = await db.update(posts)
-    .set({ title, content })
-    .where(eq(posts.id, postId))
+    const [ post ] = await db.update(posts)
+    .set({ title, content, description, thumbnailUrl })
+    .where(and(eq(posts.id, postId), eq(posts.userId, userId)))
     .returning();
 
     if (post === undefined) {
@@ -122,3 +124,5 @@ export async function likePost(postId: string): Promise<void> {
       .where(eq(posts.id, postId));
   }
 }
+
+

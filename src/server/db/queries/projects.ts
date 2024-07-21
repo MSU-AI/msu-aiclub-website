@@ -114,3 +114,38 @@ export async function getApprovedProjects() {
 
   return projectsWithUserData;
 }
+
+export async function getAllProjects() {
+  const projectsData = await db.query.projects.findMany({
+    orderBy: [desc(projects.createdAt)],
+    with: {
+      projectSkills: true,
+      userProjects: {
+        with: {
+          user: true,
+        },
+      },
+    },
+  });
+
+  const supabase = createClient();
+
+  const enhancedProjects = await Promise.all(projectsData.map(async (project) => {
+    const users = await Promise.all(project.userProjects.map(async (up) => {
+      const { data: userData } = await supabase.auth.admin.getUserById(up.userId);
+      return {
+        id: up.userId,
+        fullName: userData?.user?.user_metadata?.fullName || 'Unknown',
+        role: up.role,
+      };
+    }));
+
+    return {
+      ...project,
+      skills: project.projectSkills.map(ps => ps.skillName),
+      users,
+    };
+  }));
+
+  return enhancedProjects;
+}

@@ -1,26 +1,45 @@
 import Link from 'next/link';
 import { Button } from "~/components/ui/button";
-import { getApprovedProjects } from '~/server/db/queries/projects';
+import { getAllProjects } from '~/server/db/queries/projects';
+import { ProjectCard } from './projectCard';
+import { createClient } from '~/utils/supabase/server';
+import { revalidatePath } from 'next/cache';
 
 export default async function ProjectsPage() {
-  const approvedProjects = await getApprovedProjects();
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  const isAdmin = user?.user_metadata?.memberType === 'admin';
+  const allProjects = await getAllProjects();
+
+  // Filter projects based on user role
+  const projects = isAdmin 
+    ? allProjects 
+    : allProjects.filter(project => project.status === 'approved');
+
+  const handleStatusChange = async () => {
+    'use server'
+    revalidatePath('/projects');
+  };
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8">
+    <div className="max-w-[1024px] mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Projects</h1>
         <Link href="/projects/submit">
-          <Button variant={"secondary"}>Submit a Project</Button>
+          <Button variant="secondary">Submit a Project</Button>
         </Link>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {approvedProjects.map((project) => (
-          <div key={project.id} className="border p-4 rounded-lg">
-            <h2 className="text-xl font-semibold">{project.name}</h2>
-            <p>{project.description}</p>
-            {/* Add more project details as needed */}
-          </div>
+        {projects.map((project) => (
+          <ProjectCard 
+            key={project.id} 
+            project={project} 
+            isAdmin={isAdmin}
+            isMember={project.users.some((u: any) => u.id === user?.id)}
+            onStatusChange={handleStatusChange}
+          />
         ))}
       </div>
     </div>

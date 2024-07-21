@@ -151,7 +151,7 @@ export const commentVotes = createTable("commentVotes", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
   commentId: uuid("commentId").notNull().references(() => comments.id, { onDelete: "cascade" }),
-  voteType: integer("voteType").notNull(), // 1 for upvote, -1 for downvote
+  voteType: integer("voteType").notNull(), // 1 for upvote, -1 for downvote, 0 for no vote
   createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
 });
 

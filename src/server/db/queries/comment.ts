@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
-import { comments, users } from "~/server/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { comments, commentVotes, users } from "~/server/db/schema";
+import { eq, desc, sql } from "drizzle-orm";
 import { createClient } from "~/utils/supabase/server";
 import { CommentWithReplies } from "~/types/comments";
 
@@ -60,7 +60,7 @@ export async function getCommentsByPostId(postId: string) {
   }));
 }
 
-export async function getCommentsWithReplies(postId: string): Promise<CommentWithReplies[]> {
+export async function getCommentsWithReplies(postId: string, userId: string | undefined): Promise<CommentWithReplies[]> {
   const allComments = await db.select({
     id: comments.id,
     content: comments.content,
@@ -73,11 +73,14 @@ export async function getCommentsWithReplies(postId: string): Promise<CommentWit
     user: {
       id: users.id,
     },
+    userVote: userId
+      ? sql<number>`(SELECT "voteType" FROM ${commentVotes} WHERE ${commentVotes.commentId} = ${comments.id} AND ${commentVotes.userId} = ${userId})`
+      : sql<number>`0`,
   })
   .from(comments)
   .where(eq(comments.postId, postId))
   .leftJoin(users, eq(comments.userId, users.id))
-  .orderBy(desc(comments.createdAt));
+  .orderBy(comments.createdAt);
 
   const supabase = createClient();
   
@@ -96,6 +99,7 @@ export async function getCommentsWithReplies(postId: string): Promise<CommentWit
         : ''
     } : null,
     replies: [],
+    userVote: comment.userVote ?? 0,
   }));
 
   // Build the comment tree
@@ -116,8 +120,6 @@ export async function getCommentsWithReplies(postId: string): Promise<CommentWit
       rootComments.push(comment as CommentWithReplies);
     }
   });
-  
-  console.log(JSON.stringify(rootComments));
 
   return rootComments;
 }
