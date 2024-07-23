@@ -12,7 +12,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Button } from "~/components/ui/button";
 import { MoreHorizontal, Edit, Trash2, Check } from "lucide-react";
-import { approveProject, rejectProject, deleteProject } from '~/server/actions/project';
+import { approveProject, deleteProject } from '~/server/actions/project';
 
 const TAG_COLORS = [
   'bg-blue-200 text-blue-800',
@@ -26,7 +26,7 @@ interface ProjectCardProps {
   project: any; // Replace 'any' with your actual Project type
   isAdmin: boolean;
   isMember: boolean;
-  onStatusChange: () => void;
+  onStatusChange?: () => void;
 }
 
 export function ProjectCard({ project, isAdmin, isMember, onStatusChange }: ProjectCardProps) {
@@ -34,18 +34,13 @@ export function ProjectCard({ project, isAdmin, isMember, onStatusChange }: Proj
 
   const handleApprove = async () => {
     await approveProject(project.id);
-    onStatusChange();
-  };
-
-  const handleReject = async () => {
-    await rejectProject(project.id);
-    onStatusChange();
+    onStatusChange?.();
   };
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       await deleteProject(project.id);
-      onStatusChange();
+      onStatusChange?.();
     }
   };
 

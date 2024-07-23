@@ -5,6 +5,7 @@ import { InstagramLogoIcon, LinkedInLogoIcon, DiscordLogoIcon, GitHubLogoIcon } 
 interface Contact {
   name: string;
   href: string;
+  title: string;
   icon: JSX.Element;
 }
 
@@ -38,6 +39,8 @@ export const contacts: Contact[] = [
 
 export function Contacts() {
   return (
+    <div className="py-24">
+    <h1 className="text-2xl lg:text-4xl font-bold text-center text-white py-20">Connect with us</h1>
     <div className="flex flex-row flex-wrap items-center justify-center gap-16">
       {contacts.map((contact, index) => (
         <PinContainer key={index} title={`${contact.title}`} href={contact.href}>
@@ -48,6 +51,7 @@ export function Contacts() {
         </PinContainer>
       ))}
     </div>
+  </div>
   );
 }
 

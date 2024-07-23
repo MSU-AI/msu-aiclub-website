@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { LayoutGrid } from "~/components/ui/layout-grid";
 
-export function LayoutGridCommunity({scrollRef} : {scrollRef?: React.RefObject<HTMLDivElement>}) {
+export function LayoutGridCommunity({scrollRef} : {scrollRef: React.RefObject<HTMLDivElement>}) {
   return (
     <div className="py-10 w-full" ref={scrollRef}>
       <LayoutGrid cards={cards} directionHover={true} globe={true}/>

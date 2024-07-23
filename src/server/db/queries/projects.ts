@@ -1,8 +1,8 @@
 "use server"
 
 import { db } from "~/server/db";
-import { projects } from "~/server/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { projects, userProjects, projectSkills, users } from "~/server/db/schema";
+import { eq, desc, sql} from "drizzle-orm";
 import { createClient } from "~/utils/supabase/server";
 
 
@@ -148,4 +148,44 @@ export async function getAllProjects() {
   }));
 
   return enhancedProjects;
+}
+
+
+export async function getTopApprovedProjects(limit: number = 3) {
+  const approvedProjects = await db.query.projects.findMany({
+    where: eq(projects.status, "approved"),
+    orderBy: [desc(projects.createdAt)],
+    limit: limit,
+    with: {
+      projectSkills: true,
+      userProjects: true,
+    },
+  });
+
+  const supabase = createClient();
+
+  const projectsWithUserData = await Promise.all(
+    approvedProjects.map(async (project) => {
+      const users = await Promise.all(
+        project.userProjects.map(async (pu) => {
+          const { data: userData } = await supabase.auth.admin.getUserById(pu.userId);
+          return userData?.user ? {
+            id: userData.user.id,
+            email: userData.user.email,
+            fullName: `${userData.user.user_metadata.firstName || ''} ${userData.user.user_metadata.lastName || ''}`.trim(),
+            memberType: userData.user.user_metadata.memberType,
+            role: pu.role,
+          } : null;
+        })
+      );
+
+      return {
+        ...project,
+        users: users.filter(Boolean),
+        skills: project.projectSkills.map(ps => ps.skillName),
+      };
+    })
+  );
+
+  return projectsWithUserData;
 }

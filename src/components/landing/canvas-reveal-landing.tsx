@@ -11,7 +11,8 @@ import { scrollDown } from "~/utils/helpers";
 export function CanvasRevealLanding({scrollRef, firstRef, secondRef, thirdRef} : {scrollRef: RefObject<HTMLDivElement>, firstRef: RefObject<HTMLDivElement>, secondRef: RefObject<HTMLDivElement>, thirdRef: RefObject<HTMLDivElement>}) {
   return (
     <>
-      <div ref={scrollRef} className="py-20 flex flex-col lg:flex-row items-center justify-center bg-background w-full gap-4 mx-auto px-8">
+      <h1 className="text-4xl lg:text-7xl font-semibold text-center text-white pt-16">What we do...</h1>
+      <div ref={scrollRef} className="hidden lg:flex py-20 flex-col lg:flex-row items-center justify-center bg-background w-full gap-4 mx-auto px-8">
         <Card title="Workshops" letter={"M"} scrollRef={firstRef}> 
           <CanvasRevealEffect
             animationSpeed={5.1}
