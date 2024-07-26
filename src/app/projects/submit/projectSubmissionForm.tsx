@@ -39,6 +39,7 @@ export function ProjectSubmissionForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log(e);
     e.preventDefault();
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();

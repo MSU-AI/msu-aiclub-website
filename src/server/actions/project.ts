@@ -20,26 +20,42 @@ export async function createProject(
     thumbnailUrl: imageUrl,
     videoUrl,
     githubUrl,
-    liveSiteUrl, // Add this new field
+    liveSiteUrl,
   }).returning();
+
+  console.log("Past new project", newProject);
 
   if (newProject) {
     // Add project skills
-    await db.insert(projectSkills).values(
-      techStack.map((skill) => ({
-        projectId: newProject.id,
-        skillName: skill,
-      }))
-    );
+    if (techStack.length > 0) {
+      await db.insert(projectSkills).values(
+        techStack.map((skill) => ({
+          projectId: newProject.id,
+          skillName: skill,
+        }))
+      );
+    }
+
+    console.log("Past project skills", projectSkills);
+
+    // Filter out empty strings from userIds
+    const filteredUserIds = userIds.filter(userId => userId.trim() !== '');
+
+    console.log(filteredUserIds);
+    console.log(newProject.id)
 
     // Add project users
-    await db.insert(userProjects).values(
-      userIds.map((userId, index) => ({
-        userId,
-        projectId: newProject.id,
-        role: index === 0 ? "creator" : "member", // Assuming the first user is the creator
-      }))
-    );
+    if (filteredUserIds.length > 0) {
+      await db.insert(userProjects).values(
+        filteredUserIds.map((userId, index) => ({
+          userId,
+          projectId: newProject.id,
+          role: index === 0 ? "creator" : "member", // Assuming the first user is the creator
+        }))
+      );
+    }
+
+    console.log("Past project users", userProjects);
   }
 
   return newProject;
