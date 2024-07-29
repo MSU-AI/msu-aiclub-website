@@ -8,7 +8,8 @@ import {
   uuid,
   text,
   pgSchema,
-  integer
+  integer,
+  varchar
 } from "drizzle-orm/pg-core";
 
 /**
@@ -23,6 +24,7 @@ const authSchema = pgSchema("auth");
 
 export const users = authSchema.table("users", {
   id: uuid("id").primaryKey(),
+  email: varchar("email").notNull(),
 });
 
 export const userRelations = relations(users, ({ many }) => ({
@@ -30,6 +32,8 @@ export const userRelations = relations(users, ({ many }) => ({
   comments: many(comments),
   likes: many(likes),
   events: many(userEvents),
+  roles: many(userRoles),
+  projects: many(userProjects),
 }));
 
 
@@ -143,8 +147,11 @@ export const commentRelations = relations(comments, ({ one, many }) => ({
   parent: one(comments, {
     fields: [comments.parentId],
     references: [comments.id],
+    relationName: 'parentChild',
   }),
-  replies: many(comments),
+  replies: many(comments, {
+    relationName: 'parentChild',
+  }),
   votes: many(commentVotes),
 }));
 

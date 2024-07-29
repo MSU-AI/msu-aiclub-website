@@ -1,25 +1,28 @@
-"use server"
-import { createClient } from '~/utils/supabase/server';
+import { db } from '~/server/db';
+import { userRoles } from '../schema';
 
-export async function getUserEmails() {
-  const supabase = createClient();
-
-  try {
-    const { data: users, error } = await supabase.auth.admin.listUsers();
-
-    if (error) {
-      console.error('Error fetching users:', error);
-      return [];
+export async function getUsers() {
+  const results = await db.query.users.findMany({
+    with: {
+      roles: {
+        with: {
+          role: true
+        }
+      },
+      projects: {
+        with: {
+          project: true
+        }
+      },
     }
+  });
 
-    // Filter out users without email and map to just the email addresses
-    const emails = users
-      .filter(user => user.email)
-      .map(user => user.email as string);
+  console.log(results);
 
-    return emails;
-  } catch (error) {
-    console.error('Error in fetchUserEmails:', error);
-    return [];
-  }
+  return results.map(user => ({
+    id: user.id,
+    email: user.email,
+    roles: user.roles.map(ur => ur.role),
+    projects: user.projects.map(up => up.project),
+  }));
 }
