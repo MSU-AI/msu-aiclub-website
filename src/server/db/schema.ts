@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { relations } from "drizzle-orm";
+import { desc, relations } from "drizzle-orm";
 import {
   pgTableCreator,
   timestamp,
@@ -29,6 +29,7 @@ export const userRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
   likes: many(likes),
+  events: many(userEvents),
 }));
 
 
@@ -189,5 +190,38 @@ export const userRoleRelations = relations(userRoles, ({ one }) => ({
   role: one(roles, {
     fields: [userRoles.roleId],
     references: [roles.id],
+  }),
+}));
+
+export const events = createTable("events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  time: timestamp("time").notNull(),
+  place: text("place").notNull(),
+  points: integer("points").notNull(),
+  code: text("code").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const eventRelations = relations(events, ({ many }) => ({
+  users: many(userEvents),
+}));
+
+export const userEvents = createTable("userEvents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  eventId: uuid("eventId").notNull().references(() => events.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const userEventRelations = relations(userEvents, ({ one }) => ({
+  user: one(users, {
+    fields: [userEvents.userId],
+    references: [users.id],
+  }),
+  event: one(events, {
+    fields: [userEvents.eventId],
+    references: [events.id],
   }),
 }));

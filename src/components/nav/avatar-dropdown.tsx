@@ -50,7 +50,7 @@ export function AvatarDropDown({ userMetadata } : { userMetadata: AccountData | 
             Profile
           </DropdownMenuItem>
           {userType === "admin" && 
-          <DropdownMenuItem href={"/admin"}>
+          <DropdownMenuItem onClick={() => router.push("/admin")}>
             Admin Dashboard
           </DropdownMenuItem>
           }

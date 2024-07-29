@@ -164,3 +164,17 @@ export async function makeAdmin() {
     return null;
 }
 
+
+/**
+ * Checks if the usser is an admin
+ */
+export async function isAdmin(): Promise<boolean> {
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error) {
+        return false;
+    }
+
+    return data.user.user_metadata.memberType === 'admin';
+}
