@@ -14,6 +14,8 @@ export async function createProject(
   githubUrl: string,
   liveSiteUrl: string
 ) {
+  console.log("Creating project with title", title);
+
   const [newProject] = await db.insert(projects).values({
     name: title,
     description,

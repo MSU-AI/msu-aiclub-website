@@ -9,7 +9,8 @@ import {
   text,
   pgSchema,
   integer,
-  varchar
+  varchar,
+  jsonb
 } from "drizzle-orm/pg-core";
 
 /**
@@ -25,6 +26,7 @@ const authSchema = pgSchema("auth");
 export const users = authSchema.table("users", {
   id: uuid("id").primaryKey(),
   email: varchar("email").notNull(),
+  raw_user_meta_data: jsonb("raw_user_meta_data").notNull(),
 });
 
 export const userRelations = relations(users, ({ many }) => ({
@@ -53,13 +55,13 @@ export const projects = createTable("projects", {
 export const userProjects = createTable("userProjects", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id").notNull(),
-  projectId: uuid("project_id").notNull().references(() => projects.id),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
 });
 
 export const projectSkills = createTable("projectSkills", {
   id: uuid("id").defaultRandom().primaryKey(),
-  projectId: uuid("project_id").notNull().references(() => projects.id),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   skillName: text("skill_name").notNull(),
 });
 
@@ -94,7 +96,7 @@ export const posts = createTable("posts", {
   likes: integer("likes").notNull().default(0),
   thumbnailUrl: text("thumbnailUrl"),
   createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
-  userId: uuid("userId").notNull().references(() => users.id),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const postRelations = relations(posts, ({ one, many }) => ({

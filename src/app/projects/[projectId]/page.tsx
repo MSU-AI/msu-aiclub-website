@@ -53,6 +53,10 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
 
   const embedUrl = project.videoUrl ? getYouTubeEmbedUrl(project.videoUrl) : null;
 
+  console.log(project)
+
+  console.log(project.userProjects[0].user)
+
   return (
     <div className="max-w-[1024px] mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
@@ -80,12 +84,12 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
       ) : null}
 
       <div className="mb-6">
-        {project.skills.map((skill, index) => (
+        {project.projectSkills.map((skill, index) => (
           <span 
             key={index} 
             className={`inline-block ${TAG_COLORS[index % TAG_COLORS.length]} px-2 py-1 rounded-full text-sm mr-2 mb-2`}
           >
-            {skill}
+            {skill.skillName}
           </span>
         ))}
       </div>
@@ -114,40 +118,40 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
 
      <h2 className="text-2xl font-bold mb-4">Project Team</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {dummyTeamMembers.map((member) => (
+        {project.userProjects.map((member) => (
           <div key={member.id} className="relative group">
             <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden">
               <Image 
-                src={member.profilePicture} 
-                alt={member.name} 
+                src={`${member.user.raw_user_meta_data.flowerProfile}`}
+                alt={member.user.raw_user_meta_data.full_name} 
                 layout="fill" 
                 objectFit="cover"
               />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="text-white text-center">
-                  <p className="font-bold">{member.name}</p>
+                  <p className="font-bold">{member.user.raw_user_meta_data.full_name}</p>
                   <p>{member.role}</p>
                 </div>
               </div>
             </div>
             <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {member.linkedin && (
+              {member.user.raw_user_meta_data.linkedinUrl && (
                 <Button size="icon" variant="secondary" asChild >
-                  <Link href={member.linkedin} >
+                  <Link href={member.user.raw_user_meta_data.linkedinUrl} >
                     <LinkedInLogoIcon className="h-4 w-4" />
                   </Link>
                 </Button>
               )}
-              {member.github && (
+              {member.user.raw_user_meta_data.githubUrl && (
                 <Button size="icon" variant="secondary" asChild>
-                  <Link  href={member.github} >
+                  <Link  href={member.user.raw_user_meta_data.githubUrl} >
                     <GitHubLogoIcon className="h-4 w-4" />
                   </Link>
                 </Button>
               )}
-              {member.personalSite && (
+              {member.user.raw_user_meta_data.personalWebsite && (
                 <Button size="icon" variant="secondary" asChild >
-                  <Link href={member.personalSite} >
+                  <Link href={member.user.raw_user_meta_data.personalWebsite} >
                    <PersonalSiteIcon className="h-4 w-4" />
                   </Link>
                 </Button>
