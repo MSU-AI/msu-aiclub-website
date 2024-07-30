@@ -210,6 +210,7 @@ export const events = createTable("events", {
   place: text("place").notNull(),
   points: integer("points").notNull(),
   code: text("code").notNull(),
+  photo: text("photo"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

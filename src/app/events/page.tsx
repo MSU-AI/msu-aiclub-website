@@ -1,12 +1,14 @@
 import Link from 'next/link';
 import { Button } from "~/components/ui/button";
 import { EventCard } from './eventCard';
-import { eventsData } from './data';
 import { isAdmin, makeAdmin } from "~/server/actions/auth";
+import { getEvents } from '~/server/db/queries/events';
 
 
 export default async function EventsPage() {
   const isUserAdmin = await isAdmin();
+
+  const eventsData = await getEvents();
 
   console.log("is user admin", isUserAdmin);
 

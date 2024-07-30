@@ -3,7 +3,7 @@ export interface Event {
   title: string;
   photo?: string;
   description?: string;
-  time: string;
+  time: Date;
   place: string;
   points: number;
 }
