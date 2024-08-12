@@ -49,32 +49,17 @@ export async function getProjectById(projectId: string) {
     where: eq(projects.id, projectId),
     with: {
       projectSkills: true,
-      userProjects: true,
+      userProjects: {
+        with: {
+          user: true,
+        }
+      },
     },
   });
 
   if (!project) return null;
 
-  const supabase = createClient();
-
-  const users = await Promise.all(
-    project.userProjects.map(async (pu) => {
-      const { data: userData } = await supabase.auth.admin.getUserById(pu.userId);
-      return userData?.user ? {
-        id: userData.user.id,
-        email: userData.user.email,
-        fullName: `${userData.user.user_metadata.firstName || ''} ${userData.user.user_metadata.lastName || ''}`.trim(),
-        memberType: userData.user.user_metadata.memberType,
-        role: pu.role,
-      } : null;
-    })
-  );
-
-  return {
-    ...project,
-    skills: project.projectSkills.map(ps => ps.skillName),
-    users: users.filter(Boolean),
-  };
+  return project;
 }
 
 export async function getApprovedProjects() {

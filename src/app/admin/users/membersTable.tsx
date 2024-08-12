@@ -1,20 +1,38 @@
 "use client"
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
 import { Button } from "@nextui-org/react";
-import type { Profile } from "~/types/profiles";
 import { revalidatePath } from "next/cache"
 
-export default function MembersTable({ profiles }: { profiles: Profile[] }) {
-    
-    // const handleDelete = async (supaId: string) => {
-    //     // const success = await deleteProfile(supaId);
+type Role = {
+  id: string;
+  name: string;
+};
 
-    //     if (success) {
-    //         revalidatePath("/admin/users", "page");
-    //     } else {
-    //         alert("Profile deletion failed");
-    //     }
-    // }
+type Project = {
+  id: string;
+  name: string;
+};
+
+type UserProfile = {
+  id: string;
+  email: string;
+  roles: Role[];
+  projects: Project[];
+};
+
+export default function MembersTable({ profiles }: { profiles: UserProfile[] }) {
+    
+    const handleDelete = async (userId: string) => {
+        // Implement delete logic here
+        console.log("Delete user", userId);
+        // After successful deletion:
+        // revalidatePath("/admin/users");
+    }
+
+    const handleEdit = (userId: string) => {
+        // Implement edit logic here
+        console.log("Edit user", userId);
+    }
 
   return (
     <div className="flex w-screen h-screen justify-center">
@@ -27,14 +45,14 @@ export default function MembersTable({ profiles }: { profiles: Profile[] }) {
             <TableColumn>Actions</TableColumn>
           </TableHeader>
           <TableBody>
-            {profiles.map((profile, index) => (
-              <TableRow key={index}>
-                <TableCell>{profile.supaId /* Replace this with the email associated with the supaId */}</TableCell>
-                <TableCell>{profile.projectId}</TableCell>
-                <TableCell>{profile.userType}</TableCell>
+            {profiles.map((profile) => (
+              <TableRow key={profile.id}>
+                <TableCell>{profile.email}</TableCell>
+                <TableCell>{profile.projects.map(p => p.name).join(", ") || "No projects"}</TableCell>
+                <TableCell>{profile.roles.map(r => r.name).join(", ") || "No role assigned"}</TableCell>
                 <TableCell>
-                    <Button> Edit </Button>
-                    <Button onClick={() => (console.log("Delete profile", profile.supaId))}> Delete </Button>
+                    <Button onClick={() => handleEdit(profile.id)}> Edit </Button>
+                    <Button onClick={() => handleDelete(profile.id)}> Delete </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -44,4 +62,3 @@ export default function MembersTable({ profiles }: { profiles: Profile[] }) {
     </div>
   );
 }
-

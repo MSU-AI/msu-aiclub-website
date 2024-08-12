@@ -1,14 +1,16 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { relations } from "drizzle-orm";
+import { desc, relations } from "drizzle-orm";
 import {
   pgTableCreator,
   timestamp,
   uuid,
   text,
   pgSchema,
-  integer
+  integer,
+  varchar,
+  jsonb
 } from "drizzle-orm/pg-core";
 
 /**
@@ -23,12 +25,17 @@ const authSchema = pgSchema("auth");
 
 export const users = authSchema.table("users", {
   id: uuid("id").primaryKey(),
+  email: varchar("email").notNull(),
+  raw_user_meta_data: jsonb("raw_user_meta_data").notNull(),
 });
 
 export const userRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
   likes: many(likes),
+  events: many(userEvents),
+  roles: many(userRoles),
+  projects: many(userProjects),
 }));
 
 
@@ -48,13 +55,13 @@ export const projects = createTable("projects", {
 export const userProjects = createTable("userProjects", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id").notNull(),
-  projectId: uuid("project_id").notNull().references(() => projects.id),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
 });
 
 export const projectSkills = createTable("projectSkills", {
   id: uuid("id").defaultRandom().primaryKey(),
-  projectId: uuid("project_id").notNull().references(() => projects.id),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   skillName: text("skill_name").notNull(),
 });
 
@@ -89,7 +96,7 @@ export const posts = createTable("posts", {
   likes: integer("likes").notNull().default(0),
   thumbnailUrl: text("thumbnailUrl"),
   createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
-  userId: uuid("userId").notNull().references(() => users.id),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const postRelations = relations(posts, ({ one, many }) => ({
@@ -142,8 +149,11 @@ export const commentRelations = relations(comments, ({ one, many }) => ({
   parent: one(comments, {
     fields: [comments.parentId],
     references: [comments.id],
+    relationName: 'parentChild',
   }),
-  replies: many(comments),
+  replies: many(comments, {
+    relationName: 'parentChild',
+  }),
   votes: many(commentVotes),
 }));
 
@@ -189,5 +199,39 @@ export const userRoleRelations = relations(userRoles, ({ one }) => ({
   role: one(roles, {
     fields: [userRoles.roleId],
     references: [roles.id],
+  }),
+}));
+
+export const events = createTable("events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  time: timestamp("time").notNull(),
+  place: text("place").notNull(),
+  points: integer("points").notNull(),
+  code: text("code").notNull(),
+  photo: text("photo"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const eventRelations = relations(events, ({ many }) => ({
+  users: many(userEvents),
+}));
+
+export const userEvents = createTable("userEvents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  eventId: uuid("eventId").notNull().references(() => events.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const userEventRelations = relations(userEvents, ({ one }) => ({
+  user: one(users, {
+    fields: [userEvents.userId],
+    references: [users.id],
+  }),
+  event: one(events, {
+    fields: [userEvents.eventId],
+    references: [events.id],
   }),
 }));

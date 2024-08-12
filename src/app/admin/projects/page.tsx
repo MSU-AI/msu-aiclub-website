@@ -49,7 +49,7 @@ export default async function AdminProjectsPage() {
                 <ul className="list-disc list-inside">
                   {project.users.map((user, index) => (
                     <li key={index}>
-                      {user.fullName} ({user.role}) - {user.email}
+                      {user?.fullName} ({user?.role}) - {user?.email}
                     </li>
                   ))}
                 </ul>

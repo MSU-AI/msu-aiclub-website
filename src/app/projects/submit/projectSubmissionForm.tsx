@@ -1,28 +1,41 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createProject } from '~/server/actions/project';
 import { createClient } from '~/utils/supabase/client';
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
+import { Input, Button, Autocomplete, AutocompleteItem, Chip } from "@nextui-org/react";
 import { toast } from "react-hot-toast";
 import { TagInput } from "~/components/ui/tag-input";
 import { useCreateBlockNote } from "@blocknote/react";
-import { BlockNoteView } from "@blocknote/mantine";
+import dynamic from 'next/dynamic';
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
+import { User } from '@supabase/supabase-js';
 
-export function ProjectSubmissionForm() {
+const BlockNoteView = dynamic(() => import("@blocknote/mantine").then(mod => mod.BlockNoteView), { ssr: false });
+
+export function ProjectSubmissionForm({
+  users,
+  user
+} : {
+  users: User[];
+  user: User;
+}) {
   const [title, setTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [liveSiteUrl, setLiveSiteUrl] = useState('');
   const [techStack, setTechStack] = useState<string[]>([]);
-  const [collaborators, setCollaborators] = useState('');
+  const [collaborators, setCollaborators] = useState<User[]>([]);
   const [html, setHTML] = useState('');
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const editor = useCreateBlockNote({
     initialContent: [
@@ -38,23 +51,16 @@ export function ProjectSubmissionForm() {
     setHTML(htmlContent);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      toast.error("You must be logged in to submit a project");
-      return;
-    }
+  const handleSubmit = async () => {
+    console.log("Submitting project");
 
-    const collaboratorArray = collaborators.split(',').map(item => item.trim());
-    const userIds = [user.id, ...collaboratorArray];
+    const userIds = [user.id, ...collaborators.map(c => c.id)];
 
     try {
+      console.log("Creating project");
       const newProject = await createProject(
         title,
-        html, // Use the HTML content from the markdown editor
+        html,
         imageUrl,
         videoUrl,
         techStack,
@@ -64,9 +70,11 @@ export function ProjectSubmissionForm() {
       );
 
       if (newProject) {
+        console.log("Project submitted successfully!");
         toast.success("Project submitted successfully!");
         router.push('/projects');
       } else {
+        console.log("Failed to submit project");
         toast.error("Failed to submit project");
       }
     } catch (error) {
@@ -75,21 +83,36 @@ export function ProjectSubmissionForm() {
     }
   };
 
+  const handleCollaboratorSelect = useCallback((key: React.Key) => {
+    const selectedUser = users.find(u => u.email === key);
+    if (selectedUser && !collaborators.some(c => c.id === selectedUser.id)) {
+      setCollaborators(prev => [...prev, selectedUser]);
+    }
+  }, [users, collaborators]);
+
+  const handleCollaboratorRemove = useCallback((userId: string) => {
+    setCollaborators(prev => prev.filter(c => c.id !== userId));
+  }, []);
+
+  const availableUsers = users.filter(user => !collaborators.some(c => c.id === user.id));
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-4">
       <Input
         placeholder="Project Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
       />
-      <div className="overflow-y-auto rounded">
-        <BlockNoteView
-          editor={editor}
-          onChange={onChange}
-          theme="dark"
-        />
-      </div>
+      {isClient && (
+        <div className="overflow-y-auto rounded">
+          <BlockNoteView
+            editor={editor}
+            onChange={onChange}
+            theme="dark"
+          />
+        </div>
+      )}
       <Input
         placeholder="Image URL"
         value={imageUrl}
@@ -115,12 +138,25 @@ export function ProjectSubmissionForm() {
         onTagsChange={setTechStack}
         placeholder="Enter tech stack (separate with comma)"
       />
-      <Input
-        placeholder="Collaborator IDs (comma-separated)"
-        value={collaborators}
-        onChange={(e) => setCollaborators(e.target.value)}
-      />
-      <Button type="submit">Submit Project</Button>
-    </form>
+      <Autocomplete
+        label="Collaborators"
+        placeholder="Select collaborators"
+        onSelectionChange={handleCollaboratorSelect}
+      >
+        {availableUsers.map((user) => (
+          <AutocompleteItem key={user.email} value={user.email}>
+            {user.email}
+          </AutocompleteItem>
+        ))}
+      </Autocomplete>
+      <div className="flex flex-wrap gap-2">
+        {collaborators.map(user => (
+          <Chip key={user.id} onClose={() => handleCollaboratorRemove(user.id)}>
+            {user.email}
+          </Chip>
+        ))}
+      </div>
+      <Button onPress={() => handleSubmit()}>Submit Project</Button>
+    </div>
   );
 }

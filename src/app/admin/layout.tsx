@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { createClient } from "~/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { adminCheck } from "~/server/actions/role";
+import { isAdmin } from "~/server/actions/auth";
 
 
 export default async function RootLayout({
@@ -10,14 +11,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
 
-  const { data } = await supabase.auth.getUser();  
+  const isUserAdmin = await isAdmin();
 
-  const isAdmin = await adminCheck(data?.user?.id);
-
-   if (!isAdmin) {
-      redirect("/");
+   if (!isUserAdmin) {
+    redirect("/");
    }
 
   return children;
