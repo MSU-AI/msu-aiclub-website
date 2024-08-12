@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache";
 import { db } from "../db";
 import { users, roles, userRoles } from "../db/schema";
 import { eq, and } from "drizzle-orm";
@@ -65,6 +66,65 @@ export async function assignAdminRole(userId: string): Promise<boolean> {
     return true;
   } catch (error) {
     console.error("Error assigning admin role:", error);
+    return false;
+  }
+}
+
+export async function removeRole(userId: string, roleId: string): Promise<boolean> {
+
+  console.log("Removing role", roleId, "from user", userId);
+  try {
+    await db.delete(userRoles)
+      .where(and(
+        eq(userRoles.userId, userId),
+        eq(userRoles.roleId, roleId)
+      ));
+
+    revalidatePath("/members", "page");
+    return true;
+  } catch (error) {
+    console.error("Error removing role:", error);
+    return false;
+  }
+}
+
+export async function addRole(userId: string, roleName: string): Promise<boolean> {
+  try {
+
+    console.log("Adding role", roleName);
+    const role = await db
+      .select()
+      .from(roles)
+      .where(eq(roles.name, roleName))
+      .limit(1)
+      .then(rows => rows[0]);
+
+    if (!role) {
+      console.log("Role not found, creating new role", roleName);
+      const [newRole] = await db.insert(roles).values({
+        name: roleName,
+      }).returning();
+
+      if (!newRole) {
+        console.error("Failed to create role");
+        return false;
+      }
+
+      await db.insert(userRoles).values({
+        userId: userId,
+        roleId: newRole.id,
+      }).onConflictDoNothing();
+    } else {
+      await db.insert(userRoles).values({
+        userId: userId,
+        roleId: role.id,
+      }).onConflictDoNothing();
+    }
+
+    revalidatePath("/members", "page");
+    return true;
+  } catch (error) {
+    console.error("Error adding role:", error);
     return false;
   }
 }

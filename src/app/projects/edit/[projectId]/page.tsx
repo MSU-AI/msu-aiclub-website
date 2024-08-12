@@ -1,6 +1,7 @@
 import { getProjectById } from '~/server/db/queries/projects';
 import { ProjectEditForm } from './projectEditForm';
 import { createClient } from '~/utils/supabase/server';
+import { isAdmin } from '~/server/actions/auth';
 
 export default async function EditProjectPage({ params }: { params: { projectId: string } }) {
   const supabase = createClient();
@@ -12,10 +13,10 @@ export default async function EditProjectPage({ params }: { params: { projectId:
     return <div>Project not found</div>;
   }
 
-  const isAdmin = user?.user_metadata?.memberType === 'admin';
-  const isMember = project.users.some((u: any) => u.id === user?.id);
+  const isUserAdmin = isAdmin();
+  const isMember = project.userProjects.some((u: any) => u.id === user?.id);
 
-  if (!isAdmin && !isMember) {
+  if (!isUserAdmin && !isMember) {
     return <div>You don't have permission to edit this project</div>;
   }
 

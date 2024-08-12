@@ -19,6 +19,8 @@ const TAG_COLORS = [
 export const TagInput: React.FC<TagInputProps> = ({ tags, onTagsChange, placeholder }) => {
   const [inputValue, setInputValue] = useState('');
 
+  console.log("tags", tags);
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === ',' && e.currentTarget.value.trim()) {
       e.preventDefault();
@@ -33,7 +35,7 @@ export const TagInput: React.FC<TagInputProps> = ({ tags, onTagsChange, placehol
   };
 
   const addTag = (tag: string) => {
-    if (tag && !tags.includes(tag)) {
+    if (tag && !!!tags?.includes(tag)) {
       onTagsChange([...tags, tag]);
       setInputValue('');
     }
@@ -45,7 +47,7 @@ export const TagInput: React.FC<TagInputProps> = ({ tags, onTagsChange, placehol
 
   return (
     <div className="flex flex-wrap gap-2 p-2 border rounded">
-      {tags.map((tag, index) => (
+      {tags?.map((tag, index) => (
         <div 
           key={tag} 
           className={`flex items-center ${TAG_COLORS[index % TAG_COLORS.length]} px-2 py-1 rounded-full`}

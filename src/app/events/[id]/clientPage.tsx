@@ -34,9 +34,9 @@ export default function EventPageClient({
         const eventId = await addUserToEvent(event.id, user.id, code);
 
         if (eventId === null) {
-            console.log("Invalid code");
+            alert("Invalid code");
         } else {
-            console.log("Event registered successfully");
+            alert("Event registered successfully");
         }
     };
 

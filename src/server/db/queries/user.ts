@@ -14,15 +14,19 @@ export async function getUsers() {
           project: true
         }
       },
+      events: {
+        with: {
+          event: true
+        }
+      }
     }
   });
-
-  console.log(results);
 
   return results.map(user => ({
     id: user.id,
     email: user.email,
     roles: user.roles.map(ur => ur.role),
     projects: user.projects.map(up => up.project),
+    points: user.events.reduce((acc, event) => acc + (event.event?.points || 0), 0),
   }));
 }

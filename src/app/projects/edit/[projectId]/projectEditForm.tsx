@@ -22,7 +22,7 @@ export function ProjectEditForm({ project }: ProjectEditFormProps) {
   const [videoUrl, setVideoUrl] = useState(project.videoUrl);
   const [githubUrl, setGithubUrl] = useState(project.githubUrl);
   const [liveSiteUrl, setLiveSiteUrl] = useState(project.liveSiteUrl);
-  const [techStack, setTechStack] = useState<string[]>(project.skills);
+  const [techStack, setTechStack] = useState<string[]>(project.projectSkills.map(s => s.skillName));
   const router = useRouter();
 
   const editor = useCreateBlockNote();
@@ -35,6 +35,8 @@ export function ProjectEditForm({ project }: ProjectEditFormProps) {
   useEffect(() => {
     loadInitialHTML();
   }, [loadInitialHTML]);
+
+  console.log("project", project);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

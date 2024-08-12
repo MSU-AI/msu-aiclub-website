@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "~/utils/supabase/server";
 import { getURL } from "../helpers";
 import { AccountData } from "~/types/profiles";
+import { getRoles } from "../db/queries/roles";
 /**
  * Logs a user in
  * @param email the email of the user
@@ -176,5 +177,7 @@ export async function isAdmin(): Promise<boolean> {
         return false;
     }
 
-    return data.user.user_metadata.memberType === 'admin';
+    const roles = await getRoles(data.user.id);
+
+    return roles.includes('admin') || roles.includes('board');
 }

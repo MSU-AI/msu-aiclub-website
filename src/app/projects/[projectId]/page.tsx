@@ -39,7 +39,7 @@ function getYouTubeEmbedUrl(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
 
-  return (match && match[2].length === 11)
+  return (match && match[2]?.length === 11)
     ? `https://www.youtube.com/embed/${match[2]}`
     : null;
 }
@@ -54,8 +54,6 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
   const embedUrl = project.videoUrl ? getYouTubeEmbedUrl(project.videoUrl) : null;
 
   console.log(project)
-
-  console.log(project.userProjects[0].user)
 
   return (
     <div className="max-w-[1024px] mx-auto py-8 px-4">
@@ -122,36 +120,36 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
           <div key={member.id} className="relative group">
             <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden">
               <Image 
-                src={`${member.user.raw_user_meta_data.flowerProfile}`}
-                alt={member.user.raw_user_meta_data.full_name} 
+                src={`${member.raw_user_meta_data.flowerProfile}`}
+                alt={member.raw_user_meta_data.full_name} 
                 layout="fill" 
                 objectFit="cover"
               />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="text-white text-center">
-                  <p className="font-bold">{member.user.raw_user_meta_data.full_name}</p>
+                  <p className="font-bold">{member.raw_user_meta_data.full_name}</p>
                   <p>{member.role}</p>
                 </div>
               </div>
             </div>
             <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {member.user.raw_user_meta_data.linkedinUrl && (
+              {member.raw_user_meta_data.linkedinUrl && (
                 <Button size="icon" variant="secondary" asChild >
-                  <Link href={member.user.raw_user_meta_data.linkedinUrl} >
+                  <Link href={member.raw_user_meta_data.linkedinUrl} >
                     <LinkedInLogoIcon className="h-4 w-4" />
                   </Link>
                 </Button>
               )}
-              {member.user.raw_user_meta_data.githubUrl && (
+              {member.raw_user_meta_data.githubUrl && (
                 <Button size="icon" variant="secondary" asChild>
-                  <Link  href={member.user.raw_user_meta_data.githubUrl} >
+                  <Link  href={member.raw_user_meta_data.githubUrl} >
                     <GitHubLogoIcon className="h-4 w-4" />
                   </Link>
                 </Button>
               )}
-              {member.user.raw_user_meta_data.personalWebsite && (
+              {member.raw_user_meta_data.personalWebsite && (
                 <Button size="icon" variant="secondary" asChild >
-                  <Link href={member.user.raw_user_meta_data.personalWebsite} >
+                  <Link href={member.raw_user_meta_data.personalWebsite} >
                    <PersonalSiteIcon className="h-4 w-4" />
                   </Link>
                 </Button>

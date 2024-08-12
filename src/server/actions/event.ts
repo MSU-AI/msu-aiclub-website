@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "../db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { events, userEvents } from "../db/schema";
 
 export async function addUserToEvent(
@@ -9,6 +9,17 @@ export async function addUserToEvent(
     userId: string,
     code: string
 ) {
+
+    const userEvent = await db.query.userEvents.findFirst({
+        where: and(
+            eq(userEvents.userId, userId),
+            eq(userEvents.eventId, eventId)
+        )
+    });
+
+    if (userEvent) {
+        return null;
+    }
 
     const event = await db.query.events.findFirst({
         where: eq(events.id, eventId),

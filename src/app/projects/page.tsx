@@ -4,16 +4,17 @@ import { getAllProjects } from '~/server/db/queries/projects';
 import { ProjectCard } from './projectCard';
 import { createClient } from '~/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { isAdmin } from '~/server/actions/auth';
 
 export default async function ProjectsPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
-  const isAdmin = user?.user_metadata?.memberType === 'admin';
+  const isUserAdmin = await isAdmin();
   const allProjects = await getAllProjects();
 
   // Filter projects based on user role
-  const projects = isAdmin 
+  const projects = isUserAdmin 
     ? allProjects 
     : allProjects.filter(project => project.status === 'approved');
 
@@ -36,7 +37,7 @@ export default async function ProjectsPage() {
           <ProjectCard 
             key={project.id} 
             project={project} 
-            isAdmin={isAdmin}
+            isAdmin={isUserAdmin}
             isMember={project.users.some((u: any) => u.id === user?.id)}
             onStatusChange={handleStatusChange}
           />

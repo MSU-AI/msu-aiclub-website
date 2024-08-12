@@ -59,6 +59,10 @@ export async function getProjectById(projectId: string) {
 
   if (!project) return null;
 
+  project.userProjects = project.userProjects.map(up => up.user);
+
+  console.log("project", project);
+
   return project;
 }
 
