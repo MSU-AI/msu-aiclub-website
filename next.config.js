@@ -5,7 +5,9 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
+
 const config = {
+  output: "standalone",
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -23,6 +25,7 @@ const config = {
   experimental: {
     serverComponentsExternalPackages: ['drizzle-orm'],
   },
+
 };
 
 export default config;
