@@ -1,27 +1,14 @@
+import { headers } from "next/headers";
+
 /**
  * Get the correct URL for the environment
  * @returns {string} The full URL for the current environment
  */
 export const getURL = (path = '') => {
-    // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
-    let url =
-        process?.env?.NEXT_PUBLIC_SITE_URL &&
-            process.env.NEXT_PUBLIC_SITE_URL.trim() !== ''
-            ? process.env.NEXT_PUBLIC_SITE_URL
-            : // If not set, check for NEXT_PUBLIC_VERCEL_URL, which is automatically set by Vercel.
-            process?.env?.NEXT_PUBLIC_VERCEL_URL &&
-                process.env.NEXT_PUBLIC_VERCEL_URL.trim() !== ''
-                ? process.env.NEXT_PUBLIC_VERCEL_URL
-                : // If neither is set, default to localhost for local development.
-                'http://localhost:3000/';
+    const headersList = headers();
+    const host = headersList.get('host') || headersList.get('x-forwarded-host');
 
-    // Trim the URL and remove trailing slash if exists.
-    url = url.replace(/\/+$/, '');
-    // Make sure to include `https://` when not localhost.
-    url = url.includes('http') ? url : `https://${url}`;
-    // Ensure path starts without a slash to avoid double slashes in the final URL.
-    path = path.replace(/^\/+/, '');
+    const base = process.env.NEXT_PUBLIC_SITE_URL?.includes('localhost') ? 'http' : 'https';
 
-    // Concatenate the URL and the path.
-    return path ? `${url}/${path}` : url;
+    return `${base}://${host}${path}`;
 };
