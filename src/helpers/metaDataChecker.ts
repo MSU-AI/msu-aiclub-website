@@ -7,3 +7,11 @@ export function isProfileComplete(user: User) {
         user.user_metadata.fullName
     );
 }
+
+export function isUserConfirmed(user: User | undefined) {
+    return (
+        user &&
+        user.user_metadata &&
+        user.user_metadata.confirmed
+    );
+}
