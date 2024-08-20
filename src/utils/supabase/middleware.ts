@@ -2,6 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { AUTH_URLS } from '~/constants/urls';
 import { isProfileComplete, isUserConfirmed } from '~/helpers/metaDataChecker';
+import { getPendingUser } from '~/server/actions/auth';
 
 export async function updateSession(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/_next")) {
@@ -65,10 +66,6 @@ export async function updateSession(request: NextRequest) {
   console.log(request.nextUrl.pathname)
 
   console.log(!AUTH_URLS.includes(request.nextUrl.pathname))
-
-  if (AUTH_URLS.includes(request.nextUrl.pathname) && data.user && !isUserConfirmed(data.user ?? undefined)) {
-    return NextResponse.redirect(new URL('/auth/confirm', request.url));
-  }
 
   if (!AUTH_URLS.includes(request.nextUrl.pathname) && data.user && !isProfileComplete(data.user)) {
     return NextResponse.redirect(new URL('/auth/complete-profile', request.url));
