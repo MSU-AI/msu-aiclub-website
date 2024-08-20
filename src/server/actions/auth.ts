@@ -5,6 +5,8 @@ import { createClient } from "~/utils/supabase/server";
 import { getURL } from "../helpers";
 import { AccountData } from "~/types/profiles";
 import { getRoles } from "../db/queries/roles";
+import { cookies } from "next/headers";
+import { PENDING_USER } from "~/constants/cookies";
 /**
  * Logs a user in
  * @param email the email of the user
@@ -17,6 +19,33 @@ export async function login(email: string, password: string): Promise<string | n
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   return error ? error.message : null;
+}
+
+/**
+ * Confirms a user's email with OTP
+ * @param email email of the user
+ * @param otp otp of the user
+ * @returns redirects to the home page if successful, and back to login page if not
+ */
+export async function confirmEmail(
+  email: string,
+  otp: string
+) : Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token: otp,
+    type: 'signup',
+  });
+
+  if (error) {
+    redirect('/confirm?message=' + error.message);
+  }
+
+  await deletePendingUser();
+
+  redirect('/additional-info');
 }
 
 /**
@@ -38,8 +67,27 @@ export async function register(email: string, password: string) : Promise<string
     if (error) {
       return error.message;
     }
+
+    await setPendingUser(email);
   
     return null;
+}
+
+export async function setPendingUser(email: string) : Promise<void> {
+  cookies().set(PENDING_USER, email, { 
+    httpOnly: true, 
+    secure: true, 
+    sameSite: 'strict',
+    maxAge: 3600
+  })
+}
+
+export async function getPendingUser() : Promise<string | undefined> {
+  return cookies().get(PENDING_USER)?.value;
+}
+
+export async function deletePendingUser() : Promise<void> {
+  cookies().delete(PENDING_USER);
 }
 
 /**
