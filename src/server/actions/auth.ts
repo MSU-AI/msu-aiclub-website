@@ -134,6 +134,7 @@ export async function loginWithGoogle(
   const redirectUrl = getURL('/auth/callback');
 
   console.log("auth url: ", redirectUrl)
+  console.log('ahahahaha')
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
