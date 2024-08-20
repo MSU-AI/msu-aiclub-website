@@ -52,7 +52,7 @@ export default function RegisterForm() {
             }, 
             });
 
-            router.push('/');
+            router.push('/auth/confirm');
         }
 
     }
