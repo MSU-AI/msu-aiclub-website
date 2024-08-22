@@ -13,7 +13,7 @@ const TAG_COLORS = [
   'bg-purple-200 text-purple-800',
 ];
 
-// Dummy data for team members
+// Dummy data? for team members
 const dummyTeamMembers = [
   {
     id: '1',
@@ -117,39 +117,39 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
      <h2 className="text-2xl font-bold mb-4">Project Team</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {project.userProjects.map((member) => (
-          <div key={member.id} className="relative group">
+          <div key={member?.id} className="relative group">
             <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden">
               <Image 
-                src={`${member.raw_user_meta_data.flowerProfile}`}
-                alt={member.raw_user_meta_data.full_name} 
+                src={`${member?.raw_user_meta_data?.flowerProfile}`}
+                alt={member?.raw_user_meta_data?.full_name} 
                 layout="fill" 
                 objectFit="cover"
               />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="text-white text-center">
-                  <p className="font-bold">{member.raw_user_meta_data.full_name}</p>
-                  <p>{member.role}</p>
+                  <p className="font-bold">{member?.raw_user_meta_data?.full_name}</p>
+                  <p>{member?.role}</p>
                 </div>
               </div>
             </div>
             <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {member.raw_user_meta_data.linkedinUrl && (
+              {member?.raw_user_meta_data?.linkedinUrl && (
                 <Button size="icon" variant="secondary" asChild >
-                  <Link href={member.raw_user_meta_data.linkedinUrl} >
+                  <Link href={member?.raw_user_meta_data?.linkedinUrl} >
                     <LinkedInLogoIcon className="h-4 w-4" />
                   </Link>
                 </Button>
               )}
-              {member.raw_user_meta_data.githubUrl && (
+              {member?.raw_user_meta_data?.githubUrl && (
                 <Button size="icon" variant="secondary" asChild>
-                  <Link  href={member.raw_user_meta_data.githubUrl} >
+                  <Link  href={member?.raw_user_meta_data?.githubUrl} >
                     <GitHubLogoIcon className="h-4 w-4" />
                   </Link>
                 </Button>
               )}
-              {member.raw_user_meta_data.personalWebsite && (
+              {member?.raw_user_meta_data?.personalWebsite && (
                 <Button size="icon" variant="secondary" asChild >
-                  <Link href={member.raw_user_meta_data.personalWebsite} >
+                  <Link href={member?.raw_user_meta_data?.personalWebsite} >
                    <PersonalSiteIcon className="h-4 w-4" />
                   </Link>
                 </Button>
