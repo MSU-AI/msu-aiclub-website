@@ -8,6 +8,7 @@ import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
+import { editEvent } from '~/server/actions/event';
 
 export default function EditEventPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -36,8 +37,11 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const description = await editor.blocksToHTMLLossy(editor.document);
-    // Here you would typically send this data to your backend
-    console.log({ id: event.id, title, photo, description, time, place, points });
+    
+    // Convert time to Date if it's a string
+    const convertedTime = typeof time === 'string' ? new Date(time) : time;
+    
+    await editEvent(event.id, title, photo, description, convertedTime, place, Number(points));
     router.push('/events');
   };
 

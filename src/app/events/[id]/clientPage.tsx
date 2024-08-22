@@ -41,9 +41,13 @@ export default function EventPageClient({
     };
 
     const handleDelete = () => {
-        // Here you would typically call an API to delete the event
-        console.log('Deleting event:', event.id);
-        router.push('/events');
+        out = await deleteEvent(event.id);
+
+        if (!out) {
+          alert("Error deleting event");
+        } else {
+          router.push('/events');
+        }
     };
  
 
