@@ -70,7 +70,7 @@ export default function RegisterForm() {
             <Button 
             variant="secondary" 
             className="w-full gap-3"
-            onClick={loginWithGoogle}
+            onClick={() => loginWithGoogle()}
             >
                 <Image
                 src={'/google.svg'}
