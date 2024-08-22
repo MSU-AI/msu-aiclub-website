@@ -50,7 +50,7 @@ export default function EventPageClient({
   return (
     <div className="max-w-[1024px] mx-auto py-8 px-4 relative">
       {isAdmin && (
-        <div className="absolute top-8 right-4">
+        <div className="">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
