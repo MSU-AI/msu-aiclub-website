@@ -48,7 +48,7 @@ export default function EventPageClient({
  
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8 px-4 relative">
+    <div className="max-w-[1024px] mx-auto py-8 px-4 relative pt-28">
       {isAdmin && (
         <div className="">
           <DropdownMenu>
@@ -75,8 +75,9 @@ export default function EventPageClient({
         <Image src={event.photo} alt={event.title} width={800} height={400} className="w-full object-cover max-h-96 mb-6" />
       )}
       {event.description && (
-        <div className="prose dark:prose-invert mb-6">
-          {event.description}
+        <div className="prose dark:prose-invert mb-6"
+        dangerouslySetInnerHTML={{ __html: event.description }}
+        >
         </div>
       )}
       <div className="mb-4">

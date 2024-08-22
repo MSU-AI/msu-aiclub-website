@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { membersData, UserMetadata } from './data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { Input } from "~/components/ui/input";
@@ -25,13 +25,15 @@ export default function MembersPageClient({
 }) {
   const [curMembers, setCurMembers] = useState(members);
 
-  console.log(curMembers);
+  // Sort members by points in descending order
+  const sortedMembers = useMemo(() => {
+    return [...curMembers].sort((a, b) => (b.points || 0) - (a.points || 0));
+  }, [curMembers]);
 
   const handleFieldChange = (memberId: string, field: keyof UserMetadata, value: any) => {
     setCurMembers(curMembers.map(member => 
       member.id === memberId ? { ...member, [field]: value } : member
     ));
-
   };
 
   const EditableCell = ({ value, onChange }: { value: string, onChange: (value: string) => void }) => {
@@ -84,7 +86,7 @@ export default function MembersPageClient({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members.map((member) => (
+          {sortedMembers.map((member) => (
             <TableRow key={member.id}>
               <TableCell>
                 <Popover>

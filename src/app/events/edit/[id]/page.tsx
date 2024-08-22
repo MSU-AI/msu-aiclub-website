@@ -42,7 +42,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8 px-4">
+    <div className="max-w-[1024px] mx-auto py-8 px-4  pt-28">
       <h1 className="text-2xl font-bold mb-6">Edit Event: {event.title}</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
