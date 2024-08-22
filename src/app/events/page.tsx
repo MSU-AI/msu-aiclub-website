@@ -13,7 +13,7 @@ export default async function EventsPage() {
   console.log("is user admin", isUserAdmin);
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8 px-4">
+    <div className="max-w-[1024px] mx-auto py-8 px-4 pt-28">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Events</h1>
         {isUserAdmin && (

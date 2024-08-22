@@ -12,7 +12,7 @@ export default async function PostsPage() {
   const isAdmin = user?.user_metadata?.memberType === 'admin';
 
   return (
-    <div className="max-w-[1024px] mx-auto px-4 py-8">
+    <div className="max-w-[1024px] mx-auto px-4 py-8 pt-28">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Posts</h1>
         {isAdmin && <CreatePostButton />}

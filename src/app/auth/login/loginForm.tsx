@@ -17,6 +17,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { login, loginWithGoogle } from "~/server/actions/auth";
 import { toast } from "react-hot-toast";
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Spacer } from "@nextui-org/react";
+import Image from "next/image";
+import { Label } from "@radix-ui/react-label";
 
 
 
@@ -57,42 +61,73 @@ export default function LoginForm() {
     }
 
     return (
-        <Card className="bg-background min-w-[400px] p-4">
-            <CardHeader className="flex flex-col gap-3">
-                <div className="flex flex-col">Login</div>
-                {message && <p className="text-destructive">{message}</p>}
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-                <Input 
-                type="email" 
-                name="email" 
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@xyz.com"
+        <Card className="flex flex-col bg-background mx-auto min-w-[400px] min-h-[450px] max-w-sm">
+        <CardHeader>
+            <CardTitle className="text-2xl text-center">Login</CardTitle>
+            <CardDescription className="text-m flex flex-col gap-4">
+            <Spacer/>
+            <Button 
+            variant="secondary" 
+            className="w-full gap-3"
+            onClick={loginWithGoogle}
+            >
+                <Image
+                src={'/google.svg'}
+                alt="Google"
+                width={20}
+                height={20}
+                >
+                </Image>
+                Login with Google
+            </Button>
+            </CardDescription>
+        </CardHeader>
+        <div className="flex flex-row justify-center text-center items-center gap-4">
+            <Separator className="w-2/5" />
+            <p className="w-1/5">Or</p>
+            <Separator className="w-2/5" />
+        </div>
+        <CardContent>
+            <div className="grid gap-4">
+                <Label>{message}</Label>
+            <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
                 />
-                <Input 
-                type="password" 
-                name="password" 
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="********"
-                />
-            </CardContent>
-            <CardFooter className="flex flex-col gap-3">
-                <p>Don&apos;t have an account</p>      
-                <Link href="/auth/register" className="underline">
-                    Sign up
+            </div>
+            <div className="grid gap-2">
+                <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <Link href="#" className="ml-auto inline-block text-sm underline">
+                    Forgot your password?
                 </Link>
-                <Button onClick={() => handleSubmit()} className="w-full">
-                    Login
-                </Button>
-                <div className="inline-flex items-center justify-center w-full">
-                  <hr className="w-full h-px my-8 bg-secondary border-0 " />
-                  <span className="absolute px-3 font-medium bg-background text-foreground -translate-x-1/2  left-1/2 ">or</span>
-                </div> 
-                <Button  onClick={() => loginWithGoogle()} className="w-full flex gap-2">
-                    Login with Google
-                </Button>
-
-            </CardFooter>
+                </div>
+                <Input
+                    id="password"
+                    type="password"
+                    placeholder="********"
+                    required
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                />
+            </div>
+            <Button onClick={handleSubmit} type="submit" className="w-full">
+                Login
+            </Button>
+            </div>
+            <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/auth/register" className="underline">
+                Sign up
+            </Link>
+            </div>
+        </CardContent>
         </Card>
     )
  

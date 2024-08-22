@@ -31,7 +31,7 @@ export function LandingContent({ topPosts, topProjects, isAdmin, userId }: Landi
   return (
     <>
       <div className="flex flex-col justify-center items-center">
-        <div className="w-screen max-w-[1024px] px-4">
+        <div className="w-screen max-w-[1024px] px-4 pt-16">
           <Hero  scrollRef={canvasRef}/>
           <CanvasRevealLanding scrollRef={canvasRef} firstRef={workshopRef} secondRef={projectRef} thirdRef={communityRef} />
           <FeaturedPosts scrollRef={workshopRef} posts={topPosts} isAdmin={isAdmin} />

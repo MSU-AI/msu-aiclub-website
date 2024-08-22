@@ -27,7 +27,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${GeistSans.variable} dark`}>
-      <body className="pt-16">
+      <body className="">
           <Toaster />
           <NavBar userMetadata={userMetadata ??  null} />
           {children}

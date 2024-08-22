@@ -29,7 +29,7 @@ export default function AboutPage() {
   const years = Object.keys(typedBoardMembersData.boardMembers).reverse();
 
   return (
-    <div className="max-w-[1024px] mx-auto px-4 py-16">
+    <div className="max-w-[1024px] mx-auto px-4 py-16 pt-28">
       <div className='flex flex-col gap-7'>
       <h1 className='text-6xl font-semibold'>About us</h1>
       <p>We are the largest computer science club at Michigan State university.</p>

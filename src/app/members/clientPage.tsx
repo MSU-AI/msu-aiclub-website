@@ -25,10 +25,13 @@ export default function MembersPageClient({
 }) {
   const [curMembers, setCurMembers] = useState(members);
 
+  console.log(curMembers);
+
   const handleFieldChange = (memberId: string, field: keyof UserMetadata, value: any) => {
     setCurMembers(curMembers.map(member => 
       member.id === memberId ? { ...member, [field]: value } : member
     ));
+
   };
 
   const EditableCell = ({ value, onChange }: { value: string, onChange: (value: string) => void }) => {
@@ -63,7 +66,7 @@ export default function MembersPageClient({
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 pt-28">
       <h1 className="text-2xl font-bold mb-5">Members</h1>
       <Table>
         <TableHeader>

@@ -53,7 +53,7 @@ export default function NavBar({
     }
 
     return (
-        <nav className="fixed top-0 left-0 w-full z-[1000] bg-background border-b border-border">
+        <nav className="fixed top-0 left-0 w-full z-10 bg-background border-b border-border">
             <div className="max-w-screen-lg flex items-center justify-between mx-auto px-4 py-2">
                 <div className="flex items-center">
                     <Link href="/">
