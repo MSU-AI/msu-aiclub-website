@@ -76,7 +76,7 @@ export default function EventPageClient({
       )}
       {event.description && (
         <div className="prose dark:prose-invert mb-6">
-          <ReactMarkdown>{event.description}</ReactMarkdown>
+          {event.description}
         </div>
       )}
       <div className="mb-4">
