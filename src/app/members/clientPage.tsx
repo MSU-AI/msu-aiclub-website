@@ -90,20 +90,20 @@ export default function MembersPageClient({
             <TableRow key={member.id}>
               <TableCell>
                 <Popover>
-                  <PopoverTrigger>{member.fullName}</PopoverTrigger>
+                  <PopoverTrigger>{member.metadata.fullName}</PopoverTrigger>
                   <PopoverContent>
                     {member.githubUrl && (
-                      <a href={member.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center mb-2">
+                      <a href={member.metadata.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center mb-2">
                         <ExternalLink className="mr-2" /> GitHub
                       </a>
                     )}
                     {member.personalWebsite && (
-                      <a href={member.personalWebsite} target="_blank" rel="noopener noreferrer" className="flex items-center mb-2">
+                      <a href={member.metadata.personalWebsite} target="_blank" rel="noopener noreferrer" className="flex items-center mb-2">
                         <ExternalLink className="mr-2" /> Personal Website
                       </a>
                     )}
                     {member.linkedinUrl && (
-                      <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                      <a href={member.metadata.linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center">
                         <ExternalLink className="mr-2" /> LinkedIn
                       </a>
                     )}
@@ -118,25 +118,25 @@ export default function MembersPageClient({
               </TableCell>
               <TableCell>
                 <EditableCell
-                  value={member.memberType}
+                  value={member.metadata.memberType}
                   onChange={(value) => handleFieldChange(member.id, 'memberType', value)}
                 />
               </TableCell>
               <TableCell>
                 <EditableCell
-                  value={member.university}
+                  value={member.metadata.university}
                   onChange={(value) => handleFieldChange(member.id, 'university', value)}
                 />
               </TableCell>
               <TableCell>
                 <EditableCell
-                  value={member.major}
+                  value={member.metadata.major}
                   onChange={(value) => handleFieldChange(member.id, 'major', value)}
                 />
               </TableCell>
               <TableCell>
                 <EditableCell
-                  value={member.schoolYear}
+                  value={member.metadata.schoolYear}
                   onChange={(value) => handleFieldChange(member.id, 'schoolYear', value)}
                 />
               </TableCell>
@@ -154,7 +154,7 @@ export default function MembersPageClient({
               </TableCell>
               <TableCell>
                 <EditableCell
-                  value={member.discordUsername}
+                  value={member.metadata.discordUsername}
                   onChange={(value) => handleFieldChange(member.id, 'discordUsername', value)}
                 />
               </TableCell>
