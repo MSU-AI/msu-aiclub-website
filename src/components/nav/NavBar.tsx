@@ -8,6 +8,8 @@ import { HoverBorderGradient } from "../ui/hover-border-gradient";
 import { AvatarDropDown } from "./avatar-dropdown";
 import { AccountData } from "~/types/profiles";
 import { shouldShowNavbar } from "~/utils/navigation";
+import { Menu } from 'lucide-react';
+import { Button } from '../ui/button';
 
 
 export default function NavBar({
@@ -81,6 +83,15 @@ export default function NavBar({
                     </ul>
                 </div>
                 <div className="flex items-center space-x-4">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="md:hidden text-white"
+                    >
+                        <Menu />
+                    </Button>
+
                     {(userType === "member" || userType === "admin") ? (
                         <AvatarDropDown userMetadata={userMetadata} />
                     ) : (
@@ -94,12 +105,6 @@ export default function NavBar({
                             </HoverBorderGradient>
                         </Link>
                     )}
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden text-white"
-                    >
-                        {isMenuOpen ? "Close" : "Menu"}
-                    </button>
                 </div>
             </div>
             {isMenuOpen && (
