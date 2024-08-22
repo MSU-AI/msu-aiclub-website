@@ -21,7 +21,7 @@ export default async function EditProjectPage({ params }: { params: { projectId:
   }
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8 px-4">
+    <div className="max-w-[1024px] mx-auto py-8 px-4 pt-28">
       <h1 className="text-2xl font-bold mb-6">Edit Project: {project.name}</h1>
       <ProjectEditForm project={project} />
     </div>

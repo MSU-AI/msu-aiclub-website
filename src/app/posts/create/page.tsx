@@ -53,7 +53,7 @@ export default function CreatePostPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-28">
       <form onSubmit={handleSubmit} className="container mx-auto py-8">
         <div className="space-y-4 mb-8">
           <Input

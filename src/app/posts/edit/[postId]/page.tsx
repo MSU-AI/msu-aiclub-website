@@ -20,7 +20,7 @@ export default async function EditPostPage({ params }: { params: { postId: strin
   }
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8 px-4">
+    <div className="max-w-[1024px] mx-auto py-8 px-4 pt-28">
       <h1 className="text-2xl font-bold mb-6">Edit Post: {post.title}</h1>
       <PostEditForm post={post} />
     </div>

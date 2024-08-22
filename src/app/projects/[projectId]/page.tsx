@@ -56,7 +56,7 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
   console.log(project)
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8 px-4">
+    <div className="max-w-[1024px] mx-auto py-8 px-4 pt-28">
       <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
       
       {embedUrl ? (

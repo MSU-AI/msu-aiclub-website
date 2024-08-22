@@ -10,7 +10,7 @@ interface PostPreviewProps {
 
 const PostPreview: React.FC<PostPreviewProps> = ({ title, description, thumbnailUrl, content }) => {
   return (
-    <div className="max-w-[740px] mx-auto">
+    <div className="max-w-[740px] mx-auto pt-28">
       <h1 className="text-4xl font-bold mb-4">{title}</h1>
       <p className="text-xl text-gray-500 mb-6">{description}</p>
       {thumbnailUrl && (

@@ -59,7 +59,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-8 pt-28">
       <h1 className="text-2xl font-bold mb-4">Your Profile</h1>
       <div className="flex items-center mb-6">
         <Avatar className="w-24 h-24 mr-4">

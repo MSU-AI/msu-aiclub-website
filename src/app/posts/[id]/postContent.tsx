@@ -76,7 +76,7 @@ export default function PostContent({ initialPost }: { initialPost: PostData;}) 
   };
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8">
+    <div className="max-w-[1024px] mx-auto py-8 pt-28">
       <Card className='bg-background border-none'>
         <CardHeader>
     {post.thumbnailUrl && (
