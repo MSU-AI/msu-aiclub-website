@@ -1,12 +1,14 @@
 "use client";
-import { useState, useMemo } from 'react';
-import { membersData, UserMetadata } from './data';
+import React, { useState, useMemo, useEffect } from 'react';
+import { UserMetadata } from './data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { Input } from "~/components/ui/input";
 import { Badge } from "~/components/ui/badge";
 import { X, ExternalLink } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { addRole, removeRole } from '~/server/actions/role';
+import { Button } from "~/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 
 const TAG_COLORS = [
   'bg-blue-200 text-blue-800',
@@ -24,11 +26,31 @@ export default function MembersPageClient({
   isAdmin: boolean,
 }) {
   const [curMembers, setCurMembers] = useState(members);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Sort members by points in descending order
-  const sortedMembers = useMemo(() => {
-    return [...curMembers].sort((a, b) => (b.points || 0) - (a.points || 0));
-  }, [curMembers]);
+  // Sort and filter members
+  const sortedAndFilteredMembers = useMemo(() => {
+    return [...curMembers]
+      .sort((a, b) => (b.points || 0) - (a.points || 0))
+      .filter(member => 
+        Object.values(member).some(value => 
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        ) ||
+        Object.values(member.metadata).some(value => 
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+  }, [curMembers, searchTerm]);
+
+  // Paginate members
+  const paginatedMembers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedAndFilteredMembers.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedAndFilteredMembers, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(sortedAndFilteredMembers.length / itemsPerPage);
 
   const handleFieldChange = (memberId: string, field: keyof UserMetadata, value: any) => {
     setCurMembers(curMembers.map(member => 
@@ -67,12 +89,40 @@ export default function MembersPageClient({
     );
   };
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, itemsPerPage]);
+
   return (
     <div className="container mx-auto py-10 pt-28">
       <h1 className="text-2xl font-bold mb-5">Members</h1>
+      <div className="flex justify-between items-center mb-4">
+        <Input
+          placeholder="Search members..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-sm"
+        />
+        <div className="flex items-center space-x-2">
+          <Select
+            value={itemsPerPage.toString()}
+            onValueChange={(value) => setItemsPerPage(Number(value))}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select rows per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10 per page</SelectItem>
+              <SelectItem value="20">20 per page</SelectItem>
+              <SelectItem value="50">50 per page</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px]">#</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Member Type</TableHead>
@@ -86,8 +136,9 @@ export default function MembersPageClient({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedMembers.map((member) => (
+          {paginatedMembers.map((member, index) => (
             <TableRow key={member.id}>
+              <TableCell>{(currentPage - 1) * itemsPerPage + index + 1}</TableCell>
               <TableCell>
                 <Popover>
                   <PopoverTrigger>{member.metadata.fullName}</PopoverTrigger>
@@ -161,7 +212,7 @@ export default function MembersPageClient({
               <TableCell>
                 <div className="flex flex-wrap gap-1">
                   {member.roles.map((role, index) => (
-                    <Badge key={role} className={`mr-1 mb-1 ${TAG_COLORS[index % TAG_COLORS.length]}`}>
+                    <Badge key={role.id} className={`mr-1 mb-1 ${TAG_COLORS[index % TAG_COLORS.length]}`}>
                       {role.name}
                       {isAdmin && (
                         <X
@@ -189,6 +240,27 @@ export default function MembersPageClient({
           ))}
         </TableBody>
       </Table>
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <div className="text-sm text-muted-foreground">
+          Page {currentPage} of {totalPages}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
-}
+} 
