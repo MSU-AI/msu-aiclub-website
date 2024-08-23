@@ -62,3 +62,40 @@ export async function createEvent(
 
     return event[0]?.id ?? null;
 }
+
+export async function deleteEvent(
+    id: string
+) { 
+    const event = await db.delete(events).where(eq(events.id, id)).returning();
+
+    if (event === undefined || event.length === 0) {
+        return null;
+    }
+
+    return event[0]?.id ?? null;
+}
+
+export async function editEvent(
+    id: string,
+    title: string,
+    photo: string,
+    description: string,
+    time: Date,
+    place: string,
+    points: number
+) {
+    const event = await db.update(events).set({
+        title,
+        photo,
+        description,
+        time,
+        place,
+        points,
+    }).where(eq(events.id, id)).returning();
+
+    if (event === undefined || event.length === 0) {
+        return null;
+    }
+
+    return event[0]?.id ?? null;
+}
