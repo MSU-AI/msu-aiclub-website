@@ -10,7 +10,7 @@ import { Input } from "~/components/ui/input";
 import ReactMarkdown from 'react-markdown';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { addUserToEvent } from '~/server/actions/event';
+import { addUserToEvent, deleteEvent } from '~/server/actions/event';
 
 export default function EventPageClient({ 
     event,
@@ -40,8 +40,8 @@ export default function EventPageClient({
         }
     };
 
-    const handleDelete = () => {
-        out = await deleteEvent(event.id);
+    const handleDelete = async () => {
+        const out = await deleteEvent(event.id);
 
         if (!out) {
           alert("Error deleting event");
