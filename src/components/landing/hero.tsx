@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "~/components/ui/button";
 import { HoverBorderGradient } from "~/components/ui/hover-border-gradient";
 import { InfiniteMovingCards } from "~/components/ui/infinite-moving-cards";    
@@ -29,7 +30,7 @@ export function Hero({scrollRef} : {scrollRef: React.RefObject<HTMLDivElement>})
 
               <p className="text-lg md:text-2xl absolute bottom-[50%] "> The hub for everything AI at MSU </p>
 
-              <div className="absolute inset-0 w-full h-full bg-background [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,background)]"></div>
+              <div className="dkflafkjh-full bg-background [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,background)]"></div>
             </div>
             <div className="flex items-center justify-center gap-6 px-4">
               <Link className="" href="/auth/register">
