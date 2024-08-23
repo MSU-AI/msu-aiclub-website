@@ -10,6 +10,7 @@ import { AccountData } from "~/types/profiles";
 import { shouldShowNavbar } from "~/utils/navigation";
 import { Menu } from 'lucide-react';
 import { Button } from '../ui/button';
+import ThemeSwitcherButton from '../ui/theme-switcher-button';
 
 
 export default function NavBar({
@@ -95,6 +96,8 @@ export default function NavBar({
                     {(userType === "member" || userType === "admin") ? (
                         <AvatarDropDown userMetadata={userMetadata} />
                     ) : (
+                        <>
+                        <ThemeSwitcherButton />
                         <Link href="/auth/register">
                             <HoverBorderGradient
                                 containerClassName="rounded-full"
@@ -104,6 +107,7 @@ export default function NavBar({
                                 <span>Join Us</span>
                             </HoverBorderGradient>
                         </Link>
+                        </>
                     )}
                 </div>
             </div>
