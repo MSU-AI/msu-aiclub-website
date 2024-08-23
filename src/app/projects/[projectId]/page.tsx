@@ -60,7 +60,7 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
       <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
       
       {embedUrl ? (
-        <div className="mb-6 aspect-w-16 aspect-h-9">
+        <div className="mb-6 w-[1024] h-[576px] ">
           <iframe 
             src={embedUrl} 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -110,7 +110,7 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
       </div>
 
       <div 
-        className="prose prose-lg prose-invert max-w-none custom-html-content mb-6"
+        className="prose prose-lg prose-invert max-w-none custom-html-content !text-foreground mb-6"
         dangerouslySetInnerHTML={{ __html: project.description }}
       />
 

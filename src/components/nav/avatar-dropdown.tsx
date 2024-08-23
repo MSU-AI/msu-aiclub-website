@@ -15,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 import { AccountData } from "~/types/profiles";
 import { useRouter } from 'next/navigation';
+import ThemeSwitcher from "../ui/theme-switcher";
+import { LogOut, User } from "lucide-react";
 
 export function AvatarDropDown({ userMetadata } : { userMetadata: AccountData | null}) {
   
@@ -47,16 +49,16 @@ export function AvatarDropDown({ userMetadata } : { userMetadata: AccountData | 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push("/profile")}>
+            <User className="mr-1 h-5 w-5"/>
             Profile
           </DropdownMenuItem>
-          {userType === "admin" && 
-          <DropdownMenuItem onClick={() => router.push("/admin")}>
-            Admin Dashboard
+          <DropdownMenuItem >
+            <ThemeSwitcher />
           </DropdownMenuItem>
-          }
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={async () => { await logout();}}>
+          <LogOut className="mr-1 h-5 w-5" />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

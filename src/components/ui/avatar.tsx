@@ -1,4 +1,4 @@
-"use client"
+"!aspect-w-16 !aspect-h-9use client"
 
 import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"

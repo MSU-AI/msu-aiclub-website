@@ -55,7 +55,7 @@ export default function NavBar({
     }
 
     return (
-        <nav className="fixed top-0 left-0 w-full z-10 bg-background border-b border-border">
+        <div className="fixed top-0 left-0 w-full z-[80] bg-background border-b border-border">
             <div className="max-w-screen-lg flex items-center justify-between mx-auto px-4 py-2">
                 <div className="flex items-center">
                     <Link href="/">
@@ -72,7 +72,7 @@ export default function NavBar({
                                 <Link
                                     href={item.path}
                                     ref={(el) => (navRefs.current[item.path] = el)}
-                                    className={`text-white hover:text-gray-300 ${
+                                    className={` hover:text-foreground/70 ${
                                         pathname === item.path ? 'font-bold' : ''
                                     }`}
                                 >
@@ -87,7 +87,7 @@ export default function NavBar({
                         variant="outline"
                         size="icon"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden text-white"
+                        className="md:hidden "
                     >
                         <Menu />
                     </Button>
@@ -99,7 +99,7 @@ export default function NavBar({
                             <HoverBorderGradient
                                 containerClassName="rounded-full"
                                 as="button"
-                                className="bg-black text-white px-4 py-2"
+                                className="bg-black  px-4 py-2"
                             >
                                 <span>Join Us</span>
                             </HoverBorderGradient>
@@ -114,7 +114,7 @@ export default function NavBar({
                             <li key={item.path} className="py-2">
                                 <Link
                                     href={item.path}
-                                    className="text-white hover:text-gray-300"
+                                    className=" hover:text-accent"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     {item.name}
@@ -126,9 +126,9 @@ export default function NavBar({
             )}
             <div
                 ref={gradientRef}
-                className="absolute bottom-0 h-0.5 bg-gradient-to-r from-transparent via-white to-transparent transition-all duration-300"
+                className="absolute bottom-0 h-0.5 bg-gradient-to-r from-transparent via-foreground to-transparent transition-all duration-300"
                 style={{ width: '0px', left: '0px' }}
             ></div>
-        </nav>
+        </div>
     );
 }

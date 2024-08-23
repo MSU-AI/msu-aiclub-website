@@ -116,7 +116,7 @@ export default function PostContent({ initialPost }: { initialPost: PostData;}) 
         </CardHeader>
                 <div>
           <div 
-            className="prose prose-lg prose-invert custom-html-content"
+            className="prose prose-lg prose-invert custom-html-content !text-foreground"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </div>

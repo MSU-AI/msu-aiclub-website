@@ -12,7 +12,7 @@ interface FeaturedPostsProps {
 export function FeaturedPosts({ posts, isAdmin, scrollRef }: FeaturedPostsProps) {
   return (
     <section className="py-32" ref={scrollRef}>
-      <h1 className="text-2xl lg:text-4xl font-semibold text-center text-white pb-16 ">Weekly Workshops</h1>
+      <h1 className="text-2xl lg:text-4xl font-semibold text-center pb-16 ">Weekly Workshops</h1>
       <PostList posts={posts} isAdmin={isAdmin} />
     </section>
   );

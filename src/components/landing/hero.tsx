@@ -8,7 +8,7 @@ import Link from 'next/link';
 export function Hero({scrollRef} : {scrollRef: React.RefObject<HTMLDivElement>}){
     return(
           <div className="py-28 flex flex-col items-center justify-center">
-            <h1 className="text-5xl md:text-7xl lg:text-9xl font-bold text-center text-white">
+            <h1 className="text-5xl md:text-7xl lg:text-9xl font-bold text-center">
               AI Club @ MSU
             </h1>
             
@@ -24,12 +24,12 @@ export function Hero({scrollRef} : {scrollRef: React.RefObject<HTMLDivElement>})
                 maxSize={1}
                 particleDensity={1200}
                 className="h-full w-screen md:w-full"
-                particleColor="#FFFFFF"
+                particleColor="dark:#FFFFFF blue-500"
               />
 
               <p className="text-lg md:text-2xl absolute bottom-[50%] "> The hub for everything AI at MSU </p>
 
-              <div className="absolute inset-0 w-full h-full bg-[#121212] [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
+              <div className="absolute inset-0 w-full h-full bg-background [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,background)]"></div>
             </div>
             <div className="flex items-center justify-center gap-6 px-4">
               <Link className="" href="/auth/register">
@@ -38,12 +38,12 @@ export function Hero({scrollRef} : {scrollRef: React.RefObject<HTMLDivElement>})
                   as="button"
                   className="bg-[#020D28] text-white flex items-center space-x-2"
                 >
-                  <span className="text-sm md:text-lg">Join our growing community {`>`} </span>
+                  <span className="text-sm md:text-lg">Join our growing community </span>
                 </HoverBorderGradient>
               </Link>
               <Button onClick={() => scrollDown(scrollRef)} className="font-bold rounded-[0.5rem]"> Learn More</Button>
             </div>
-            <div className="w-screen md:w-fit max-w-[1024px] pt-40 rounded-md flex flex-col antialiased bg-white dark:bg-background dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+            <div className="w-screen md:w-fit max-w-[1024px] pt-40 rounded-md flex flex-col antialiased bg-background  dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
               <InfiniteMovingCards
                 direction="right"
                 speed="slow"

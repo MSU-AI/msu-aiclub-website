@@ -11,7 +11,7 @@ import { scrollDown } from "~/utils/helpers";
 export function CanvasRevealLanding({scrollRef, firstRef, secondRef, thirdRef} : {scrollRef: RefObject<HTMLDivElement>, firstRef: RefObject<HTMLDivElement>, secondRef: RefObject<HTMLDivElement>, thirdRef: RefObject<HTMLDivElement>}) {
   return (
     <>
-      <h1 className="text-4xl lg:text-7xl font-semibold text-center text-white pt-16">What we do...</h1>
+      <h1 className="text-4xl lg:text-7xl font-semibold text-center pt-16">What we do...</h1>
       <div ref={scrollRef} className="hidden lg:flex py-20 flex-col lg:flex-row items-center justify-center bg-background w-full gap-4 mx-auto px-8">
         <Card title="Workshops" letter={"M"} scrollRef={firstRef}> 
           <CanvasRevealEffect
@@ -30,7 +30,7 @@ export function CanvasRevealLanding({scrollRef, firstRef, secondRef, thirdRef} :
             dotSize={2}
           />
           {/* Radial gradient for the cute fade */}
-          <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/90" />
+          <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/40 dark:bg-black/90" />
         </Card>
         <Card title="Communial Events" letter={"U"} scrollRef={thirdRef}>
           <CanvasRevealEffect
@@ -62,7 +62,7 @@ const Card = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => scrollDown(scrollRef)}
-      className="border cursor-pointer group/canvas-card flex items-center justify-center border-white/[0.2]  max-w-sm w-full mx-auto p-4 relative h-[30rem] relative"
+      className="border cursor-pointer group/canvas-card flex items-center justify-center border-foreground/[0.2]  max-w-sm w-full mx-auto p-4 relative h-[30rem] relative"
     >
       <Icon className="absolute h-6 w-6 -top-3 -left-3 text-whitek" />
       <Icon className="absolute h-6 w-6 -bottom-3 -left-3 text-white " />

@@ -54,7 +54,7 @@ export default function EventPageClient({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4 text-foreground" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -75,7 +75,7 @@ export default function EventPageClient({
         <Image src={event.photo} alt={event.title} width={800} height={400} className="w-full object-cover max-h-96 mb-6" />
       )}
       {event.description && (
-        <div className="prose dark:prose-invert mb-6"
+        <div className="prose dark:prose-invert mb-6 !text-foreground"
         dangerouslySetInnerHTML={{ __html: event.description }}
         >
         </div>

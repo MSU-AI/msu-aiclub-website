@@ -14,7 +14,7 @@ export function FeaturedProjects({ projects, isAdmin, userId, scrollRef }: Featu
  
   return (
     <section className="py-28" ref={scrollRef}>
-      <h1 className="text-2xl lg:text-4xl font-semibold text-center text-white pb-14">Past projects</h1>
+      <h1 className="text-2xl lg:text-4xl font-semibold text-center pb-14">Past projects</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => (
           <ProjectCard

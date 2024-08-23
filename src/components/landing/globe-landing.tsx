@@ -396,7 +396,7 @@ export function GlobeLanding() {
 
   return (
       <div className="flex items-center justify-center max-w-4xl mx-auto w-full relative overflow-hidden h-[30rem] px-4">
-        <h1 className="text-8xl font-bold  z-[150] select-none bg-gradient-to-t from-[#868686] to-white incline-block text-transparent bg-clip-text">International community reach</h1>
+        <h1 className="text-8xl font-bold  z-[50] select-none bg-gradient-to-t from-[#868686] to-foreground incline-block text-transparent bg-clip-text">International community reach</h1>
         <motion.div
           initial={{
             opacity: 0,
@@ -414,7 +414,7 @@ export function GlobeLanding() {
         </motion.div>
         <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent to-background  z-40" />
         <div className="absolute w-full -bottom-20 h-72 md:h-full z-10">
-          <World data={sampleArcs} globeConfig={globeConfig} />;
+          <World data={sampleArcs} globeConfig={globeConfig} />
         </div>
       </div>
   );

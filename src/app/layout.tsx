@@ -5,6 +5,7 @@ import NavBar from "~/components/nav/NavBar";
 import { Providers } from "~/app/providers";
 import { createClient } from "~/utils/supabase/server";
 import { Toaster } from "~/components/ui/toaster";
+import { ThemeProvider } from "~/components/theme-provider";
 
 export const metadata = {
   title: "MSU AI Club",
@@ -26,11 +27,13 @@ export default async function RootLayout({
   const userMetadata = data.user?.user_metadata;
 
   return (
-    <html lang="en" className={`${GeistSans.variable} dark`}>
+    <html lang="en" className={`${GeistSans.variable}`}>
       <body className="">
+          <ThemeProvider attribute="class" defaultTheme="system">
           <Toaster />
           <NavBar userMetadata={userMetadata ??  null} />
           {children}
+          </ThemeProvider>
       </body>
     </html>
   );
