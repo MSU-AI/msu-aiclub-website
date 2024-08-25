@@ -91,7 +91,7 @@ export default function EventPageClient({
       </div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button>Register for Event</Button>
+          <Button disabled={!user}>Register for Event</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
