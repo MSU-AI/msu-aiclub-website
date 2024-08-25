@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { addUserToEvent, deleteEvent } from '~/server/actions/event';
+import { Footer } from '~/components/landing/footer';
 
 export default function EventPageClient({ 
     event,

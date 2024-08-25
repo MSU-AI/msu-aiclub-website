@@ -20,14 +20,11 @@ export default async function EventPage({
   const { data: user } = await supabase.auth.getUser();
 
   return (
-  <>
   <EventPageClient 
     event={event} 
     isAdmin={isUserAdmin} 
     user={user.user}
     />
-    <Footer />
-    </>
   );
     
 }
