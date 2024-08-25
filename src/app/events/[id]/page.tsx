@@ -18,8 +18,6 @@ export default async function EventPage({
   const supabase = createClient();
   const { data: user } = await supabase.auth.getUser();
 
-  const points = await getUserPoints(user?.user?.id);
-
   return (
   <EventPageClient 
     event={event} 
