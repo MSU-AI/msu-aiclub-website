@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { ParallaxScroll } from './parallaxScroll';
 import boardMembersData from './boardMembers.json';
 import { AchievementsCarousel } from './carousel';
+import { Footer } from '~/components/landing/footer';
 
 interface BoardMember {
   id: string;
@@ -54,6 +55,7 @@ export default function AboutPage() {
           </TabsContent>
         ))}
       </Tabs>
+    <Footer />
     </div>
   );
 }

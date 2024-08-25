@@ -203,7 +203,7 @@ export default function CommentContent({ initialComments, postId, userId }: {
   };
 
   return (
-    <div className="max-w-[1024px] mx-auto mt-8 mb-8">
+    <div className="max-w-[1024px] mx-auto mt-8 mb-28">
       <h2 className="text-2xl font-bold mb-4">Comments</h2>
       <div className="mb-4">
         <Input

@@ -1,6 +1,8 @@
 import { getPostById } from '~/server/db/queries/posts';
 import { PostEditForm } from './postEditForm';
 import { createClient } from '~/utils/supabase/server';
+import { LucideFolderDown } from 'lucide-react';
+import { Footer } from '~/components/landing/footer';
 
 export default async function EditPostPage({ params }: { params: { postId: string } }) {
   const supabase = createClient();

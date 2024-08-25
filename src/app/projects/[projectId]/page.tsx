@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import { GlobeIcon, GitHubLogoIcon, LinkedInLogoIcon, GlobeIcon as PersonalSiteIcon } from "@radix-ui/react-icons";
 import '~/app/posts/create/postStyles.css'; // Reuse the styles from the post page
 import Link from 'next/link';
+import { Footer } from '~/components/landing/footer';
 
 const TAG_COLORS = [
   'bg-blue-200 text-blue-800',
@@ -158,6 +159,7 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
           </div>
         ))}
       </div>
+      <Footer />
     </div>
   );
 }

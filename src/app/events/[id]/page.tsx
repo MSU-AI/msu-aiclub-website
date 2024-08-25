@@ -2,6 +2,7 @@ import { getEventById, getUserPoints } from "~/server/db/queries/events";
 import EventPageClient from "./clientPage";
 import { isAdmin } from "~/server/actions/auth";
 import { createClient } from "~/utils/supabase/server";
+import { Footer } from "~/components/landing/footer";
 
 
 export default async function EventPage({ 
@@ -29,11 +30,14 @@ export default async function EventPage({
   }
 
   return (
+  <>
   <EventPageClient 
     event={event} 
     isAdmin={isUserAdmin} 
     user={user.user}
     />
+    <Footer />
+    </>
   );
     
 }
