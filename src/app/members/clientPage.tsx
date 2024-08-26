@@ -4,7 +4,7 @@ import { UserMetadata } from './data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { Input } from "~/components/ui/input";
 import { Badge } from "~/components/ui/badge";
-import { X, ExternalLink } from "lucide-react";
+import { X, ExternalLink, Download } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { addRole, removeRole } from '~/server/actions/role';
 import { Button } from "~/components/ui/button";
@@ -30,7 +30,6 @@ export default function MembersPageClient({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Sort and filter members
   const sortedAndFilteredMembers = useMemo(() => {
     return [...curMembers]
       .sort((a, b) => (b.points || 0) - (a.points || 0))
@@ -44,7 +43,6 @@ export default function MembersPageClient({
       );
   }, [curMembers, searchTerm]);
 
-  // Paginate members
   const paginatedMembers = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return sortedAndFilteredMembers.slice(startIndex, startIndex + itemsPerPage);
@@ -93,9 +91,52 @@ export default function MembersPageClient({
     setCurrentPage(1);
   }, [searchTerm, itemsPerPage]);
 
+  const exportToCSV = () => {
+    const headers = [
+      'Name', 'Email', 'Member Type', 'University', 'Major', 'School Year',
+      'Level', 'Points', 'Discord Username', 'Roles'
+    ];
+
+    const csvContent = [
+      headers.join(','),
+      ...curMembers.map(member => [
+        member.metadata.fullName,
+        member.email,
+        member.metadata.memberType,
+        member.metadata.university,
+        member.metadata.major,
+        member.metadata.schoolYear,
+        member.level,
+        member.points,
+        member.metadata.discordUsername,
+        member.roles.map(role => role.name).join(';')
+      ].map(field => `"${field}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'members_data.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <div className="container mx-auto py-10 pt-28">
-      <h1 className="text-2xl font-bold mb-5">Members</h1>
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="text-2xl font-bold">Members</h1>
+        {isAdmin && (
+          <Button onClick={exportToCSV} className="flex items-center">
+            <Download className="mr-2 h-4 w-4" />
+            Export to CSV
+          </Button>
+        )}
+      </div>
       <div className="flex justify-between items-center mb-4">
         <Input
           placeholder="Search members..."
@@ -263,4 +304,4 @@ export default function MembersPageClient({
       </div>
     </div>
   );
-} 
+}
