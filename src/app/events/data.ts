@@ -1,7 +1,7 @@
 export interface Event {
   id: string;
   title: string;
-  photo?: string;
+  photo?: string | null;
   description?: string;
   time: Date;
   place: string;

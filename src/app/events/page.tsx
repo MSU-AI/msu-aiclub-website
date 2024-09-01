@@ -10,6 +10,8 @@ export default async function EventsPage() {
 
   const eventsData = await getEvents();
 
+  const sortedEvents = eventsData.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+
   console.log("is user admin", isUserAdmin);
 
   return (
@@ -24,7 +26,7 @@ export default async function EventsPage() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {eventsData.map((event) => (
+        {sortedEvents.map((event) => (
           <EventCard key={event.id} event={event} isAdmin={isUserAdmin} />
         ))}
       </div>

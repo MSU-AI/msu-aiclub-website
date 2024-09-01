@@ -8,7 +8,6 @@ import { Button } from "~/components/ui/button";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 
 export function EventCard({ event, isAdmin }: { event: Event; isAdmin: boolean }) {
-  console.log("is admin", isAdmin);
   return (
     <div className="border rounded-lg overflow-hidden">
       {event.photo && (

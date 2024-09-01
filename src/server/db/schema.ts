@@ -1,6 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
+import { user } from "@nextui-org/react";
 import { desc, relations } from "drizzle-orm";
 import {
   pgTableCreator,
@@ -10,7 +11,8 @@ import {
   pgSchema,
   integer,
   varchar,
-  jsonb
+  jsonb,
+  boolean
 } from "drizzle-orm/pg-core";
 
 /**
@@ -233,5 +235,42 @@ export const userEventRelations = relations(userEvents, ({ one }) => ({
   event: one(events, {
     fields: [userEvents.eventId],
     references: [events.id],
+  }),
+}));
+
+export const eventQuestions = createTable("eventQuestions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("eventId").notNull().references(() => events.id, { onDelete: "cascade" }),
+  question: text("question").notNull(),
+  required: boolean("required").default(false),
+});
+
+export const eventQuestionRelations = relations(eventQuestions, ({ one }) => ({
+  event: one(events, {
+    fields: [eventQuestions.eventId],
+    references: [events.id],
+  }),
+}));
+
+export const eventAnswers = createTable("eventAnswers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("eventId").notNull().references(() => events.id, { onDelete: "cascade" }),
+  questionId: uuid("questionId").notNull().references(() => eventQuestions.id, { onDelete: "cascade" }),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  answer: text("answer").notNull(),
+});
+
+export const eventAnswerRelations = relations(eventAnswers, ({ one }) => ({
+  event: one(events, {
+    fields: [eventAnswers.eventId],
+    references: [events.id],
+  }),
+  question: one(eventQuestions, {
+    fields: [eventAnswers.questionId],
+    references: [eventQuestions.id],
+  }),
+  user: one(users, {
+    fields: [eventAnswers.userId],
+    references: [users.id],
   }),
 }));

@@ -3,25 +3,28 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Event, eventsData } from '../data';
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import ReactMarkdown from 'react-markdown';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { addUserToEvent, deleteEvent } from '~/server/actions/event';
+import { submitAnswers } from '~/server/db/queries/questions';
 
 export default function EventPageClient({ 
     event,
     isAdmin,
-    user
+    user,
+    questions
 }: { 
     event: any,
     isAdmin: boolean,
-    user: any
+    user: any,
+    questions: any
 }) {
     const [code, setCode] = useState('');
+    const [answers, setAnswers] = useState<{[key: string]: string}>({});
+    const [error, setError] = useState('');
     const router = useRouter();
 
     console.log("user", user);
@@ -31,13 +34,31 @@ export default function EventPageClient({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        const eventId = await addUserToEvent(event.id, user.id, code);
+        // Check if all required questions are answered
+        const unansweredRequiredQuestions = questions
+            .filter((q: any) => q.required && !answers[q.id]);
 
-        if (eventId === null) {
-            alert("Invalid code");
-        } else {
-            alert("Event registered successfully");
+        if (unansweredRequiredQuestions.length > 0) {
+            setError('Please answer all required questions.');
+            return;
         }
+
+        const eventId = await addUserToEvent(event.id, user.id, code);
+        if (eventId === null) {
+            setError("Invalid code");
+            return;
+        }
+
+        // Format answers for submission
+        const formattedAnswers = Object.entries(answers).map(([questionId, answer]) => ({
+            questionId,
+            answer
+        }));
+
+        const questionResults = await submitAnswers(event.id, user.id, formattedAnswers);
+
+        alert("Event registered successfully");
+        // You might want to close the dialog or redirect the user here
     };
 
     const handleDelete = async () => {
@@ -88,6 +109,7 @@ export default function EventPageClient({
         <p><strong>Time:</strong> {new Date(event.time).toLocaleString()}</p>
         <p><strong>Place:</strong> {event.place}</p>
         <p><strong>Points:</strong> {event.points}</p>
+        {isAdmin && <p><strong>Code:</strong> {event.code}</p>}
       </div>
       <Dialog>
         <DialogTrigger asChild>
@@ -104,6 +126,18 @@ export default function EventPageClient({
               value={code}
               onChange={(e) => setCode(e.target.value)}
             />
+            {questions?.map((question: any, index: number) => (
+              <div key={index} className="mt-4">
+                <p>{question.question} {question.required && <span className="text-red-500">*</span>}</p>
+                <Input
+                  type="text"
+                  placeholder="Enter answer"
+                  onChange={(e) => setAnswers({ ...answers, [question.id]: e.target.value })}
+                  required={question.required}
+                />
+              </div>
+            ))}
+            {error && <p className="text-red-500">{error}</p>}
             <Button type="submit">Submit</Button>
           </form>
         </DialogContent>
