@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export function Footer() {
     return (
-        <footer className="bg-background rounded-lg shadow m-4">
+        <footer className="bg-background">
             <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
                 <div className="sm:flex sm:items-center sm:justify-between">
                     <Link href="/" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
@@ -22,7 +22,10 @@ export function Footer() {
                             <Link href="https://github.com/MSU-AI" className="hover:underline me-4 md:me-6">Github</Link>
                         </li>
                         <li>
-                            <Link href="https://www.linkedin.com/company/75724713/" className="hover:underline">LinkedIn</Link>
+                            <Link href="https://www.linkedin.com/company/75724713/" className="hover:underline me-4 md:me-6">LinkedIn</Link>
+                        </li>
+                        <li>
+                            <Link href="/terms" className="hover:underline">Terms</Link>
                         </li>
                     </ul>
                 </div>

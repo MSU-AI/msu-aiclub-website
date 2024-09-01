@@ -9,7 +9,11 @@ import { Input } from "~/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { addUserToEvent, deleteEvent } from '~/server/actions/event';
+<<<<<<< HEAD
 import { submitAnswers } from '~/server/db/queries/questions';
+=======
+import { Footer } from '~/components/landing/footer';
+>>>>>>> 334309c7e0b8602dd4f2cf02652c9df331e030bb
 
 export default function EventPageClient({ 
     event,

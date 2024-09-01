@@ -66,4 +66,27 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .terms {
+      h1 {
+          @apply text-5xl md:text-4xl font-semibold text-foreground ;
+      }
+      h2 {
+          @apply text-5xl md:text-4xl font-semibold text-foreground py-4 text-blue-900 dark:text-blue-500;
+      }
+      h3 {
+          @apply text-4xl font-semibold text-foreground py-4 text-foreground;
+      }
+      h4 {
+          @apply text-3xl font-semibold text-foreground ;
+      }
+
+      p {
+          @apply lg:text-lg text-lg  py-2 text-muted-foreground;
+      }
+      li {
+          @apply py-2 text-muted-foreground;
+      }
+  }
+
 }

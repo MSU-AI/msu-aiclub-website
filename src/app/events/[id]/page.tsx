@@ -2,7 +2,11 @@ import { getEventById, getUserPoints } from "~/server/db/queries/events";
 import EventPageClient from "./clientPage";
 import { isAdmin } from "~/server/actions/auth";
 import { createClient } from "~/utils/supabase/server";
+<<<<<<< HEAD
 import { getQuestionsForEvent } from "~/server/db/queries/questions";
+=======
+import { Footer } from "~/components/landing/footer";
+>>>>>>> 334309c7e0b8602dd4f2cf02652c9df331e030bb
 
 
 export default async function EventPage({ 
