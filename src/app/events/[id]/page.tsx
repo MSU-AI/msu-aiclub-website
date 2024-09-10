@@ -1,4 +1,4 @@
-import { getEventById, getUserPoints } from "~/server/db/queries/events";
+import { getEventById, getEventSignupCount, getUserPoints } from "~/server/db/queries/events";
 import EventPageClient from "./clientPage";
 import { isAdmin } from "~/server/actions/auth";
 import { createClient } from "~/utils/supabase/server";
@@ -15,6 +15,11 @@ export default async function EventPage({
 ) {
   const event = await getEventById(params.id);
   const questions = await getQuestionsForEvent(event?.id);
+
+
+  const signUpCount = await getEventSignupCount(event?.id);
+  console.log("signUpCount", signUpCount);
+
   const isUserAdmin = await isAdmin();
 
   const supabase = createClient();
@@ -26,6 +31,7 @@ export default async function EventPage({
     questions={questions}
     isAdmin={isUserAdmin} 
     user={user.user}
+    signUpCount={signUpCount}
     />
   );
     

@@ -1,6 +1,6 @@
 "use server"
 
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "~/server/db";
 import { events, userEvents } from "../schema";
 
@@ -35,3 +35,27 @@ export const getUserPoints = async (userId: string | undefined) => {
 
     console.log("userEvent", userEvent);
 };
+
+export async function getEventSignupCount(eventId: string | undefined) {
+  console.log("eventId", eventId);
+
+  if (!eventId) {
+    console.error("No event ID provided");
+    return null;
+  } 
+
+  try {
+    const result = await db
+      .select({ count: sql<number>`cast(count(*) as integer)` })
+      .from(userEvents)
+      .where(eq(userEvents.eventId, eventId))
+      .execute();
+
+    console.log("result", result);
+
+    return result[0]?.count ?? 0;
+  } catch (error) {
+    console.error("Error getting event signup count:", error);
+    return null;
+  }
+}

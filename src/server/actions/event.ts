@@ -2,7 +2,7 @@
 
 import { db } from "../db";
 import { and, eq } from "drizzle-orm";
-import { events, userEvents } from "../db/schema";
+import { eventQuestions, events, userEvents } from "../db/schema";
 
 export async function addUserToEvent(
     eventId: string, 
@@ -45,8 +45,9 @@ export async function createEvent(
     points: number,
     photo: string,
     code: string,
+    questions: { question: string; required: boolean }[]
 ) {
-    const event = await db.insert(events).values({
+    const [event] = await db.insert(events).values({
         title,
         description,
         time,
@@ -56,11 +57,17 @@ export async function createEvent(
         code,
     }).returning();
 
-    if (event === undefined || event.length === 0) {
-        return null;
+    if (event) {
+        await Promise.all(questions.map(q => 
+            db.insert(eventQuestions).values({
+                eventId: event.id,
+                question: q.question,
+                required: q.required,
+            })
+        ));
     }
 
-    return event[0]?.id ?? null;
+    return event?.id ?? null;
 }
 
 export async function deleteEvent(

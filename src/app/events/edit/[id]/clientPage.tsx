@@ -9,6 +9,7 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import { editEvent } from '~/server/actions/event';
 import { getEventById } from '~/server/db/queries/events';
+import { Checkbox } from '~/components/ui/checkbox';
 
 export default function ClientEditEventPage({ 
     params,
@@ -24,6 +25,7 @@ export default function ClientEditEventPage({
   const [time, setTime] = useState(event?.time || '');
   const [place, setPlace] = useState(event?.place || '');
   const [points, setPoints] = useState(event?.points.toString() || '');
+  const [questions, setQuestions] = useState(event?.questions || []);
   
   const editor = useCreateBlockNote();
 
@@ -43,11 +45,34 @@ export default function ClientEditEventPage({
     e.preventDefault();
     const description = await editor.blocksToHTMLLossy(editor.document);
     
-    // Convert time to Date if it's a string
     const convertedTime = typeof time === 'string' ? new Date(time) : time;
     
-    await editEvent(event.id, title, photo, description, convertedTime, place, Number(points));
+    await editEvent(
+      event.id, 
+      title, 
+      photo, 
+      description, 
+      convertedTime, 
+      place, 
+      Number(points),
+      questions.filter(q => q.question.trim() !== '')
+    );
     router.push('/events');
+  };
+
+  const handleQuestionChange = (index: number, field: 'question' | 'required', value: string | boolean) => {
+    const newQuestions = [...questions];
+    newQuestions[index][field] = value;
+    setQuestions(newQuestions);
+  };
+
+  const addQuestion = () => {
+    setQuestions([...questions, { question: '', required: false }]);
+  };
+
+  const removeQuestion = (index: number) => {
+    const newQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(newQuestions);
   };
 
   return (
@@ -87,6 +112,26 @@ export default function ClientEditEventPage({
           onChange={(e) => setPoints(e.target.value)}
           required
         />
+                <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Event Questions</h2>
+          {questions.map((q, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <Input
+                placeholder="Question"
+                value={q.question}
+                onChange={(e) => handleQuestionChange(index, 'question', e.target.value)}
+              />
+              <Checkbox
+                checked={q.required}
+                onCheckedChange={(checked) => handleQuestionChange(index, 'required', checked)}
+              />
+              <span>Required</span>
+              <Button type="button" onClick={() => removeQuestion(index)}>Remove</Button>
+            </div>
+          ))}
+          <Button type="button" onClick={addQuestion}>Add Question</Button>
+        </div>
+        
         <Button type="submit">Update Event</Button>
       </form>
     </div>

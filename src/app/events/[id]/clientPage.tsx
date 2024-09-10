@@ -15,12 +15,14 @@ export default function EventPageClient({
     event,
     isAdmin,
     user,
-    questions
+    questions,
+    signUpCount
 }: { 
     event: any,
     isAdmin: boolean,
     user: any,
-    questions: any
+    questions: any,
+    signUpCount: number | null
 }) {
     const [code, setCode] = useState('');
     const [answers, setAnswers] = useState<{[key: string]: string}>({});
@@ -70,6 +72,8 @@ export default function EventPageClient({
           router.push('/events');
         }
     };
+
+    console.log("sign up count", signUpCount);
  
 
   return (
@@ -110,6 +114,7 @@ export default function EventPageClient({
         <p><strong>Place:</strong> {event.place}</p>
         <p><strong>Points:</strong> {event.points}</p>
         {isAdmin && <p><strong>Code:</strong> {event.code}</p>}
+        {isAdmin && <p><strong>Num Of Sign Ups:</strong> {signUpCount}</p>}
       </div>
       <Dialog>
         <DialogTrigger asChild>
