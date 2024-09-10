@@ -11,6 +11,14 @@ import { editEvent } from '~/server/actions/event';
 import { getEventById } from '~/server/db/queries/events';
 import { Checkbox } from '~/components/ui/checkbox';
 
+
+interface EventQuestion {
+  id?: string;
+  question: string;
+  required: boolean;
+}
+
+
 export default function ClientEditEventPage({ 
     params,
     event
@@ -55,7 +63,7 @@ export default function ClientEditEventPage({
       convertedTime, 
       place, 
       Number(points),
-      questions.filter(q => q.question.trim() !== '')
+      questions.filter((q: EventQuestion) => q.question.trim() !== '')
     );
     router.push('/events');
   };

@@ -137,7 +137,6 @@ export default function CreateEventPageClient() {
         </div>
         
         <Button type="submit">Create Event</Button>
-        <Button type="submit">Create Event</Button>
       </form>
     </div>
   );

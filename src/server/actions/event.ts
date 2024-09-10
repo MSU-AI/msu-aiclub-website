@@ -89,20 +89,43 @@ export async function editEvent(
     description: string,
     time: Date,
     place: string,
-    points: number
+    points: number,
+    questions: { id?: string; question: string; required: boolean }[]
 ) {
-    const event = await db.update(events).set({
-        title,
-        photo,
-        description,
-        time,
-        place,
-        points,
-    }).where(eq(events.id, id)).returning();
+    await db.transaction(async (tx) => {
+        await tx.update(events).set({
+            title,
+            photo,
+            description,
+            time,
+            place,
+            points,
+        }).where(eq(events.id, id));
 
-    if (event === undefined || event.length === 0) {
-        return null;
-    }
+        // Delete existing questions not in the new list
+        await tx.delete(eventQuestions)
+            .where(and(
+                eq(eventQuestions.eventId, id),
+                eq(eventQuestions.id, id),
+            ));
 
-    return event[0]?.id ?? null;
+        // Update or insert questions
+        for (const q of questions) {
+            if (q.id) {
+                await tx.update(eventQuestions)
+                    .set({ question: q.question, required: q.required })
+                    .where(eq(eventQuestions.id, q.id));
+            } else {
+                await tx.insert(eventQuestions)
+                    .values({
+                        eventId: id,
+                        question: q.question,
+                        required: q.required,
+                    });
+            }
+        }
+    });
+
+    return id;
 }
+
