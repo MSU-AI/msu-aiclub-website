@@ -1,5 +1,6 @@
 import { db } from "~/server/db";
 import { posts, users, comments, likes } from "~/server/db/schema";
+import { ilike, or, and } from 'drizzle-orm/expressions';
 import { eq, desc, count,sql} from "drizzle-orm";
 import { createClient } from "~/utils/supabase/server";
 
@@ -53,11 +54,11 @@ export async function getPostById(postId: string) {
   };
 }
 
-export async function getPostsWithUserInfo(limit: number = 10, offset: number = 0) {
+export async function getPostsWithUserInfo(limit: number = 10, offset: number = 0, searchQuery?: string) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const postsWithCounts = await db
+  let query = db
     .select({
       id: posts.id,
       title: posts.title,
@@ -70,7 +71,7 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
       user: {
         id: users.id,
       },
-      commentCount: count(comments.id),
+      commentCount: sql<number>`count(${comments.id})`.as('commentCount'),
       liked: user ? sql<boolean>`EXISTS (
         SELECT 1 FROM ${likes}
         WHERE ${likes.postId} = ${posts.id}
@@ -81,9 +82,22 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
     .leftJoin(users, eq(posts.userId, users.id))
     .leftJoin(comments, eq(posts.id, comments.postId))
     .groupBy(posts.id, users.id)
-    .orderBy(desc(posts.createdAt))
-    .limit(limit)
-    .offset(offset);
+    .orderBy(desc(posts.createdAt));
+
+  // Add search functionality
+  if (searchQuery) {
+    const searchTerms = searchQuery.split(' ').filter(term => term.length > 0);
+    const searchConditions = searchTerms.map(term => 
+      or(
+        ilike(posts.title, `%${term}%`),
+        ilike(posts.description, `%${term}%`),
+        ilike(posts.content, `%${term}%`)
+      )
+    );
+    query = query.where(and(...searchConditions));
+  }
+
+  const postsWithCounts = await query.limit(limit).offset(offset);
 
   // Fetch user metadata for all posts
   const userMetadata = await Promise.all(
