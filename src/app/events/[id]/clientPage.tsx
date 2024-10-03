@@ -49,6 +49,9 @@ export default function EventPageClient({
         if (eventId === null) {
             setError("Invalid code");
             return;
+        } else if (eventId === "already-registered") {
+          setError("Already registered to this event.")
+          return;
         }
 
         // Format answers for submission

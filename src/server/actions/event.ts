@@ -18,7 +18,7 @@ export async function addUserToEvent(
     });
 
     if (userEvent) {
-        return null;
+        return "already-registered";
     }
 
     const event = await db.query.events.findFirst({
@@ -26,6 +26,7 @@ export async function addUserToEvent(
     });
 
     if (event === undefined || event.code !== code) {
+        console.log("Invalid code");
         return null;
     }
 
