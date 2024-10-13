@@ -6,7 +6,7 @@
         "name": "Mohammad Alshaikhusain",
         "position": "President",
         "email": "alshaik8@msu.edu",
-        "profilePicture": "https://media.licdn.com/dms/image/v2/D4D03AQHu16FDkW9IVQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1722363193810?e=1729728000&v=beta&t=vBgYNwy6ikTNXok63s-y4iPdHH36QDIB1wDQsGiqYvU",
+        "profilePicture": "/malshaik.jpg",
         "linkedin": "https://linkedin.com/in/malshaik",
         "github": "https://github.com/malshaik",
         "personalSite": "https://malshaik.com"
@@ -16,7 +16,7 @@
           "name": "Pratham Pradhan",
           "position": "Vice-President",
           "email": "pradha11@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D5603AQGxU5Cyq5yH9w/profile-displayphoto-shrink_800_800/0/1685993772913?e=1727308800&v=beta&t=bcaf0VNO4HPFjuYfc5SuRqBewBFOIW0K3cojHseOL-s",
+          "profilePicture": "/pratham.jpg",
           "linkedin": "https://www.linkedin.com/in/prathampradhan/",
           "github": "https://github.com/Pratt2321"
       },
@@ -25,7 +25,7 @@
           "name": "Paul Lin",
           "position": "Secretary",
           "email": "linpaul1@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D4E03AQEKtczyGOc9Kg/profile-displayphoto-shrink_800_800/0/1681162458852?e=1727308800&v=beta&t=oIMA6rd5FHLSUwoQ-2S6Lbdnle0Us7i-xc5EibiOLrI",
+          "profilePicture": "/paul.jpg",
           "linkedin": "https://www.linkedin.com/in/paul-lin-8b0b62269/",
           "github": "https://github.com/PaulLin1"
       },
@@ -34,7 +34,7 @@
           "name": "Darrian Chen",
           "position": "Treasurer",
           "email": "chendarr@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D5603AQFE0PRhgWxusA/profile-displayphoto-shrink_800_800/0/1718904579843?e=1727308800&v=beta&t=YOReU2cxSuXqIau3XdF_LTurixXdALTDJsPgzeEhn8g",
+          "profilePicture": "/darrian.jpg",
           "linkedin": "https://www.linkedin.com/in/darrianchen/"
       },
       {
@@ -42,7 +42,7 @@
           "name": "Sania Sinha",
           "position": "Executive Advisor",
           "email": "sinhasa3@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/C4D03AQFbu_bn-ytUAQ/profile-displayphoto-shrink_800_800/0/1625813663840?e=1727308800&v=beta&t=wmDWPjH_vO1W6wBH-wGAAqw-T0cMgZkoVEVli-DnusU",
+          "profilePicture": "/sania.jpg",
           "linkedin": "https://www.linkedin.com/in/sania-sinha-20aa07216/",
           "github": "https://github.com/Sanya1001"
       },
@@ -51,8 +51,7 @@
           "name": "Daniel Helo",
           "position": "Workshop Director",
           "email": "helodani@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D4E03AQFYIA2MKN1WOw/profile-displayphoto-shrink_800_800/0/1667786701495?e=1727308800&v=beta&t=Xs4CxdK-3ZBZsFmwZTYPBJFEnG2jGQNpHrWQqFY3nUY",
-          "linkedin": "https://www.linkedin.com/in/daniel-helo-puccini-a3779b242/",
+          "profilePicture": "/daniel.jpg",
           "github": "https://github.com/Danhelo"
       },
       {
@@ -60,7 +59,7 @@
           "name": "Aashish Harishchandre",
           "position": "Workshop Organizer",
           "email": "harishch@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D4E03AQHT4pnF6-BZTw/profile-displayphoto-shrink_800_800/0/1679457220241?e=1727308800&v=beta&t=pr29NEEeuCPXRE11xplUdthZ5u9OJV-41v1NsTB5Uw4",
+          "profilePicture": "/ashish.jpg",
           "linkedin": "https://www.linkedin.com/in/aashish-harishchandre/",
           "github": "https://github.com/AashishH15"
       },
@@ -69,7 +68,7 @@
           "name": "Uzair Mohammed",
           "position": "Workshop Advisor",
           "email": "moham147@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D5603AQGqgxQXu1go0A/profile-displayphoto-shrink_200_200/0/1700450515134?e=1727308800&v=beta&t=x7Ex4lBIK4ByyCf70d_PrT0KaEhSZG3qDaWORDt8H1w",
+          "profilePicture": "/uzair.jpg",
           "linkedin": "https://www.linkedin.com/in/uzair-m/",
           "github": "https://github.com/uzairname"
       },
@@ -88,7 +87,7 @@
           "name": "Arafat Khan",
           "position": "Project Coordinator",
           "email": "khanaraf@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D4D03AQE5I99XGQNdGA/profile-displayphoto-shrink_800_800/0/1713654595452?e=1727308800&v=beta&t=TQXNf-DYd4ig1AE8DoIJ3oIJwZDAuyi5Qtvo2kkEXSc",
+          "profilePicture": "/arafat.jpg",
           "linkedin": "https://www.linkedin.com/in/arafat-khan-121389tt/",
           "github": "https://github.com/arafat-ar13"
       },
@@ -106,7 +105,7 @@
           "name": "Kajal Modi",
           "position": "Marketing Director",
           "email": "modikaja@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D5603AQFK1IfGwQV-TA/profile-displayphoto-shrink_800_800/0/1721435655021?e=1727308800&v=beta&t=07PPYm0aqXOCjORD9ZVB07xLWNxJQlVU-OjJuRVr4gk",
+          "profilePicture": "/kajal.jpg",
           "linkedin": "https://www.linkedin.com/in/kajal-modi28/"
       },
       {
@@ -114,7 +113,7 @@
           "name": "Mann Aswal",
           "position": "Marketing Coordinator",
           "email": "aswalman@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D4D03AQHs0uXxRY09Xg/profile-displayphoto-shrink_800_800/0/1687700211080?e=1727308800&v=beta&t=8M3M6jQWcAh-xNv-IUHQ-xu3wYZxdOCRAxHhDCpEAqw",
+          "profilePicture": "/mann.jpg",
           "linkedin": "https://www.linkedin.com/in/mannaswal/",
           "github": "https://github.com/mannaswal"
       },
@@ -123,7 +122,7 @@
           "name": "Clara Linjewile",
           "position": "Outreach Coordinator",
           "email": "linjewil@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D4E03AQHnrs26XcaU0w/profile-displayphoto-shrink_800_800/0/1705979174200?e=1727308800&v=beta&t=PnHiH9iPcDhzPWzkVqAj6CIwGPN-yEuv-oUIIPvJ0cU",
+          "profilePicture": "/clara.jpg",
           "linkedin": "https://www.linkedin.com/in/clara-linjewile-6969b6192/"
       },
       {
@@ -131,7 +130,7 @@
           "name": "Alexander Grunewald",
           "position": "Marketing Advisor",
           "email": "grunew14@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D5603AQG6-G2O9-oZZg/profile-displayphoto-shrink_800_800/0/1710407452122?e=1727308800&v=beta&t=ChWQUwi3_zD-yG2tVL_NDuHOqzNQvk16byoDWbRisJM",
+          "profilePicture": "/alex.jpg",
           "linkedin": "https://www.linkedin.com/in/alexandermaxgrunewald/"
       },
       {
@@ -139,7 +138,7 @@
           "name": "Mateja Milicevic",
           "position": "Graduate Advisor",
           "email": "milicev2@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/D5603AQFJTCGcmgvPXw/profile-displayphoto-shrink_800_800/0/1708739203833?e=1727308800&v=beta&t=GJ1hHjCKmqEzWbAzJqUIWtwRBoIJEZXJ0eIhw2mQG7o",
+          "profilePicture": "/mateja.jpg",
           "linkedin": "https://www.linkedin.com/in/mateja-mili%C4%87evi%C4%87-8738a1214/",
           "github": "https://github.com/makibrte"
       },
@@ -148,7 +147,7 @@
           "name": "Dirk Colbry",
           "position": "Faculty Advisor",
           "email": "colbrydi@msu.edu",
-          "profilePicture": "https://icer.msu.edu/sites/default/files/styles/medium/public/images/people/Dirk%20Colbry%20v2.png?itok=DG8fGU6n",
+          "profilePicture": "/dirk.jpg",
           "linkedin": "https://www.linkedin.com/in/dirkcolbry/",
           "personalSite": "https://icer.msu.edu/about/directory/colbry"
       },
@@ -157,7 +156,7 @@
           "name": "Parisa Kordjamshidi",
           "position": "Faculty Advisor",
           "email": "kordjams@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/C4D03AQHy33A72YFu2A/profile-displayphoto-shrink_800_800/0/1516866111519?e=1727308800&v=beta&t=8MdCDehyojwThlAtDg1IRLUmytgC0HfJ11DuhbaFRxs",
+          "profilePicture": "/parisa.png",
           "linkedin": "https://linkedin.com/in/parisakordjamshidi",
           "personalSite": "https://www.cse.msu.edu/~kordjams/"
       }
@@ -168,7 +167,7 @@
             "name": "Sanya Sinha",
             "position": "President",
             "email": "sinhasa3@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/C4D03AQFbu_bn-ytUAQ/profile-displayphoto-shrink_800_800/0/1625813663840?e=1727308800&v=beta&t=wmDWPjH_vO1W6wBH-wGAAqw-T0cMgZkoVEVli-DnusU",
+            "profilePicture": "/sania.jpg",
             "linkedin": "https://www.linkedin.com/in/sania-sinha-20aa07216/",
             "github": "https://github.com/Sanya1001"
         },
@@ -194,7 +193,7 @@
             "name": "Mohammad Alshaikhusain",
             "position": "Project Director",
             "email": "alshaik8@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D5603AQH_tfGSDQ19FQ/profile-displayphoto-shrink_800_800/0/1699410506781?e=1727308800&v=beta&t=BbPuoboCRY7cG2p09RgLJIFwuWv8S6zzPKiBZKkWNqU",
+            "profilePicture": "/malshaik.jpg",
             "linkedin": "https://linkedin.com/in/malshaik",
             "github": "https://github.com/malshaik"
         },
@@ -203,7 +202,7 @@
             "name": "Alexander Grunewald",
             "position": "Project Coordinator",
             "email": "grunew14@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D5603AQG6-G2O9-oZZg/profile-displayphoto-shrink_800_800/0/1710407452122?e=1727308800&v=beta&t=ChWQUwi3_zD-yG2tVL_NDuHOqzNQvk16byoDWbRisJM",
+            "profilePicture": "/alex.jpg",
             "linkedin": "https://www.linkedin.com/in/alexandermaxgrunewald/"
         },
         {
@@ -211,7 +210,7 @@
             "name": "Pratham Pradhan",
             "position": "Secretary",
             "email": "pradha11@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D5603AQGxU5Cyq5yH9w/profile-displayphoto-shrink_800_800/0/1685993772913?e=1727308800&v=beta&t=bcaf0VNO4HPFjuYfc5SuRqBewBFOIW0K3cojHseOL-s",
+            "profilePicture": "/pratham.jpg",
             "linkedin": "https://www.linkedin.com/in/prathampradhan/",
             "github": "https://github.com/Pratt2321"
         },
@@ -220,7 +219,7 @@
             "name": "Uzair Mohammed",
             "position": "Workshop Director",
             "email": "moham147@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D5603AQGqgxQXu1go0A/profile-displayphoto-shrink_200_200/0/1700450515134?e=1727308800&v=beta&t=x7Ex4lBIK4ByyCf70d_PrT0KaEhSZG3qDaWORDt8H1w",
+            "profilePicture": "/uzair.jpg",
             "linkedin": "https://www.linkedin.com/in/uzair-m/",
             "github": "https://github.com/uzairname"
         },
@@ -229,7 +228,7 @@
             "name": "Audrey Chen",
             "position": "Workshop Coordinator",
             "email": "chenaud1@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D5603AQGR4rINNKOARA/profile-displayphoto-shrink_800_800/0/1715636884113?e=1727308800&v=beta&t=Jv1Md6-AEdbaVAksBnTEihHSBRtKwmQB4m-uULY1bb8",
+            "profilePicture": "/audrey.jpg",
             "linkedin": "https://www.linkedin.com/in/audrey-chen-tech/",
             "github": "https://github.com/audgeviolin07"
         },
@@ -238,7 +237,7 @@
             "name": "Anas Shaaban",
             "position": "Marketing Director",
             "email": "shaaban3@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D4D03AQF3ET43qMIDKA/profile-displayphoto-shrink_800_800/0/1719274282441?e=1727308800&v=beta&t=ON0epBsFpc3eHCXwK0eGqgeaAKapWO35lZobbSI0q0A",
+            "profilePicture": "/anas.jpg",
             "linkedin": "https://www.linkedin.com/in/anasshaaban01/",
             "github": "https://github.com/anashanishaaban"
         },
@@ -247,7 +246,7 @@
             "name": "Kaitlyn Tuttle",
             "position": "Marketing Coordinator",
             "email": "tuttlek3@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D5603AQGUXeKk2TZReg/profile-displayphoto-shrink_800_800/0/1699557975077?e=1727308800&v=beta&t=PIug2wrpg80TDxn3OXUlI26485wypDDZAC6agKT_4IE",
+            "profilePicture": "",
             "linkedin": "https://www.linkedin.com/in/kaitlyn-tuttle-a1a25124b/"
         },
         {
@@ -255,7 +254,7 @@
             "name": "Mann Aswal",
             "position": "Marketing Coordinator",
             "email": "aswalman@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D4D03AQHs0uXxRY09Xg/profile-displayphoto-shrink_800_800/0/1687700211080?e=1727308800&v=beta&t=8M3M6jQWcAh-xNv-IUHQ-xu3wYZxdOCRAxHhDCpEAqw",
+            "profilePicture": "/mann.jpg",
             "linkedin": "https://www.linkedin.com/in/mannaswal/",
             "github": "https://github.com/mannaswal"
         },
@@ -264,7 +263,7 @@
             "name": "Darrian Chen",
             "position": "Treasurer",
             "email": "chendarr@msu.edu",
-            "profilePicture": "https://media.licdn.com/dms/image/D5603AQFE0PRhgWxusA/profile-displayphoto-shrink_800_800/0/1718904579843?e=1727308800&v=beta&t=YOReU2cxSuXqIau3XdF_LTurixXdALTDJsPgzeEhn8g",
+            "profilePicture": "/darrian.jpg",
             "linkedin": "https://www.linkedin.com/in/darrianchen/"
         }, 
         {
@@ -273,7 +272,7 @@
           "name": "Dirk Colbry",
           "position": "Faculty Advisor",
           "email": "colbrydi@msu.edu",
-          "profilePicture": "https://icer.msu.edu/sites/default/files/styles/medium/public/images/people/Dirk%20Colbry%20v2.png?itok=DG8fGU6n",
+          "profilePicture": "/dirk.jpg",
           "linkedin": "https://www.linkedin.com/in/dirkcolbry/",
           "personalSite": "https://icer.msu.edu/about/directory/colbry"
       },
@@ -282,7 +281,7 @@
           "name": "Parisa Kordjamshidi",
           "position": "Faculty Advisor",
           "email": "kordjams@msu.edu",
-          "profilePicture": "https://media.licdn.com/dms/image/C4D03AQHy33A72YFu2A/profile-displayphoto-shrink_800_800/0/1516866111519?e=1727308800&v=beta&t=8MdCDehyojwThlAtDg1IRLUmytgC0HfJ11DuhbaFRxs",
+          "profilePicture": "/parisa.png",
           "linkedin": "https://linkedin.com/in/parisakordjamshidi",
           "personalSite": "https://www.cse.msu.edu/~kordjams/"
       }
