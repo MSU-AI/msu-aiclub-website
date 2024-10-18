@@ -58,7 +58,7 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  let query = db
+  let baseQuery = db
     .select({
       id: posts.id,
       title: posts.title,
@@ -85,19 +85,28 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
     .orderBy(desc(posts.createdAt));
 
   // Add search functionality
+  let searchConditions;
   if (searchQuery) {
     const searchTerms = searchQuery.split(' ').filter(term => term.length > 0);
-    const searchConditions = searchTerms.map(term => 
+    searchConditions = searchTerms.map(term => 
       or(
         ilike(posts.title, `%${term}%`),
         ilike(posts.description, `%${term}%`),
         ilike(posts.content, `%${term}%`)
       )
     );
-    query = query.where(and(...searchConditions));
+    baseQuery = baseQuery.where(and(...searchConditions));
   }
 
-  const postsWithCounts = await query.limit(limit).offset(offset);
+  const postsWithCounts = await baseQuery.limit(limit).offset(offset);
+
+  // Get total count of posts
+  const totalCountResult = await db
+    .select({ count: sql<number>`count(*)`.as('count') })
+    .from(posts)
+    .where(searchConditions ? and(...searchConditions) : undefined);
+
+  const totalCount = totalCountResult[0].count;
 
   // Fetch user metadata for all posts
   const userMetadata = await Promise.all(
@@ -105,7 +114,7 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
   );
 
   // Combine post data with user metadata
-  return postsWithCounts.map((post, index) => ({
+  const postsWithUserInfo = postsWithCounts.map((post, index) => ({
     ...post,
     liked: post.liked,
     user: post.user ? {
@@ -115,6 +124,11 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
         : ''
     } : null
   }));
+
+  return {
+    posts: postsWithUserInfo,
+    totalCount
+  };
 }
 
 export async function getPostWithComments(postId: string) {

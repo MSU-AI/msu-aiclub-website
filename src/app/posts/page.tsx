@@ -5,6 +5,8 @@ import CreatePostButton from './createPostButton';
 import SearchButton from './searchButton';
 import { createClient } from '~/utils/supabase/server';
 import { isAdmin } from '~/server/actions/auth';
+import Pagination from './pagination';
+import { headers } from 'next/headers';
 
 export default async function PostsPage({
   searchParams,
@@ -18,9 +20,18 @@ export default async function PostsPage({
   const limit = 10;
   const offset = (page - 1) * limit;
   
-  const posts = await getPostsWithUserInfo(limit, offset, query);
+  const { posts, totalCount } = await getPostsWithUserInfo(limit, offset, query);
   
   const isUserAdmin = await isAdmin();
+
+  const totalPages = Math.ceil(totalCount / limit);
+
+  // Get the host from headers
+  const host = headers().get('host') || 'localhost:3000';
+  const protocol = process?.env.NODE_ENV === 'development' ? 'http' : 'https';
+
+  // Construct the full base URL for pagination
+  const baseUrl = `${protocol}://${host}/posts` + (query ? `?query=${encodeURIComponent(query)}` : '');
 
   return (
     <div className="max-w-[1024px] mx-auto px-4 py-8 pt-28">
@@ -39,6 +50,9 @@ export default async function PostsPage({
       <Suspense fallback={<div>Loading posts...</div>}>
         <PostList posts={posts} isAdmin={isUserAdmin} />
       </Suspense>
+      {totalPages > 1 && (
+        <Pagination currentPage={page} totalPages={totalPages} baseUrl={baseUrl} />
+      )}
     </div>
   );
 }
