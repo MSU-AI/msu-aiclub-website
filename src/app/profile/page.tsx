@@ -1,17 +1,21 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { AccountData } from '~/types/profiles';
 import { LabeledInput } from '~/components/ui/labeled-input';
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { updateProfile } from '~/server/actions/auth';
+import { uploadImage } from '~/server/actions/helpers';
 import { createClient } from '~/utils/supabase/client';
 import { Button } from '~/components/ui/button';
+import { Image } from "lucide-react";
 
 export default function ProfilePage() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [userData, setUserData] = useState<AccountData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,6 +31,47 @@ export default function ProfilePage() {
     };
     fetchUserData();
   }, []);
+
+  const triggerFileInput = () => {
+    if (isEditing) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const uploadedUrl = await uploadImage(formData);
+      if (userData) {
+        setUserData({ ...userData, profilePictureUrl: uploadedUrl });
+      }
+      toast.success('Image uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleChange = (name: keyof AccountData, value: string) => {
     if (userData) {
@@ -61,16 +106,41 @@ export default function ProfilePage() {
   return (
     <div className="container mx-auto p-8 pt-28">
       <h1 className="text-2xl font-bold mb-4">Your Profile</h1>
-      <div className="flex items-center mb-6">
-        <Avatar className="w-24 h-24 mr-4">
-          <AvatarImage src={userData.flowerProfile ?? "https://github.com/shadcn.png"} />
+      
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        className="hidden"
+      />
+
+      <div 
+        onClick={triggerFileInput}
+        className={`
+          mb-6 w-40 h-40 relative rounded-full overflow-hidden
+          ${isEditing ? 'cursor-pointer hover:opacity-90' : ''}
+          ${isUploading ? 'opacity-50' : ''}
+        `}
+      >
+        <Avatar className="w-full h-full">
+          <AvatarImage src={userData.profilePictureUrl || userData.flowerProfile || "https://github.com/shadcn.png"} />
           <AvatarFallback>PF</AvatarFallback>
         </Avatar>
-        <div>
-          <h2 className="text-xl font-semibold">{userData.firstName} {userData.lastName}</h2>
-          <p>Level {level ?? 'Unknown'}</p>
-        </div>
+        {isEditing && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <p className="text-white text-sm text-center">
+              {isUploading ? 'Uploading...' : 'Click to change profile picture'}
+            </p>
+          </div>
+        )}
       </div>
+
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold">{userData.firstName} {userData.lastName}</h2>
+        <p>Level {level ?? 'Unknown'}</p>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <LabeledInput
           label="First Name"
@@ -79,7 +149,6 @@ export default function ProfilePage() {
           placeholder='First Name'
           value={userData.firstName}
           onChange={(value) => handleChange("firstName", value)}
-
           disabled={!isEditing}
         />
         <LabeledInput
@@ -127,21 +196,11 @@ export default function ProfilePage() {
           onChange={(value) => handleChange("personalWebsite", value)}
           disabled={!isEditing}
         />
-        <LabeledInput
-          label="Profile Picture URL"
-          id="profilePictureUrl"
-          name="profilePictureUrl"
-          placeholder="https://example.com/your-profile-picture.jpg"
-          value={userData.profilePictureUrl || ''}
-          onChange={(value) => handleChange("profilePictureUrl", value)}
-          disabled={!isEditing}
-          type="url"
-        />
 
         {isEditing ? (
           <div className="space-x-2">
-            <Button type="submit" className="rounded-lg">Save</Button>
-            <Button onClick={() => setIsEditing(false)} className="rounded-lg">Cancel</Button>
+            <Button type="submit" className="rounded-lg" disabled={isUploading}>Save</Button>
+            <Button onClick={() => setIsEditing(false)} className="rounded-lg" disabled={isUploading}>Cancel</Button>
           </div>
         ) : (
           <Button onClick={() => setIsEditing(true)} className="rounded-lg">Edit Profile</Button>

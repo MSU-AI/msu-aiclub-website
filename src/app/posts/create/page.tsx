@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -8,14 +8,18 @@ import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import { createPost } from '~/server/actions/post';
+import { uploadImage } from '~/server/actions/helpers';
 import { toast } from "~/components/ui/use-toast";
 import PostPreview from './postPreview';
-import './postStyles.css'
+import { Image } from "lucide-react";
+import './postStyles.css';
 
 export default function CreatePostPage() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const [html, setHTML] = useState('');
   const router = useRouter();
 
@@ -28,8 +32,59 @@ export default function CreatePostPage() {
     ],
   });
 
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "Image size should be less than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Error",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const uploadedUrl = await uploadImage(formData);
+      setThumbnailUrl(uploadedUrl);
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const onChange = async () => {
-    // Converts the editor's contents from Block objects to HTML and store to state.
     const htmlContent = await editor.blocksToHTMLLossy(editor.document);
     setHTML(htmlContent);
   };
@@ -39,7 +94,7 @@ export default function CreatePostPage() {
     const result = await createPost(title, html, description, thumbnailUrl);
     if (result) {
       toast({
-        title: "Post created",
+        title: "Success",
         description: "Your post has been successfully published.",
       });
       router.push(`/posts/${result}`);
@@ -69,12 +124,54 @@ export default function CreatePostPage() {
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-          <Input
-            placeholder="Thumbnail URL"
-            value={thumbnailUrl}
-            onChange={(e) => setThumbnailUrl(e.target.value)}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
           />
+
+          <div 
+            onClick={triggerFileInput}
+            className={`
+              border-2 border-dashed rounded-lg p-6
+              ${thumbnailUrl ? 'border-green-500' : 'border-gray-300'}
+              hover:border-gray-400 cursor-pointer
+              transition-colors duration-200
+              flex flex-col items-center justify-center
+              ${isUploading ? 'opacity-50' : ''}
+              h-[200px]
+            `}
+          >
+            {!thumbnailUrl && (
+              <div className="text-center">
+                <Image className="mx-auto mb-4 w-12 h-12 text-gray-400" />
+                <div className="mb-2 text-sm font-medium">
+                  {isUploading ? 'Uploading...' : 'Click to upload thumbnail image'}
+                </div>
+                <p className="text-xs text-secondary-foreground">
+                  PNG, JPG, GIF up to 5MB
+                </p>
+              </div>
+            )}
+            
+            {thumbnailUrl && !isUploading && (
+              <div className="relative group w-full h-full">
+                <img
+                  src={thumbnailUrl}
+                  alt="Thumbnail preview"
+                  className="w-full h-full object-cover rounded"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded">
+                  <p className="text-white text-sm">Click to change image</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
         <div className="flex flex-col md:flex-row space-x-4 h-[calc(100vh-300px)]">
           <div className="w-full md:w-1/2 overflow-y-auto border rounded-md">
             <BlockNoteView
@@ -93,11 +190,21 @@ export default function CreatePostPage() {
             />
           </div>
         </div>
+
         <div className="flex justify-end space-x-2 mt-4">
-          <Button type="button" variant="outline" onClick={() => router.push('/posts')}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => router.push('/posts')}
+          >
             Cancel
           </Button>
-          <Button type="submit">Publish</Button>
+          <Button 
+            type="submit"
+            disabled={isUploading}
+          >
+            Publish
+          </Button>
         </div>
       </form>
     </div>
