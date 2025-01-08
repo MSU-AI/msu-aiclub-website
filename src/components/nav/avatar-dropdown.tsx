@@ -22,8 +22,6 @@ export function AvatarDropDown({ userMetadata } : { userMetadata: AccountData | 
   
   const router = useRouter();
 
-  const userType = userMetadata?.memberType;
-
   const flower = userMetadata?.flowerProfile;
   let level = null;
 

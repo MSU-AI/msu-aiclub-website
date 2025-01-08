@@ -54,11 +54,11 @@ export async function getPostById(postId: string) {
   };
 }
 
-export async function getPostsWithUserInfo(limit: number = 10, offset: number = 0, searchQuery?: string) {
+export async function getPostsWithUserInfo() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-
-  let query = db
+  
+  const query = db
     .select({
       id: posts.id,
       title: posts.title,
@@ -84,27 +84,12 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
     .groupBy(posts.id, users.id)
     .orderBy(desc(posts.createdAt));
 
-  // Add search functionality
-  if (searchQuery) {
-    const searchTerms = searchQuery.split(' ').filter(term => term.length > 0);
-    const searchConditions = searchTerms.map(term => 
-      or(
-        ilike(posts.title, `%${term}%`),
-        ilike(posts.description, `%${term}%`),
-        ilike(posts.content, `%${term}%`)
-      )
-    );
-    query = query.where(and(...searchConditions));
-  }
+  const postsWithCounts = await query;
 
-  const postsWithCounts = await query.limit(limit).offset(offset);
-
-  // Fetch user metadata for all posts
   const userMetadata = await Promise.all(
     postsWithCounts.map(post => post.user ? supabase.auth.admin.getUserById(post.user.id) : null)
   );
 
-  // Combine post data with user metadata
   return postsWithCounts.map((post, index) => ({
     ...post,
     liked: post.liked,
@@ -116,6 +101,7 @@ export async function getPostsWithUserInfo(limit: number = 10, offset: number = 
     } : null
   }));
 }
+
 
 export async function getPostWithComments(postId: string) {
   const post = await getPostById(postId);
