@@ -80,7 +80,7 @@ export function ClientProfile({ userMetadata, points }: ClientProfileProps) {
   };
 
   return (
-    <div className="container mx-auto p-8 pt-28">
+    <div className="container mx-auto p-8 pt-28 flex flex-col items-center justify-center">
       <div className="flex flex-col md:flex-row items-start md:items-center gap-8 mb-8">
         <div className="relative">
           <input
@@ -126,14 +126,14 @@ export function ClientProfile({ userMetadata, points }: ClientProfileProps) {
               <p className="text-2xl font-bold">{points.totalPoints}</p>
             </div>
             <div className="bg-card p-4 rounded-lg">
-              <p className="text-sm text-muted-foreground">Current Points</p>
+              <p className="text-sm text-muted-foreground">Current Semester Points</p>
               <p className="text-2xl font-bold">{points.visiblePoints}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+      <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <LabeledInput
             label="First Name"
