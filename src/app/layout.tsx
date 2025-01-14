@@ -9,8 +9,20 @@ import { ThemeProvider } from "~/components/theme-provider";
 
 export const metadata = {
   title: "MSU AI Club",
-  description: "Insert description here",
+  description: "The hub for AI at MSU",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  openGraph: {
+    title: "MSU AI Club",
+    description: "The hub for AI at MSU",
+    images: [
+      {
+        url: "/join-light.png",
+        width: 1200,
+        height: 630,
+        alt: "MSU AI Club Banner",
+      },
+    ],
+  },
 };
 
 export default async function RootLayout({

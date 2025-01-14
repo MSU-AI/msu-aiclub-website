@@ -14,27 +14,6 @@ const TAG_COLORS = [
   'bg-purple-200 text-purple-800',
 ];
 
-// Dummy data? for team members
-const dummyTeamMembers = [
-  {
-    id: '1',
-    name: 'John Doe',
-    role: 'Project Lead',
-    profilePicture: 'https://i.pravatar.cc/150?img=1',
-    linkedin: 'https://linkedin.com/in/johndoe',
-    github: 'https://github.com/johndoe',
-    personalSite: 'https://johndoe.com'
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    role: 'Developer',
-    profilePicture: 'https://i.pravatar.cc/150?img=2',
-    linkedin: 'https://linkedin.com/in/janesmith',
-    github: 'https://github.com/janesmith',
-  },
-  // Add more dummy team members as needed
-];
 
 function getYouTubeEmbedUrl(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;

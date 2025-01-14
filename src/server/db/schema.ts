@@ -213,6 +213,7 @@ export const events = createTable("events", {
   points: integer("points").notNull(),
   code: text("code").notNull(),
   photo: text("photo"),
+  hidden: boolean("hidden").default(false), // Add hidden field
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

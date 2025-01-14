@@ -1,15 +1,30 @@
-"use client"
+"use client";
 
-import Image from 'next/image';
+import React from 'react';
 import Link from 'next/link';
-import { Event } from './data';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "~/components/ui/dropdown-menu";
 import { Button } from "~/components/ui/button";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { toggleEventVisibility } from "~/server/actions/event";
+import { Event } from './data';
 
 export function EventCard({ event, isAdmin }: { event: Event; isAdmin: boolean }) {
+  const router = useRouter();
+
+  const handleToggleVisibility = async () => {
+    await toggleEventVisibility(event.id);
+    router.refresh();
+  };
+
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-hidden relative">
       {event.photo && (
         <Image src={event.photo} alt={event.title} width={300} height={200} className="w-full object-cover h-48" />
       )}
@@ -31,16 +46,30 @@ export function EventCard({ event, isAdmin }: { event: Event; isAdmin: boolean }
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => {}}>
+              <DropdownMenuItem onClick={() => router.push(`/events/edit/${event.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 <span>Edit</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {}} className="text-red-600">
-                <Trash2 className="mr-2 h-4 w-4" />
-                <span>Delete</span>
+              <DropdownMenuItem onClick={handleToggleVisibility}>
+                {event.hidden ? (
+                  <>
+                    <Eye className="mr-2 h-4 w-4" />
+                    <span>Show Event</span>
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="mr-2 h-4 w-4" />
+                    <span>Hide Event</span>
+                  </>
+                )}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
+      )}
+      {event.hidden && isAdmin && (
+        <div className="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-sm">
+          Hidden
         </div>
       )}
     </div>

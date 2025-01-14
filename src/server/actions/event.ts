@@ -130,3 +130,17 @@ export async function editEvent(
     return id;
 }
 
+
+export async function toggleEventVisibility(eventId: string): Promise<void> {
+  const event = await db.query.events.findFirst({
+    where: eq(events.id, eventId),
+  });
+
+  if (!event) {
+    throw new Error("Event not found");
+  }
+
+  await db.update(events)
+    .set({ hidden: !event.hidden })
+    .where(eq(events.id, eventId));
+}

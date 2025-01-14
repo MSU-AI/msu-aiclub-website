@@ -5,8 +5,13 @@ import { db } from "~/server/db";
 import { events, userEvents } from "../schema";
 
 
-export const getEvents = () => {
-  return db.query.events.findMany();
+export const getEvents = async (isAdmin = false) => {
+  if (isAdmin) {
+    return db.query.events.findMany();
+  }
+  return db.query.events.findMany({
+    where: eq(events.hidden, false)
+  });
 }
 
 export const getEventById = async (id: string | undefined) => {
