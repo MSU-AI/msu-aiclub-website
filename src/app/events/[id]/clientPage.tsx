@@ -221,7 +221,7 @@ export default function EventPageClient({
                     alt={event.title} 
                     width={800} 
                     height={400} 
-                    className="w-full object-cover max-h-96 mb-6" 
+                    className="w-full object-fill mb-6" 
                 />
             )}
             
