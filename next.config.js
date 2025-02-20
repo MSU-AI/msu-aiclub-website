@@ -3,9 +3,7 @@
  * for Docker builds.
  */
 await import("./src/env.js");
-
 /** @type {import("next").NextConfig} */
-
 const config = {
   output: "standalone",
   typescript: {
@@ -25,8 +23,23 @@ const config = {
   experimental: {
     serverComponentsExternalPackages: ['drizzle-orm'],
   },
-
+  // Add headers configuration to increase size limit
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'x-middleware-override-headers',
+            value: '1',
+          },
+          {
+            key: 'x-middleware-request-cookie',
+            value: '1',
+          },
+        ],
+      },
+    ];
+  },
 };
-
 export default config;
-
