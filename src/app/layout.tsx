@@ -1,11 +1,11 @@
 import "~/styles/globals.css";
-
 import { GeistSans } from "geist/font/sans";
 import NavBar from "~/components/nav/NavBar";
-import { Providers } from "~/app/providers";
 import { createClient } from "~/utils/supabase/server";
 import { Toaster } from "~/components/ui/toaster";
 import { ThemeProvider } from "~/components/theme-provider";
+import ShopProvider from "~/components/shop/shop-provider";
+import ShopCart from "~/components/shop/shop-cart"; // Import the ShopCart component
 
 export const metadata = {
   title: "MSU AI Club",
@@ -31,21 +31,23 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const supabase = createClient();
-
   const { data } = await supabase.auth.getUser();  
-
   console.log('user data', data.user?.user_metadata?.memberType)
-
   const userMetadata = data.user?.user_metadata;
-
+  
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="">
-          <ThemeProvider attribute="class" defaultTheme="system">
-          <Toaster />
-          <NavBar userMetadata={userMetadata ??  null} />
-          {children}
-          </ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          <ShopProvider>
+            <Toaster />
+            <NavBar userMetadata={userMetadata ?? null} />
+            {children}
+            
+            {/* Global ShopCart component */}
+            <ShopCart />
+          </ShopProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
