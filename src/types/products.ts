@@ -30,6 +30,12 @@ export interface ShopifyProduct {
   collections?: { id: string }[];
 }
 
+export interface ShopifyDiscountCode {
+  code: string;
+  applicable: boolean;
+  amount?: string;
+}
+
 export interface ShopifyCartItem {
   id: string;
   title: string;
@@ -52,6 +58,8 @@ export interface ShopifyCart {
   subtotalPrice: string;
   totalPrice: string;
   currencyCode: string;
+  discountAmount?: string;
+  discountCodes?: ShopifyDiscountCode[];
   lineItems: ShopifyCartItem[];
 }
 
@@ -61,4 +69,9 @@ export interface ShopifyCollection {
   handle: string;
   description: string;
   image: ShopifyProductImage | null;
+}
+
+export interface DiscountCodeResponse {
+  success: boolean;
+  error?: string;
 }

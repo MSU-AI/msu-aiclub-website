@@ -8,6 +8,13 @@
       "when": 1736853148127,
       "tag": "0000_chubby_scarlet_spider",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1741208240621,
+      "tag": "0001_flashy_daredevil",
+      "breakpoints": true
     }
   ]
 }

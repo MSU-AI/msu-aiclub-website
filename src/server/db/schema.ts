@@ -1,8 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { user } from "@nextui-org/react";
-import { desc, relations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   pgTableCreator,
   timestamp,
@@ -38,6 +37,7 @@ export const userRelations = relations(users, ({ many }) => ({
   events: many(userEvents),
   roles: many(userRoles),
   projects: many(userProjects),
+  redemptions: many(pointRedemptions) 
 }));
 
 
@@ -272,6 +272,25 @@ export const eventAnswerRelations = relations(eventAnswers, ({ one }) => ({
   }),
   user: one(users, {
     fields: [eventAnswers.userId],
+    references: [users.id],
+  }),
+}));
+
+export const pointRedemptions = createTable("pointRedemptions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  points: integer("points").notNull(),
+  discountCode: text("discount_code").notNull(),
+  discountValue: integer("discount_value").notNull(), // In percentage
+  status: text("status").notNull().default("active"), // 'active', 'used', 'expired'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"),
+  usedAt: timestamp("used_at"),
+});
+
+export const pointRedemptionRelations = relations(pointRedemptions, ({ one }) => ({
+  user: one(users, {
+    fields: [pointRedemptions.userId],
     references: [users.id],
   }),
 }));

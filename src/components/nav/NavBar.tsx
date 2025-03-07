@@ -59,10 +59,21 @@ export default function NavBar({
         const fetchCartCount = async () => {
             try {
                 const client = ShopifyClient.getInstance();
-                const count = await client.getCartItemCount();
-                setCartCount(count);
+                // Check if the method exists before calling it
+                if (typeof client.getCartItemCount === 'function') {
+                    const count = await client.getCartItemCount();
+                    setCartCount(count);
+                } else {
+                    console.error("getCartItemCount method not found on ShopifyClient");
+                    // Fallback: try to get cart and calculate count manually
+                    const cart = await client.getCart();
+                    if (cart && cart.lineItems) {
+                        const count = cart.lineItems.reduce((total, item) => total + item.quantity, 0);
+                        setCartCount(count);
+                    }
+                }
             } catch (error) {
-                console.error('Error fetching cart count:', error);
+                console.error("Error fetching cart count:", error);
             }
         };
 
@@ -165,7 +176,7 @@ export default function NavBar({
                     ) : (
                         <>
                         <ThemeSwitcherButton />
-                        <Link href="/auth/register">
+                        <Link href="/auth/login">
                             <HoverBorderGradient
                                 containerClassName="rounded-full"
                                 as="button"

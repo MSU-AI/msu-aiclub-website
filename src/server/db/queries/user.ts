@@ -1,6 +1,5 @@
 import { db } from '~/server/db';
-import { userRoles, userEvents } from '../schema';
-import { User } from '@supabase/supabase-js';
+import { userEvents } from '../schema';
 import { eq } from 'drizzle-orm';
 
 export async function getUsers() {
