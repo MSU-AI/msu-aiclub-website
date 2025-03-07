@@ -65,10 +65,19 @@ const PointsBanner: React.FC<PointsBannerProps> = ({ onOpenRedemption, user, red
     <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg p-4 mb-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex-1">
+        <div className="flex w-full justify-between">
           <div className="flex items-center mb-1">
             <Coins className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
             <h3 className="font-medium">You have <span className="font-bold">{redeemablePoints} points</span> to redeem!</h3>
           </div>
+          <Button 
+            onClick={onOpenRedemption} 
+            className="whitespace-nowrap"
+          >
+            Redeem Points
+            <ChevronRight className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
           
           {pointsNeeded > 0 ? (
             <p className="text-sm mb-2">
@@ -95,13 +104,6 @@ const PointsBanner: React.FC<PointsBannerProps> = ({ onOpenRedemption, user, red
           </div>
         </div>
         
-        <Button 
-          onClick={onOpenRedemption} 
-          className="whitespace-nowrap"
-        >
-          Redeem Points
-          <ChevronRight className="ml-1 h-4 w-4" />
-        </Button>
       </div>
     </div>
   );
