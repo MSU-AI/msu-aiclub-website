@@ -57,7 +57,7 @@
       {
           "id": "7",
           "name": "Aashish Harishchandre",
-          "position": "Workshop Organizer",
+          "position": "Workshop Director",
           "email": "harishch@msu.edu",
           "profilePicture": "/ashish.jpg",
           "linkedin": "https://www.linkedin.com/in/aashish-harishchandre/",
@@ -110,15 +110,6 @@
       },
       {
           "id": "13",
-          "name": "Mann Aswal",
-          "position": "Marketing Coordinator",
-          "email": "aswalman@msu.edu",
-          "profilePicture": "/mann.jpg",
-          "linkedin": "https://www.linkedin.com/in/mannaswal/",
-          "github": "https://github.com/mannaswal"
-      },
-      {
-          "id": "14",
           "name": "Clara Linjewile",
           "position": "Outreach Coordinator",
           "email": "linjewil@msu.edu",
@@ -126,7 +117,7 @@
           "linkedin": "https://www.linkedin.com/in/clara-linjewile-6969b6192/"
       },
       {
-          "id": "15",
+          "id": "14",
           "name": "Alexander Grunewald",
           "position": "Marketing Advisor",
           "email": "grunew14@msu.edu",
@@ -134,7 +125,7 @@
           "linkedin": "https://www.linkedin.com/in/alexandermaxgrunewald/"
       },
       {
-          "id": "16",
+          "id": "15",
           "name": "Mateja Milicevic",
           "position": "Graduate Advisor",
           "email": "milicev2@msu.edu",
@@ -143,7 +134,23 @@
           "github": "https://github.com/makibrte"
       },
       {
+          "id": "16",
+          "name": "Abdolla Hegazy",
+          "position": "Workshop Organizer",
+          "email": "hegazyab@msu.edu",
+          "profilePicture": "/abdolla.jpg",
+          "linkedin": "https://www.linkedin.com/in/abdolla-hegazy/"
+      },
+      {
           "id": "17",
+          "name": "Malhar K",
+          "position": "Workshop Organizer",
+          "email": "khistyma@msu.edu",
+          "profilePicture": "/malhar.jpg",
+          "linkedin": "https://www.linkedin.com/in/malhar-k-181552266/"
+      },
+      {
+          "id": "18",
           "name": "Dirk Colbry",
           "position": "Faculty Advisor",
           "email": "colbrydi@msu.edu",
@@ -152,7 +159,7 @@
           "personalSite": "https://icer.msu.edu/about/directory/colbry"
       },
       {
-          "id": "18",
+          "id": "19",
           "name": "Parisa Kordjamshidi",
           "position": "Faculty Advisor",
           "email": "kordjams@msu.edu",
@@ -185,7 +192,7 @@
             "name": "Gabriel Sotelo",
             "position": "Chief Advisor",
             "email": "sotelog1@msu.edu",
-            "profilePicture": "https://static.wixstatic.com/media/21bf5e_1e15e54264dc41c68b8236b89ab599af~mv2.png/v1/crop/x_25,y_0,w_980,h_936/fill/w_266,h_254,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Gabriel%20.png",
+            "profilePicture": "/gabriel.jpg",
             "personalSite": "https://gabrielsotelo.com/#/"
         },
         {
@@ -246,7 +253,7 @@
             "name": "Kaitlyn Tuttle",
             "position": "Marketing Coordinator",
             "email": "tuttlek3@msu.edu",
-            "profilePicture": "",
+            "profilePicture": "/kaitlyn.jpeg",
             "linkedin": "https://www.linkedin.com/in/kaitlyn-tuttle-a1a25124b/"
         },
         {
@@ -267,7 +274,6 @@
             "linkedin": "https://www.linkedin.com/in/darrianchen/"
         }, 
         {
-
           "id": "117",
           "name": "Dirk Colbry",
           "position": "Faculty Advisor",
@@ -275,8 +281,8 @@
           "profilePicture": "/dirk.jpg",
           "linkedin": "https://www.linkedin.com/in/dirkcolbry/",
           "personalSite": "https://icer.msu.edu/about/directory/colbry"
-      },
-      {
+        },
+        {
           "id": "118",
           "name": "Parisa Kordjamshidi",
           "position": "Faculty Advisor",
@@ -284,29 +290,217 @@
           "profilePicture": "/parisa.png",
           "linkedin": "https://linkedin.com/in/parisakordjamshidi",
           "personalSite": "https://www.cse.msu.edu/~kordjams/"
-      }
+        }
     ],
     "2022/2023": [
         {
             "id": "201",
-            "name": "Placeholder Member",
-            "position": "Placeholder Position",
-            "email": "placeholder@msu.edu",
-            "profilePicture": "/board-members/2022-2023/placeholder.jpg",
-            "linkedin": "https://linkedin.com/in/placeholder",
-            "github": "https://github.com/placeholder"
+            "name": "Gabriel Sotelo",
+            "position": "President",
+            "email": "sotelog1@msu.edu",
+            "profilePicture": "/gabriel.jpg",
+            "personalSite": "https://gabrielsotelo.com/"
+        },
+        {
+            "id": "202",
+            "name": "Sania Sinha",
+            "position": "Vice President",
+            "email": "sinhasa3@msu.edu",
+            "profilePicture": "/sania.jpg",
+            "linkedin": "https://www.linkedin.com/in/sania-sinha-20aa07216/",
+            "github": "https://github.com/Sanya1001"
+        },
+        {
+            "id": "203",
+            "name": "Rachel Townson",
+            "position": "Marketing Director",
+            "email": "townsonr@msu.edu",
+            "profilePicture": "/rachel.jpg",
+            "linkedin": "https://www.linkedin.com/in/rachel-townson/"
+        },
+        {
+            "id": "204",
+            "name": "Josh Pullen",
+            "position": "Workshop Director",
+            "email": "pullenjo@msu.edu",
+            "profilePicture": "/josh.jpg",
+            "linkedin": "https://www.linkedin.com/in/joshpullen/"
+        },
+        {
+            "id": "205",
+            "name": "Owen Cochell",
+            "position": "Project Director",
+            "email": "cochello@msu.edu",
+            "profilePicture": "/owen.jpg",
+            "linkedin": "https://www.linkedin.com/in/owen-cochell/",
+            "github": "https://github.com/OwenCochell"
+        },
+        {
+            "id": "206",
+            "name": "Fanurs Teh",
+            "position": "Graduate Advisor",
+            "email": "tehfanu@msu.edu",
+            "profilePicture": "/fanurs.jpg",
+            "linkedin": "https://www.linkedin.com/in/fanurs-teh/"
+        },
+        {
+            "id": "207",
+            "name": "Karoline Yashin",
+            "position": "Secretary",
+            "email": "yashinka@msu.edu",
+            "profilePicture": "/karoline.jpg"
+        },
+        {
+            "id": "208",
+            "name": "Morgan Sandler",
+            "position": "Graduate Advisor",
+            "email": "sandlerm@msu.edu",
+            "profilePicture": "/morgan.jpg",
+            "linkedin": "https://www.linkedin.com/in/morgan-sandler/"
+        },
+        {
+            "id": "209",
+            "name": "Darrian Chen",
+            "position": "Treasurer",
+            "email": "chendarr@msu.edu",
+            "profilePicture": "/darrian.jpg",
+            "linkedin": "https://www.linkedin.com/in/darrianchen/"
+        },
+        {
+            "id": "210",
+            "name": "Vy Hoang",
+            "position": "Outreach Coordinator",
+            "email": "hoangvy@msu.edu",
+            "profilePicture": "/vy.jpg",
+            "linkedin": "https://www.linkedin.com/in/vy-hoang-bb9294213/"
+        },
+        {
+            "id": "211",
+            "name": "Alexander Grunewald",
+            "position": "Technical Coordinator",
+            "email": "grunew14@msu.edu",
+            "profilePicture": "/alex.jpg",
+            "linkedin": "https://www.linkedin.com/in/alexandermaxgrunewald/"
+        },
+        {
+            "id": "212",
+            "name": "Uzair Mohammed",
+            "position": "Technical Coordinator",
+            "email": "moham147@msu.edu",
+            "profilePicture": "/uzair.jpg",
+            "linkedin": "https://www.linkedin.com/in/uzair-m/",
+            "github": "https://github.com/uzairname"
+        },
+        {
+            "id": "213",
+            "name": "Kaitlyn Tuttle",
+            "position": "Outreach Coordinator",
+            "email": "tuttlek3@msu.edu",
+            "profilePicture": "/kaitlyn.jpeg",
+            "linkedin": "https://www.linkedin.com/in/kaitlyn-tuttle-a1a25124b/"
         }
     ],
     "2021/2022": [
         {
             "id": "301",
-            "name": "Placeholder Member",
-            "position": "Placeholder Position",
-            "email": "placeholder@msu.edu",
-            "profilePicture": "/board-members/2021-2022/placeholder.jpg",
-            "linkedin": "https://linkedin.com/in/placeholder",
-            "github": "https://github.com/placeholder"
+            "name": "Gabriel Sotelo",
+            "position": "President",
+            "email": "sotelog1@msu.edu",
+            "profilePicture": "/gabriel.jpg",
+            "personalSite": "https://gabrielsotelo.com/"
+        },
+        {
+            "id": "302",
+            "name": "Sania Sinha",
+            "position": "Vice President",
+            "email": "sinhasa3@msu.edu",
+            "profilePicture": "/sania.jpg",
+            "linkedin": "https://www.linkedin.com/in/sania-sinha-20aa07216/",
+            "github": "https://github.com/Sanya1001"
+        },
+        {
+            "id": "303",
+            "name": "Rachel Townson",
+            "position": "Marketing Director",
+            "email": "townsonr@msu.edu",
+            "profilePicture": "/rachel.jpg",
+            "linkedin": "https://www.linkedin.com/in/rachel-townson/"
+        },
+        {
+            "id": "304",
+            "name": "Josh Pullen",
+            "position": "Workshop Director",
+            "email": "pullenjo@msu.edu",
+            "profilePicture": "/josh.jpg",
+            "linkedin": "https://www.linkedin.com/in/joshpullen/"
+        },
+        {
+            "id": "305",
+            "name": "Owen Cochell",
+            "position": "Project Director",
+            "email": "cochello@msu.edu",
+            "profilePicture": "/owen.jpg",
+            "linkedin": "https://www.linkedin.com/in/owen-cochell/",
+            "github": "https://github.com/OwenCochell"
+        },
+        {
+            "id": "306",
+            "name": "Fanurs Teh",
+            "position": "Graduate Advisor",
+            "email": "tehfanu@msu.edu",
+            "profilePicture": "/fanurs.jpg",
+            "linkedin": "https://www.linkedin.com/in/fanurs-teh/"
+        },
+        {
+            "id": "307",
+            "name": "Karoline Yashin",
+            "position": "Secretary",
+            "email": "yashinka@msu.edu",
+            "profilePicture": "/karoline.jpg",
+            "linkedin": "https://www.linkedin.com/in/yashinka/"
+        },
+        {
+            "id": "308",
+            "name": "Morgan Sandler",
+            "position": "Graduate Advisor",
+            "email": "sandlerm@msu.edu",
+            "profilePicture": "/morgan.jpg",
+            "linkedin": "https://www.linkedin.com/in/morgan-sandler/"
+        }
+    ],
+    "2020/2021": [
+        {
+            "id": "401",
+            "name": "Aref Zeitoun",
+            "position": "President",
+            "email": "zeitouna@msu.edu",
+            "profilePicture": "/aref.png",
+            "linkedin": "https://www.linkedin.com/in/aref-zeitoun/"
+        },
+        {
+            "id": "402",
+            "name": "Brylee Pavlik",
+            "position": "Vice President",
+            "email": "pavlikbr@msu.edu",
+            "profilePicture": "/brylee.jpg",
+            "linkedin": "https://www.linkedin.com/in/brylee-pavlik-345250205/"
+        },
+        {
+            "id": "403",
+            "name": "Gabriel Sotelo",
+            "position": "Technical Director",
+            "email": "sotelog1@msu.edu",
+            "profilePicture": "/gabriel.jpg",
+            "personalSite": "https://gabrielsotelo.com/"
+        },
+        {
+            "id": "404",
+            "name": "Trinity Johnson",
+            "position": "Secretary",
+            "email": "john3600@msu.edu",
+            "profilePicture": "/trinity.jpg",
+            "linkedin": "https://www.linkedin.com/in/trinity-johnson-a099aa179/"
         }
     ]
   }
-} 
+}

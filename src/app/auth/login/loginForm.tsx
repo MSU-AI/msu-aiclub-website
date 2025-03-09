@@ -1,63 +1,84 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
+import Image from "next/image";
 
-import { Button } from "~/components/ui/button"
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card"
-import { Input } from "~/components/ui/input"
-
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { login, loginWithGoogle } from "~/server/actions/auth";
-import { toast } from "react-hot-toast";
+} from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Spacer } from "@nextui-org/react";
-import Image from "next/image";
 import { Label } from "@radix-ui/react-label";
-
-
+import { login, loginWithGoogle } from "~/server/actions/auth";
 
 export default function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        // Check if there's a success message from password reset
+        const urlMessage = searchParams.get('message');
+        if (urlMessage) {
+            setMessage(urlMessage);
+            toast.success(urlMessage, {
+                duration: 4000, 
+                position: 'bottom-right', 
+                style: {
+                    border: '2px solid #333',
+                    color: '#fff',
+                    backgroundColor: '#333',
+                },
+            });
+        }
+    }, [searchParams]);
 
     const handleSubmit = async () => {
-        const res = await login(email, password);
+        setIsSubmitting(true);
+        try {
+            const res = await login(email, password);
 
-        if (res) {
-            setMessage(res);
-            toast.error(res, {
-                duration: 4000, 
-                position: 'bottom-right', 
-                style: {
-                    border: '2px solid #333',
-                    color: '#fff',
-                    backgroundColor: '#333',
-                },
+            if (res) {
+                setMessage(res);
+                toast.error(res, {
+                    duration: 4000, 
+                    position: 'bottom-right', 
+                    style: {
+                        border: '2px solid #333',
+                        color: '#fff',
+                        backgroundColor: '#333',
+                    },
                 });
-        } else {
-            toast.success('Successfully logged in!', {
-                duration: 4000, 
-                position: 'bottom-right', 
-                style: {
-                    border: '2px solid #333',
-                    color: '#fff',
-                    backgroundColor: '#333',
-                },
+            } else {
+                toast.success('Successfully logged in!', {
+                    duration: 4000, 
+                    position: 'bottom-right', 
+                    style: {
+                        border: '2px solid #333',
+                        color: '#fff',
+                        backgroundColor: '#333',
+                    },
                 });
-            router.push('/');
+                router.push('/');
+            }
+        } catch (error) {
+            setMessage('An error occurred. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
-
     }
 
     return (
@@ -89,7 +110,7 @@ export default function LoginForm() {
         </div>
         <CardContent>
             <div className="grid gap-4">
-                <Label>{message}</Label>
+                {message && <Label className={message.includes('successfully') ? 'text-green-500' : 'text-red-500'}>{message}</Label>}
             <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -102,8 +123,11 @@ export default function LoginForm() {
                 />
             </div>
             <div className="grid gap-2">
-                <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    <Link href="/auth/forgot-password" className="text-xs text-blue-500 hover:underline">
+                        Forgot Password?
+                    </Link>
                 </div>
                 <Input
                     id="password"
@@ -114,8 +138,13 @@ export default function LoginForm() {
                     onChange={e => setPassword(e.target.value)}
                 />
             </div>
-            <Button onClick={handleSubmit} type="submit" className="w-full">
-                Login
+            <Button 
+                onClick={handleSubmit} 
+                type="submit" 
+                className="w-full"
+                disabled={isSubmitting}
+            >
+                {isSubmitting ? "Logging in..." : "Login"}
             </Button>
             </div>
             <div className="mt-4 text-center text-sm">
@@ -127,5 +156,4 @@ export default function LoginForm() {
         </CardContent>
         </Card>
     )
- 
 }

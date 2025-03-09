@@ -232,3 +232,72 @@ export async function isAdmin(): Promise<boolean> {
 
     return roles.includes('admin') || roles.includes('board');
 }
+
+
+/**
+ * Sends a password reset email to the user
+ * @param email the email of the user
+ * @returns null if successful, or an error message if not
+ */
+export async function requestPasswordReset(email: string): Promise<string | null> {
+  if (!email) {
+    return "Please enter your email address";
+  }
+  
+  const supabase = createClient();
+  
+  // Use the callback route which is meant to handle auth redirects
+  const redirectUrl = getURL('/auth/callback?next=/auth/reset-password');
+  
+  // Log for debugging
+  console.log("Reset password redirect URL:", redirectUrl);
+  
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectUrl,
+  });
+
+  if (error) console.log(error);
+
+  return error ? error.message : null;
+}
+
+/**
+ * Resets a user's password
+ * @param password the new password
+ * @returns null if successful, or an error message if not
+ */
+export async function resetPassword(password: string): Promise<string | null> {
+  if (!password) {
+    return "Please enter a new password";
+  }
+  
+  if (password.length < 6) {
+    return "Password must be at least 6 characters";
+  }
+  
+  const supabase = createClient();
+  
+  const { error } = await supabase.auth.updateUser({
+    password,
+  });
+
+  return error ? error.message : null;
+}
+
+/**
+ * Checks if the reset password request is valid
+ * @returns true if valid, false if not
+ */
+export async function validateResetRequest(): Promise<boolean> {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase.auth.getSession();
+  
+  if (error ?? !data.session) {
+    return false;
+  }
+  
+  return true;
+}
+
+
