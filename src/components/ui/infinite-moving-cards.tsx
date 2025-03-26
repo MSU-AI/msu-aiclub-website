@@ -23,7 +23,7 @@ const items: Item[] = [
     name: "Burgess Institute"
   },
   {
-    image: "/sponsors/dchous.png",
+    image: "/sponsors/dchaus.png",
     name: "digital consultinghaus"
   },
   {
@@ -33,6 +33,10 @@ const items: Item[] = [
   {
     image: "/sponsors/rocket.png",
     name: "Rocket Mortgage"
+  },
+  {
+    image: "/sponsors/humana.webp",
+    name: "Humana"
   },
 ];
 
