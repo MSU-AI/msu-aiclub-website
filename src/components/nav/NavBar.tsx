@@ -14,9 +14,11 @@ import ThemeSwitcherButton from '../ui/theme-switcher-button';
 import ShopifyClient from '~/utils/shopify';
 
 export default function NavBar({
-    userMetadata
+    userMetadata,
+    isAdmin = false
 }: {
-    userMetadata: AccountData | null
+    userMetadata: AccountData | null,
+    isAdmin?: boolean
 }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [cartCount, setCartCount] = useState(0);
@@ -68,7 +70,7 @@ export default function NavBar({
                     // Fallback: try to get cart and calculate count manually
                     const cart = await client.getCart();
                     if (cart && cart.lineItems) {
-                        const count = cart.lineItems.reduce((total, item) => total + item.quantity, 0);
+                        const count = cart.lineItems.reduce((total: number, item: any) => total + item.quantity, 0);
                         setCartCount(count);
                     }
                 }
@@ -143,6 +145,7 @@ export default function NavBar({
                                 </Link>
                             </li>
                         ))}
+                        {/* Admin attendance is now integrated into the members page */}
                     </ul>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -203,6 +206,7 @@ export default function NavBar({
                                 </Link>
                             </li>
                         ))}
+                        {/* Admin attendance is now integrated into the members page */}
                     </ul>
                 </div>
             )}

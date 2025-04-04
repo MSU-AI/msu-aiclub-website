@@ -1,0 +1,662 @@
+"use client";
+import React, { useState, useMemo, useEffect } from 'react';
+import { UserMetadata } from './data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Input } from "~/components/ui/input";
+import { Badge } from "~/components/ui/badge";
+import { X, ExternalLink, Download } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { addRole, removeRole } from '~/server/actions/role';
+import { Button } from "~/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Checkbox } from "~/components/ui/checkbox";
+import { Label } from "~/components/ui/label";
+import { Progress } from "~/components/ui/progress";
+import type { Event, Member, AttendanceRecord } from "~/types/attendance";
+
+const TAG_COLORS = [
+  'bg-blue-200 text-blue-800',
+  'bg-green-200 text-green-800',
+  'bg-yellow-200 text-yellow-800',
+  'bg-red-200 text-red-800',
+  'bg-purple-200 text-purple-800',
+];
+
+export default function MembersPageClient({
+  members,
+  isAdmin,
+  events = [],
+  allMembers = [],
+  attendanceData = [],
+  attendanceCounts = new Map(),
+} : {
+  members: any,
+  isAdmin: boolean,
+  events?: Event[],
+  allMembers?: Member[],
+  attendanceData?: AttendanceRecord[],
+  attendanceCounts?: Map<string, number>,
+}) {
+  const [curMembers, setCurMembers] = useState(members);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Attendance related state
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [attendanceThreshold, setAttendanceThreshold] = useState(50); // Default 50%
+  const [currentTab, setCurrentTab] = useState("members");
+
+  const sortedAndFilteredMembers = useMemo(() => {
+    return [...curMembers]
+      .sort((a, b) => (b.points || 0) - (a.points || 0))
+      .filter(member => 
+        Object.values(member).some(value => 
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        ) ||
+        Object.values(member.metadata).some(value => 
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+  }, [curMembers, searchTerm]);
+
+  const paginatedMembers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedAndFilteredMembers.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedAndFilteredMembers, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(sortedAndFilteredMembers.length / itemsPerPage);
+
+  const handleFieldChange = (memberId: string, field: keyof UserMetadata, value: any) => {
+    setCurMembers(curMembers.map(member => 
+      member.id === memberId ? { ...member, [field]: value } : member
+    ));
+  };
+
+  const EditableCell = ({ value, onChange }: { value: string, onChange: (value: string) => void }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editValue, setEditValue] = useState(value);
+
+    if (isEditing) {
+      return (
+        <Input
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={() => {
+            onChange(editValue);
+            setIsEditing(false);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              onChange(editValue);
+              setIsEditing(false);
+            }
+          }}
+          autoFocus
+        />
+      );
+    }
+
+    return (
+      <div onClick={() => isAdmin && setIsEditing(true)} className={isAdmin ? "cursor-pointer" : ""}>
+        {value}
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, itemsPerPage]);
+
+  // Calculate attendance stats
+  const attendanceStats = useMemo(() => {
+    // Filter events if any are selected
+    const filteredEvents = selectedEvents.length > 0 
+      ? events.filter(event => selectedEvents.includes(event.id))
+      : events;
+    
+    // Map of eventIds that are selected (or all if none selected)
+    const eventIdMap = new Map(filteredEvents.map(event => [event.id, true]));
+    
+    // Calculate attendance rate for each member
+    return allMembers.map(member => {
+      // Get all attendance records for this member
+      const memberAttendance = attendanceData.filter(record => 
+        record.userId === member.id && eventIdMap.has(record.eventId)
+      );
+      
+      // Calculate attendance rate
+      const attendanceRate = filteredEvents.length > 0
+        ? (memberAttendance.length / filteredEvents.length) * 100
+        : 0;
+      
+      // List of events this member attended
+      const attendedEvents = memberAttendance.map(record => 
+        events.find(event => event.id === record.eventId)
+      ).filter(Boolean) as Event[];
+      
+      // List of events this member missed
+      const missedEvents = filteredEvents.filter(event => 
+        !memberAttendance.some(record => record.eventId === event.id)
+      );
+      
+      return {
+        member,
+        attendanceRate,
+        attendedEvents,
+        missedEvents,
+        totalEvents: filteredEvents.length,
+        eventsAttended: attendedEvents.length
+      };
+    });
+  }, [allMembers, attendanceData, events, selectedEvents]);
+
+  // Calculate overview stats
+  const overviewStats = useMemo(() => {
+    const totalMembers = allMembers.length;
+    const totalEvents = events.length;
+    const selectedEventCount = selectedEvents.length > 0 ? selectedEvents.length : totalEvents;
+    
+    // Calculate average attendance rate
+    const totalAttendanceRate = attendanceStats.reduce((sum, stat) => sum + stat.attendanceRate, 0);
+    const averageAttendanceRate = totalMembers > 0 ? totalAttendanceRate / totalMembers : 0;
+    
+    // Count members below threshold
+    const membersBelowThreshold = attendanceStats.filter(stat => 
+      stat.attendanceRate < attendanceThreshold
+    ).length;
+    
+    // Calculate percentage of members below threshold
+    const percentBelowThreshold = totalMembers > 0 
+      ? (membersBelowThreshold / totalMembers) * 100
+      : 0;
+    
+    return {
+      averageAttendanceRate,
+      membersBelowThreshold,
+      percentBelowThreshold,
+      totalMembers,
+      totalEvents,
+      selectedEvents: selectedEventCount
+    };
+  }, [attendanceStats, attendanceThreshold, allMembers.length, events.length, selectedEvents.length]);
+
+  // Helper function to format date
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(date).toLocaleDateString('en-US', options);
+  };
+
+  // Toggle event selection
+  const toggleEventSelection = (eventId: string) => {
+    setSelectedEvents(prev => 
+      prev.includes(eventId)
+        ? prev.filter(id => id !== eventId)
+        : [...prev, eventId]
+    );
+  };
+
+  // Select all events
+  const selectAllEvents = () => {
+    setSelectedEvents(events.map(event => event.id));
+  };
+
+  // Clear all selected events
+  const clearEventSelection = () => {
+    setSelectedEvents([]);
+  };
+
+  // Export attendance data as CSV
+  const exportAttendanceCSV = () => {
+    const headers = ['Member Name', 'Email', 'Attendance Rate', 'Events Attended', 'Total Events'];
+    
+    const csvContent = [
+      headers.join(','),
+      ...attendanceStats.map(stat => [
+        `"${stat.member.name}"`,
+        `"${stat.member.email}"`,
+        `"${stat.attendanceRate.toFixed(1)}%"`,
+        `"${stat.eventsAttended}"`,
+        `"${stat.totalEvents}"`
+      ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'attendance_data.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Export members data to CSV
+  const exportToCSV = () => {
+    const headers = [
+      'Name', 'Email', 'Member Type', 'University', 'Major', 'School Year',
+      'Level', 'Points', 'Discord Username', 'Roles'
+    ];
+
+    const csvContent = [
+      headers.join(','),
+      ...curMembers.map(member => [
+        member.metadata.fullName,
+        member.email,
+        member.metadata.memberType,
+        member.metadata.university,
+        member.metadata.major,
+        member.metadata.schoolYear,
+        member.level,
+        member.points,
+        member.metadata.discordUsername,
+        member.roles.map(role => role.name).join(';')
+      ].map(field => `"${field}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'members_data.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8 pt-28">
+      <Tabs defaultValue="members" onValueChange={setCurrentTab}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="members">Members</TabsTrigger>
+          {isAdmin && (
+            <>
+              <TabsTrigger value="attendance">Attendance Overview</TabsTrigger>
+              <TabsTrigger value="events">Event Selection</TabsTrigger>
+            </>
+          )}
+        </TabsList>
+
+        <TabsContent value="members">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <Input
+                placeholder="Search members..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full md:w-64"
+              />
+            </div>
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <Select
+                value={itemsPerPage.toString()}
+                onValueChange={(value) => setItemsPerPage(parseInt(value))}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Items per page" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5 per page</SelectItem>
+                  <SelectItem value="10">10 per page</SelectItem>
+                  <SelectItem value="20">20 per page</SelectItem>
+                  <SelectItem value="50">50 per page</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={exportToCSV}>
+                <Download className="mr-2 h-4 w-4" /> Export CSV
+              </Button>
+            </div>
+          </div>
+          
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[50px]">#</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Member Type</TableHead>
+                <TableHead>University</TableHead>
+                <TableHead>Major</TableHead>
+                <TableHead>School Year</TableHead>
+                <TableHead>Level</TableHead>
+                <TableHead>Points</TableHead>
+                <TableHead>Discord Username</TableHead>
+                {isAdmin && (
+                  <>
+                    <TableHead>Attendance %</TableHead>
+                    <TableHead>Events Attended</TableHead>
+                  </>
+                )}
+                <TableHead>Roles</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedMembers.map((member, index) => (
+                <TableRow key={member.id}>
+                  <TableCell>{(currentPage - 1) * itemsPerPage + index + 1}</TableCell>
+                  <TableCell>
+                    <Popover>
+                      <PopoverTrigger>{member.metadata.fullName}</PopoverTrigger>
+                      <PopoverContent>
+                        {member.githubUrl && (
+                          <a href={member.metadata.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center mb-2">
+                            <ExternalLink className="mr-2" /> GitHub
+                          </a>
+                        )}
+                        {member.personalWebsite && (
+                          <a href={member.metadata.personalWebsite} target="_blank" rel="noopener noreferrer" className="flex items-center mb-2">
+                            <ExternalLink className="mr-2" /> Personal Website
+                          </a>
+                        )}
+                        {member.linkedinUrl && (
+                          <a href={member.metadata.linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                            <ExternalLink className="mr-2" /> LinkedIn
+                          </a>
+                        )}
+                      </PopoverContent>
+                    </Popover>
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.email}
+                      onChange={(value) => handleFieldChange(member.id, 'email', value)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.metadata.memberType}
+                      onChange={(value) => handleFieldChange(member.id, 'memberType', value)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.metadata.university}
+                      onChange={(value) => handleFieldChange(member.id, 'university', value)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.metadata.major}
+                      onChange={(value) => handleFieldChange(member.id, 'major', value)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.metadata.schoolYear}
+                      onChange={(value) => handleFieldChange(member.id, 'schoolYear', value)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.level?.toString() || ''}
+                      onChange={(value) => handleFieldChange(member.id, 'level', parseInt(value))}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.points?.toString() || ''}
+                      onChange={(value) => handleFieldChange(member.id, 'points', parseInt(value))}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditableCell
+                      value={member.metadata.discordUsername}
+                      onChange={(value) => handleFieldChange(member.id, 'discordUsername', value)}
+                    />
+                  </TableCell>
+                  {isAdmin && (
+                    <>
+                      <TableCell>
+                        {attendanceStats.find(stat => stat.member.id === member.id)?.attendanceRate.toFixed(1)}%
+                      </TableCell>
+                      <TableCell>
+                        {attendanceStats.find(stat => stat.member.id === member.id)?.eventsAttended || 0} / 
+                        {attendanceStats.find(stat => stat.member.id === member.id)?.totalEvents || 0}
+                      </TableCell>
+                    </>
+                  )}
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {member.roles.map((role: any, index: number) => (
+                        <Badge key={role.id} className={`mr-1 mb-1 ${TAG_COLORS[index % TAG_COLORS.length]}`}>
+                          {role.name}
+                          {isAdmin && (
+                            <X
+                              className="ml-1 h-3 w-3 cursor-pointer"
+                              onClick={() => removeRole(member.id, role.id)}
+                            />
+                          )}
+                        </Badge>
+                      ))}
+                      {isAdmin && (
+                        <Input
+                          className="w-20 h-6 text-xs"
+                          placeholder="Add role"
+                          onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (e.key === 'Enter') {
+                              addRole(member.id, e.currentTarget.value);
+                              e.currentTarget.value = '';
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="flex items-center justify-between space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <div className="text-sm text-muted-foreground">
+              Page {currentPage} of {totalPages}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </TabsContent>
+
+        {isAdmin && (
+          <>
+            {/* Attendance Overview Tab */}
+            <TabsContent value="attendance">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle>Average Attendance</CardTitle>
+                    <CardDescription>
+                      {selectedEvents.length > 0 && selectedEvents.length !== events.length
+                        ? `Based on ${selectedEvents.length} selected events`
+                        : "Based on all events"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{overviewStats.averageAttendanceRate.toFixed(1)}%</div>
+                    <Progress 
+                      value={overviewStats.averageAttendanceRate} 
+                      className="mt-2" 
+                    />
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle>Events Analyzed</CardTitle>
+                    <CardDescription>
+                      {selectedEvents.length > 0 && selectedEvents.length !== events.length
+                        ? `${selectedEvents.length} selected events`
+                        : "All events included in analysis"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">
+                      {overviewStats.selectedEvents} / {overviewStats.totalEvents}
+                    </div>
+                    {overviewStats.totalEvents > 0 && (
+                      <Progress 
+                        value={(overviewStats.selectedEvents / overviewStats.totalEvents) * 100} 
+                        className="mt-2" 
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+                
+                <Card className="md:col-span-2">
+                  <CardHeader className="pb-2">
+                    <CardTitle>Members Below Threshold</CardTitle>
+                    <CardDescription>{attendanceThreshold}% attendance threshold</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">
+                      {overviewStats.membersBelowThreshold} / {overviewStats.totalMembers}
+                    </div>
+                    <Progress 
+                      value={overviewStats.percentBelowThreshold} 
+                      className="mt-2" 
+                    />
+                    
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {attendanceStats
+                        .filter(stat => stat.attendanceRate < attendanceThreshold)
+                        .slice(0, 9)
+                        .map(stat => (
+                          <Card key={stat.member.id} className="overflow-hidden">
+                            <CardHeader className="p-4 pb-0">
+                              <CardTitle className="text-lg">{stat.member.name}</CardTitle>
+                              <CardDescription>{stat.attendanceRate.toFixed(1)}% attendance</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-4">
+                              <div className="text-sm">
+                                <p><span className="font-medium">Events attended:</span> {stat.eventsAttended}/{stat.totalEvents}</p>
+                                {stat.missedEvents.length > 0 && (
+                                  <div className="mt-2">
+                                    <span className="font-medium">Recent missed events:</span>
+                                    <ul className="list-disc pl-5 mt-1 text-xs">
+                                      {stat.missedEvents.slice(0, 3).map(event => (
+                                        <li key={event.id}>{event.title} ({formatDate(event.time)})</li>
+                                      ))}
+                                      {stat.missedEvents.length > 3 && (
+                                        <li>And {stat.missedEvents.length - 3} more...</li>
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                        
+                      {attendanceStats.filter(stat => stat.attendanceRate < attendanceThreshold).length === 0 && (
+                        <div className="col-span-full text-center py-8 text-gray-500">
+                          No members below the attendance threshold
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="flex justify-end mb-4">
+                <Button onClick={exportAttendanceCSV}>
+                  <Download className="mr-2 h-4 w-4" /> Export Attendance CSV
+                </Button>
+              </div>
+            </TabsContent>
+            
+            {/* Events Tab */}
+            <TabsContent value="events">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-medium">Select Events for Analysis</h2>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={selectAllEvents}>Select All</Button>
+                  <Button variant="outline" onClick={clearEventSelection}>Clear</Button>
+                </div>
+              </div>
+              
+              <Card>
+                <CardContent className="p-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12"></TableHead>
+                        <TableHead>Event Name</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Attendees</TableHead>
+                        <TableHead className="text-right">Attendance Rate</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* Sort events from most recent to oldest */}
+                      {[...events]
+                        .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+                        .map((event) => {
+                        // Get attendance count for this event from the provided data
+                        const attendeeCount = attendanceCounts.get(event.id) ?? 0;
+                        const attendanceRate = allMembers.length > 0 
+                          ? (attendeeCount / allMembers.length) * 100
+                          : 0;
+                        
+                        return (
+                          <TableRow key={event.id}>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedEvents.includes(event.id)}
+                                onCheckedChange={() => toggleEventSelection(event.id)}
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium">{event.title}</TableCell>
+                            <TableCell>{formatDate(event.time)}</TableCell>
+                            <TableCell className="text-right">{attendeeCount}/{allMembers.length}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <Progress value={attendanceRate} className="w-20" />
+                                <span>{attendanceRate.toFixed(1)}%</span>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      
+                      {events.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-4">
+                            No events found
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
+    </div>
+  );
+}
