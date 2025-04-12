@@ -8,3 +8,15 @@ export interface Project {
     videoURL?: string | null;
     tags?: string[] | null;
 }
+
+
+export interface StoredFormData {
+    title?: string;
+    imageUrl?: string;
+    videoUrl?: string;
+    githubUrl?: string;
+    liveSiteUrl?: string;
+    techStack?: string[];
+    html?: string;
+    activeTab?: string;
+}

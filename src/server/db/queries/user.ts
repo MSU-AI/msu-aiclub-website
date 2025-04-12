@@ -2,7 +2,9 @@ import { db } from '~/server/db';
 import { userEvents } from '../schema';
 import { eq } from 'drizzle-orm';
 
-export async function getUsers() {
+import { DbUser } from '../types';
+
+export async function getUsers(): Promise<DbUser[]> {
   const results = await db.query.users.findMany({
     with: {
       roles: {
@@ -27,8 +29,20 @@ export async function getUsers() {
     id: user.id,
     email: user.email,
     metadata: user.raw_user_meta_data,
-    roles: user.roles.map(ur => ur.role),
-    projects: user.projects.map(up => up.project),
+    // Add user_metadata to match the expected structure in ProjectSubmissionForm
+    user_metadata: {
+      full_name: user.raw_user_meta_data?.full_name || ''
+    },
+    roles: user.roles.map(ur => ({
+      id: ur.role.id,
+      name: ur.role.name || '',
+      ...ur.role
+    })),
+    projects: user.projects.map(up => ({
+      id: up.project.id,
+      name: up.project.name || '',
+      ...up.project
+    })),
     // Only count points from visible events
     points: user.events.reduce((acc, event) => {
       if (!event.event || event.event.hidden) return acc;

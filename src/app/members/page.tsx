@@ -25,6 +25,8 @@ export default async function MembersPage() {
     }
 
     return (
+    <>
+    <h1 className="text-3xl font-bold">Posts</h1>
     <MembersPageClient 
         members={members}
         isAdmin={isUserAdmin}
@@ -33,5 +35,6 @@ export default async function MembersPage() {
         attendanceData={attendanceData}
         attendanceCounts={attendanceCounts}
     />
+    </>
     );
 }

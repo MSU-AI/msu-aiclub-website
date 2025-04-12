@@ -48,7 +48,15 @@ export default function MembersPageClient({
   // Attendance related state
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const [attendanceThreshold, setAttendanceThreshold] = useState(50); // Default 50%
+  // Initialize to members tab, which is the only tab non-admins can see
   const [currentTab, setCurrentTab] = useState("members");
+  
+  // Ensure non-admins can only access the members tab
+  useEffect(() => {
+    if (!isAdmin && currentTab !== "members") {
+      setCurrentTab("members");
+    }
+  }, [currentTab, isAdmin]);
   const [attendanceSearchQuery, setAttendanceSearchQuery] = useState("");
   const [attendanceSortOrder, setAttendanceSortOrder] = useState("desc"); // Default sort order
   const [includeZeroAttendance, setIncludeZeroAttendance] = useState(false); // Default: exclude 0% attendance
@@ -372,47 +380,50 @@ export default function MembersPageClient({
   console.log('Admin tabs should be visible:', isAdmin === true);
 
   return (
-    <div className="container mx-auto py-6">
-      {/* Debug UI element */}
-      <div className="bg-blue-100 p-2 mb-4 rounded">
-        Admin Status: {isAdmin ? 'Admin (true)' : 'Not Admin (false)'}
-      </div>
+    <div className="container mx-auto py-20">
+      <h1 className="text-3xl font-bold py-8">Members</h1>
 
       <Tabs value={currentTab} onValueChange={setCurrentTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="members">Members</TabsTrigger>
-          {/* Force render admin tabs for debugging */}
-          <TabsTrigger value="attendance">Attendance Overview</TabsTrigger>
-          <TabsTrigger value="events">Events</TabsTrigger>
-        </TabsList>
+        {isAdmin && (
+          <>
+            <TabsList className="mb-4">
+              <TabsTrigger value="members">Members</TabsTrigger>
+              <TabsTrigger value="attendance">Attendance Overview</TabsTrigger>
+              <TabsTrigger value="events">Events</TabsTrigger>
+            </TabsList>
+          </>
+        )}
 
         <TabsContent value="members">
           {/* Event filtering information */}
-          {isAdmin && selectedEvents.length > 0 && selectedEvents.length !== events.length && (
-            <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-4 flex items-center justify-between">
-              <div>
-                <span className="font-medium">Filtered view:</span> Showing data for {selectedEvents.length} selected events
-                <Button 
-                  variant="link" 
-                  className="text-blue-600 dark:text-blue-400 p-0 h-auto ml-2"
-                  onClick={() => setCurrentTab("events")}
+          {isAdmin &&
+            selectedEvents.length > 0 &&
+            selectedEvents.length !== events.length && (
+              <div className="mb-4 flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950">
+                <div>
+                  <span className="font-medium">Filtered view:</span> Showing
+                  data for {selectedEvents.length} selected events
+                  <Button
+                    variant="link"
+                    className="ml-2 h-auto p-0 text-blue-600 dark:text-blue-400"
+                    onClick={() => setCurrentTab("events")}
+                  >
+                    Manage selection
+                  </Button>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearEventSelection}
+                  className="text-xs"
                 >
-                  Manage selection
+                  Clear filter
                 </Button>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={clearEventSelection}
-                className="text-xs"
-              >
-                Clear filter
-              </Button>
-            </div>
-          )}
+            )}
 
-          <div className="flex flex-col gap-4 mb-4">
-            <div className="flex flex-wrap justify-between items-center gap-4">
+          <div className="mb-4 flex flex-col gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-4">
                 <Input
                   placeholder="Search members..."
@@ -421,7 +432,12 @@ export default function MembersPageClient({
                   className="w-64"
                 />
                 <div className="flex items-center gap-2">
-                  <Label htmlFor="memberAttendanceThreshold" className="whitespace-nowrap">Min. Attendance:</Label>
+                  <Label
+                    htmlFor="memberAttendanceThreshold"
+                    className="whitespace-nowrap"
+                  >
+                    Min. Attendance:
+                  </Label>
                   <div className="flex items-center">
                     <Input
                       id="memberAttendanceThreshold"
@@ -429,16 +445,20 @@ export default function MembersPageClient({
                       min="0"
                       max="100"
                       value={attendanceThreshold}
-                      onChange={(e) => setAttendanceThreshold(parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        setAttendanceThreshold(parseInt(e.target.value) || 0)
+                      }
                       className="w-16"
                     />
                     <span className="ml-1">%</span>
                   </div>
                 </div>
-                
+
                 {isAdmin && (
                   <div className="flex items-center gap-2">
-                    <Label htmlFor="sortField" className="whitespace-nowrap">Sort by:</Label>
+                    <Label htmlFor="sortField" className="whitespace-nowrap">
+                      Sort by:
+                    </Label>
                     <Select value={sortField} onValueChange={setSortField}>
                       <SelectTrigger id="sortField" className="w-36">
                         <SelectValue placeholder="Sort by" />
@@ -447,22 +467,33 @@ export default function MembersPageClient({
                         <SelectItem value="points">Points</SelectItem>
                         <SelectItem value="name">Name</SelectItem>
                         <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="attendance">Attendance Rate</SelectItem>
-                        <SelectItem value="eventsAttended">Events Attended</SelectItem>
+                        <SelectItem value="attendance">
+                          Attendance Rate
+                        </SelectItem>
+                        <SelectItem value="eventsAttended">
+                          Events Attended
+                        </SelectItem>
                       </SelectContent>
                     </Select>
-                    
+
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
+                      onClick={() =>
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
+                        )
+                      }
                       className="h-9 w-9"
                     >
-                      {sortDirection === 'asc' ? '↑' : '↓'}
+                      {sortDirection === "asc" ? "↑" : "↓"}
                     </Button>
                   </div>
                 )}
-                <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(parseInt(value))}>
+                <Select
+                  value={itemsPerPage.toString()}
+                  onValueChange={(value) => setItemsPerPage(parseInt(value))}
+                >
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="10 per page" />
                   </SelectTrigger>
@@ -475,7 +506,10 @@ export default function MembersPageClient({
                 </Select>
               </div>
               {isAdmin && (
-                <Button onClick={exportToCSV} className="flex items-center gap-2">
+                <Button
+                  onClick={exportToCSV}
+                  className="flex items-center gap-2"
+                >
                   <Download className="h-4 w-4" />
                   Export CSV
                 </Button>
@@ -508,10 +542,14 @@ export default function MembersPageClient({
             <TableBody>
               {paginatedMembers.map((member, index) => (
                 <TableRow key={member.id}>
-                  <TableCell>{(currentPage - 1) * itemsPerPage + index + 1}</TableCell>
+                  <TableCell>
+                    {(currentPage - 1) * itemsPerPage + index + 1}
+                  </TableCell>
                   <TableCell>
                     <Popover>
-                      <PopoverTrigger>{member.metadata.fullName}</PopoverTrigger>
+                      <PopoverTrigger>
+                        {member.metadata.fullName}
+                      </PopoverTrigger>
                       <PopoverContent>
                         {/* ... (rest of the code remains the same) */}
                       </PopoverContent>
@@ -520,68 +558,91 @@ export default function MembersPageClient({
                   <TableCell>
                     <EditableCell
                       value={member.email}
-                      onChange={(value) => handleFieldChange(member.id, 'email', value)}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "email", value)
+                      }
                     />
                   </TableCell>
                   <TableCell>
                     <EditableCell
                       value={member.metadata.memberType}
-                      onChange={(value) => handleFieldChange(member.id, 'memberType', value)}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "memberType", value)
+                      }
                     />
                   </TableCell>
                   <TableCell>
                     <EditableCell
                       value={member.metadata.university}
-                      onChange={(value) => handleFieldChange(member.id, 'university', value)}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "university", value)
+                      }
                     />
                   </TableCell>
                   <TableCell>
                     <EditableCell
                       value={member.metadata.major}
-                      onChange={(value) => handleFieldChange(member.id, 'major', value)}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "major", value)
+                      }
                     />
                   </TableCell>
                   <TableCell>
                     <EditableCell
                       value={member.metadata.schoolYear}
-                      onChange={(value) => handleFieldChange(member.id, 'schoolYear', value)}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "schoolYear", value)
+                      }
                     />
                   </TableCell>
                   <TableCell>
                     <EditableCell
-                      value={member.level?.toString() || ''}
-                      onChange={(value) => handleFieldChange(member.id, 'level', parseInt(value))}
+                      value={member.level?.toString() || ""}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "level", parseInt(value))
+                      }
                     />
                   </TableCell>
                   <TableCell>
                     <EditableCell
-                      value={member.points?.toString() || ''}
-                      onChange={(value) => handleFieldChange(member.id, 'points', parseInt(value))}
+                      value={member.points?.toString() || ""}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "points", parseInt(value))
+                      }
                     />
                   </TableCell>
                   <TableCell>
                     <EditableCell
                       value={member.metadata.discordUsername}
-                      onChange={(value) => handleFieldChange(member.id, 'discordUsername', value)}
+                      onChange={(value) =>
+                        handleFieldChange(member.id, "discordUsername", value)
+                      }
                     />
                   </TableCell>
-                  {isAdmin && (() => {
-                    const memberStats = attendanceStats.find(stat => stat.member.id === member.id);
-                    return (
-                      <>
-                        <TableCell>
-                          {memberStats?.attendanceRate.toFixed(1) ?? '0.0'}%
-                        </TableCell>
-                        <TableCell>
-                          {memberStats?.eventsAttended ?? 0} / {memberStats?.totalEvents ?? 0}
-                        </TableCell>
-                      </>
-                    );
-                  })()}
+                  {isAdmin &&
+                    (() => {
+                      const memberStats = attendanceStats.find(
+                        (stat) => stat.member.id === member.id,
+                      );
+                      return (
+                        <>
+                          <TableCell>
+                            {memberStats?.attendanceRate.toFixed(1) ?? "0.0"}%
+                          </TableCell>
+                          <TableCell>
+                            {memberStats?.eventsAttended ?? 0} /{" "}
+                            {memberStats?.totalEvents ?? 0}
+                          </TableCell>
+                        </>
+                      );
+                    })()}
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {member.roles.map((role: any, index: any) => (
-                        <Badge key={role.id} className={`mr-1 mb-1 ${TAG_COLORS[index % TAG_COLORS.length]}`}>
+                        <Badge
+                          key={role.id}
+                          className={`mb-1 mr-1 ${TAG_COLORS[index % TAG_COLORS.length]}`}
+                        >
                           {role.name}
                           {isAdmin && (
                             <X
@@ -593,12 +654,12 @@ export default function MembersPageClient({
                       ))}
                       {isAdmin && (
                         <Input
-                          className="w-20 h-6 text-xs"
+                          className="h-6 w-20 text-xs"
                           placeholder="Add role"
                           onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === "Enter") {
                               addRole(member.id, e.currentTarget.value);
-                              e.currentTarget.value = '';
+                              e.currentTarget.value = "";
                             }
                           }}
                         />
@@ -613,7 +674,7 @@ export default function MembersPageClient({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
               Previous
@@ -624,7 +685,9 @@ export default function MembersPageClient({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
               Next
@@ -634,357 +697,522 @@ export default function MembersPageClient({
 
         {/* Attendance Overview Tab */}
         <TabsContent value="attendance">
-              {/* Filtering controls */}
-              <div className="flex flex-wrap items-center gap-4 mb-6">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="attendanceThreshold">Attendance Threshold:</Label>
-                  <div className="flex items-center">
-                    <Input
-                      id="attendanceThreshold"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={attendanceThreshold}
-                      onChange={(e) => setAttendanceThreshold(parseInt(e.target.value) || 0)}
-                      className="w-20"
-                    />
-                    <span className="ml-1">%</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="includeZeroAttendance" 
-                      checked={includeZeroAttendance}
-                      onCheckedChange={() => setIncludeZeroAttendance(!includeZeroAttendance)}
-                    />
-                    <Label 
-                      htmlFor="includeZeroAttendance" 
-                      className="text-sm font-normal"
-                    >
-                      Include members with 0% attendance
-                    </Label>
-                  </div>
-                </div>
-
-                {selectedEvents.length > 0 && selectedEvents.length !== events.length && (
-                  <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-1.5 flex items-center">
-                    <span className="text-sm">Filtered: {selectedEvents.length} events selected</span>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-6 ml-2 text-xs"
-                      onClick={clearEventSelection}
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                )}
+          {/* Filtering controls */}
+          <div className="mb-6 flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="attendanceThreshold">Attendance Threshold:</Label>
+              <div className="flex items-center">
+                <Input
+                  id="attendanceThreshold"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={attendanceThreshold}
+                  onChange={(e) =>
+                    setAttendanceThreshold(parseInt(e.target.value) || 0)
+                  }
+                  className="w-20"
+                />
+                <span className="ml-1">%</span>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle>Average Attendance</CardTitle>
-                    <CardDescription>
-                      {selectedEvents.length > 0 && selectedEvents.length !== events.length
-                        ? `Based on ${selectedEvents.length} selected events`
-                        : "Based on all events"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">{overviewStats.averageAttendanceRate.toFixed(1)}%</div>
-                    <Progress 
-                      value={overviewStats.averageAttendanceRate} 
-                      className="mt-2" 
-                    />
-                  </CardContent>
-                </Card>
-                
-                <Card className="md:col-span-2">
-                  <CardHeader className="pb-2">
-                    <CardTitle>Members Below Threshold</CardTitle>
-                    <CardDescription>{attendanceThreshold}% attendance threshold</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">
-                      {overviewStats.membersBelowThreshold} / {overviewStats.totalMembers}
-                    </div>
-                    <Progress 
-                      value={overviewStats.percentBelowThreshold} 
-                      className="mt-2" 
-                    />
-                  </CardContent>
-                </Card>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="includeZeroAttendance"
+                  checked={includeZeroAttendance}
+                  onCheckedChange={() =>
+                    setIncludeZeroAttendance(!includeZeroAttendance)
+                  }
+                />
+                <Label
+                  htmlFor="includeZeroAttendance"
+                  className="text-sm font-normal"
+                >
+                  Include members with 0% attendance
+                </Label>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Attendance Distribution</CardTitle>
-                    <CardDescription>
-                      {selectedEvents.length > 0 && selectedEvents.length !== events.length
-                        ? `Based on ${selectedEvents.length} selected events`
-                        : "Based on all events"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <defs>
-                          <linearGradient id="belowThresholdGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4}/>
-                            <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                          </linearGradient>
-                          <linearGradient id="aboveThresholdGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4}/>
-                            <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.1}/>
-                          </linearGradient>
-                        </defs>
-                        <Pie
-                          data={[
-                            { 
-                              name: 'Below Threshold', 
-                              value: filteredAttendanceStats
-                                .filter(stat => stat.attendanceRate < attendanceThreshold)
-                                .length,
-                              fill: 'url(#belowThresholdGradient)', // Use gradient
-                              stroke: '#3b82f6', // Blue outline
-                              strokeWidth: 1
-                            },
-                            { 
-                              name: 'Above Threshold', 
-                              value: filteredAttendanceStats
-                                .filter(stat => stat.attendanceRate >= attendanceThreshold)
-                                .length,
-                              fill: 'url(#aboveThresholdGradient)', // Use gradient
-                              stroke: '#8b5cf6', // Purple outline
-                              strokeWidth: 1
-                            },
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }: { name: string, percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                        </Pie>
-                        <Tooltip 
-                          formatter={(value) => [`${value} members`, '']} 
-                          contentStyle={{ backgroundColor: '#1e293b', color: '#ffffff', border: '1px solid #475569', padding: '8px 12px', borderRadius: '4px' }}
-                          labelStyle={{ color: '#94a3b8', fontWeight: 'bold', marginBottom: '4px' }}
-                          itemStyle={{ color: '#ffffff' }}
-                        />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
+            {selectedEvents.length > 0 &&
+              selectedEvents.length !== events.length && (
+                <div className="flex items-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 dark:border-blue-800 dark:bg-blue-950">
+                  <span className="text-sm">
+                    Filtered: {selectedEvents.length} events selected
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="ml-2 h-6 text-xs"
+                    onClick={clearEventSelection}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              )}
+          </div>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Attendance Rates</CardTitle>
-                    <CardDescription>
-                      Distribution of attendance rates
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={[
-                          { range: '0-25%', count: filteredAttendanceStats
-                            .filter(stat => 
-                              (includeZeroAttendance || stat.attendanceRate > 0) && 
-                              stat.attendanceRate >= 0 && 
-                              stat.attendanceRate < 25
-                            ).length 
-                          },
-                          { range: '25-50%', count: filteredAttendanceStats.filter(stat => stat.attendanceRate >= 25 && stat.attendanceRate < 50).length },
-                          { range: '50-75%', count: filteredAttendanceStats.filter(stat => stat.attendanceRate >= 50 && stat.attendanceRate < 75).length },
-                          { range: '75-100%', count: filteredAttendanceStats.filter(stat => stat.attendanceRate >= 75 && stat.attendanceRate <= 100).length },
-                        ]}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle>Average Attendance</CardTitle>
+                <CardDescription>
+                  {selectedEvents.length > 0 &&
+                  selectedEvents.length !== events.length
+                    ? `Based on ${selectedEvents.length} selected events`
+                    : "Based on all events"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">
+                  {overviewStats.averageAttendanceRate.toFixed(1)}%
+                </div>
+                <Progress
+                  value={overviewStats.averageAttendanceRate}
+                  className="mt-2"
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="md:col-span-2">
+              <CardHeader className="pb-2">
+                <CardTitle>Members Below Threshold</CardTitle>
+                <CardDescription>
+                  {attendanceThreshold}% attendance threshold
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">
+                  {overviewStats.membersBelowThreshold} /{" "}
+                  {overviewStats.totalMembers}
+                </div>
+                <Progress
+                  value={overviewStats.percentBelowThreshold}
+                  className="mt-2"
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Attendance Distribution</CardTitle>
+                <CardDescription>
+                  {selectedEvents.length > 0 &&
+                  selectedEvents.length !== events.length
+                    ? `Based on ${selectedEvents.length} selected events`
+                    : "Based on all events"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <defs>
+                      <linearGradient
+                        id="belowThresholdGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="range" />
-                        <YAxis />
-                        <Tooltip 
-                          formatter={(value) => [`${value} members`, 'Count']} 
-                          contentStyle={{ backgroundColor: '#1e293b', color: '#ffffff', border: '1px solid #475569', padding: '8px 12px', borderRadius: '4px' }}
-                          labelStyle={{ color: '#94a3b8', fontWeight: 'bold', marginBottom: '4px' }}
-                          itemStyle={{ color: '#ffffff' }}
+                        <stop
+                          offset="0%"
+                          stopColor="#3b82f6"
+                          stopOpacity={0.4}
                         />
-                        <defs>
-                          <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.4}/>
-                            <stop offset="100%" stopColor="#10b981" stopOpacity={0.1}/>
-                          </linearGradient>
-                        </defs>
-                        <Bar dataKey="count" fill="url(#barGradient)" stroke="#10b981" strokeWidth={1.5} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              </div>
+                        <stop
+                          offset="100%"
+                          stopColor="#3b82f6"
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="aboveThresholdGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor="#8b5cf6"
+                          stopOpacity={0.4}
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#8b5cf6"
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <Pie
+                      data={[
+                        {
+                          name: "Below Threshold",
+                          value: filteredAttendanceStats.filter(
+                            (stat) => stat.attendanceRate < attendanceThreshold,
+                          ).length,
+                          fill: "url(#belowThresholdGradient)", // Use gradient
+                          stroke: "#3b82f6", // Blue outline
+                          strokeWidth: 1,
+                        },
+                        {
+                          name: "Above Threshold",
+                          value: filteredAttendanceStats.filter(
+                            (stat) =>
+                              stat.attendanceRate >= attendanceThreshold,
+                          ).length,
+                          fill: "url(#aboveThresholdGradient)", // Use gradient
+                          stroke: "#8b5cf6", // Purple outline
+                          strokeWidth: 1,
+                        },
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({
+                        name,
+                        percent,
+                      }: {
+                        name: string;
+                        percent: number;
+                      }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    ></Pie>
+                    <Tooltip
+                      formatter={(value) => [`${value} members`, ""]}
+                      contentStyle={{
+                        backgroundColor: "#1e293b",
+                        color: "#ffffff",
+                        border: "1px solid #475569",
+                        padding: "8px 12px",
+                        borderRadius: "4px",
+                      }}
+                      labelStyle={{
+                        color: "#94a3b8",
+                        fontWeight: "bold",
+                        marginBottom: "4px",
+                      }}
+                      itemStyle={{ color: "#ffffff" }}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Attendance Trends</CardTitle>
-                  <CardDescription>
-                    {selectedEvents.length > 0 && selectedEvents.length !== events.length
-                      ? `Based on ${selectedEvents.length} selected events`
-                      : "Based on all events"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={events
-                        .filter(event => selectedEvents.length === 0 || selectedEvents.includes(event.id))
-                        .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
-                        .map(event => {
-                          // Get the list of members who attended this specific event
-                          const attendeesForThisEvent = attendanceData
-                            .filter(record => record.eventId === event.id)
-                            .map(record => record.userId);
-                          
-                          const attendeeCount = attendeesForThisEvent.length;
-                          
-                          // Calculate effective member count based on includeZeroAttendance setting
-                          let effectiveMemberCount = allMembers.length;
-                          
-                          // If we're not including zero attendance, adjust the member count
-                          if (!includeZeroAttendance) {
-                            // Get members who have attended at least one event (any event)
-                            const membersWithAnyAttendance = new Set();
-                            attendanceData.forEach(record => {
-                              membersWithAnyAttendance.add(record.userId);
-                            });
-                            effectiveMemberCount = membersWithAnyAttendance.size;
-                          }
-                          
-                          const attendanceRate = effectiveMemberCount > 0 
-                            ? (attendeeCount / effectiveMemberCount) * 100
-                            : 0;
-                            
-                          return {
-                            name: event.title,
-                            date: formatDate(event.time),
-                            rate: parseFloat(attendanceRate.toFixed(1))
-                          };
-                        })}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis domain={[0, 100]} />
-                      <Tooltip 
-                        formatter={(value) => [`${value}%`, 'Attendance Rate']} 
-                        contentStyle={{ backgroundColor: '#1e293b', color: '#ffffff', border: '1px solid #475569', padding: '8px 12px', borderRadius: '4px' }}
-                        labelStyle={{ color: '#94a3b8', fontWeight: 'bold', marginBottom: '4px' }}
-                        itemStyle={{ color: '#ffffff' }}
-                      />
-                      <Legend />
-                      <defs>
-                        <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.4}/>
-                          <stop offset="100%" stopColor="#6366f1" stopOpacity={0.4}/>
-                        </linearGradient>
-                      </defs>
-                      <Line type="monotone" dataKey="rate" stroke="url(#lineGradient)" strokeWidth={2.5} activeDot={{ r: 8 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {/* Events Tab */}
-            <TabsContent value="events">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-medium">Select Events for Analysis</h2>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={selectAllEvents}>Select All</Button>
-                  <Button variant="outline" onClick={clearEventSelection}>Clear</Button>
-                </div>
-              </div>
-              
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-12"></TableHead>
-                        <TableHead>Event Name</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Attendees</TableHead>
-                        <TableHead className="text-right">Attendance Rate</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {/* Sort events from most recent to oldest */}
-                      {[...events]
-                        .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-                        .map((event) => {
-                        // Get the list of members who attended this specific event
-                        const attendeesForThisEvent = attendanceData
-                          .filter(record => record.eventId === event.id)
-                          .map(record => record.userId);
-                        
-                        const attendeeCount = attendeesForThisEvent.length;
-                        
-                        // Calculate effective member count based on includeZeroAttendance setting
-                        let effectiveMemberCount = allMembers.length;
-                        
-                        // If we're not including zero attendance, adjust the member count
-                        if (!includeZeroAttendance) {
-                          // Get members who have attended at least one event (any event)
-                          const membersWithAnyAttendance = new Set();
-                          attendanceData.forEach(record => {
-                            membersWithAnyAttendance.add(record.userId);
-                          });
-                          effectiveMemberCount = membersWithAnyAttendance.size;
-                        }
-                        
-                        const attendanceRate = effectiveMemberCount > 0 
+            <Card>
+              <CardHeader>
+                <CardTitle>Attendance Rates</CardTitle>
+                <CardDescription>
+                  Distribution of attendance rates
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={[
+                      {
+                        range: "0-25%",
+                        count: filteredAttendanceStats.filter(
+                          (stat) =>
+                            (includeZeroAttendance ||
+                              stat.attendanceRate > 0) &&
+                            stat.attendanceRate >= 0 &&
+                            stat.attendanceRate < 25,
+                        ).length,
+                      },
+                      {
+                        range: "25-50%",
+                        count: filteredAttendanceStats.filter(
+                          (stat) =>
+                            stat.attendanceRate >= 25 &&
+                            stat.attendanceRate < 50,
+                        ).length,
+                      },
+                      {
+                        range: "50-75%",
+                        count: filteredAttendanceStats.filter(
+                          (stat) =>
+                            stat.attendanceRate >= 50 &&
+                            stat.attendanceRate < 75,
+                        ).length,
+                      },
+                      {
+                        range: "75-100%",
+                        count: filteredAttendanceStats.filter(
+                          (stat) =>
+                            stat.attendanceRate >= 75 &&
+                            stat.attendanceRate <= 100,
+                        ).length,
+                      },
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="range" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value) => [`${value} members`, "Count"]}
+                      contentStyle={{
+                        backgroundColor: "#1e293b",
+                        color: "#ffffff",
+                        border: "1px solid #475569",
+                        padding: "8px 12px",
+                        borderRadius: "4px",
+                      }}
+                      labelStyle={{
+                        color: "#94a3b8",
+                        fontWeight: "bold",
+                        marginBottom: "4px",
+                      }}
+                      itemStyle={{ color: "#ffffff" }}
+                    />
+                    <defs>
+                      <linearGradient
+                        id="barGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor="#10b981"
+                          stopOpacity={0.4}
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#10b981"
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <Bar
+                      dataKey="count"
+                      fill="url(#barGradient)"
+                      stroke="#10b981"
+                      strokeWidth={1.5}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Attendance Trends</CardTitle>
+              <CardDescription>
+                {selectedEvents.length > 0 &&
+                selectedEvents.length !== events.length
+                  ? `Based on ${selectedEvents.length} selected events`
+                  : "Based on all events"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={events
+                    .filter(
+                      (event) =>
+                        selectedEvents.length === 0 ||
+                        selectedEvents.includes(event.id),
+                    )
+                    .sort(
+                      (a, b) =>
+                        new Date(a.time).getTime() - new Date(b.time).getTime(),
+                    )
+                    .map((event) => {
+                      // Get the list of members who attended this specific event
+                      const attendeesForThisEvent = attendanceData
+                        .filter((record) => record.eventId === event.id)
+                        .map((record) => record.userId);
+
+                      const attendeeCount = attendeesForThisEvent.length;
+
+                      // Calculate effective member count based on includeZeroAttendance setting
+                      let effectiveMemberCount = allMembers.length;
+
+                      // If we're not including zero attendance, adjust the member count
+                      if (!includeZeroAttendance) {
+                        // Get members who have attended at least one event (any event)
+                        const membersWithAnyAttendance = new Set();
+                        attendanceData.forEach((record) => {
+                          membersWithAnyAttendance.add(record.userId);
+                        });
+                        effectiveMemberCount = membersWithAnyAttendance.size;
+                      }
+
+                      const attendanceRate =
+                        effectiveMemberCount > 0
                           ? (attendeeCount / effectiveMemberCount) * 100
                           : 0;
-                        
-                        return (
-                          <TableRow key={event.id}>
-                            <TableCell>
-                              <Checkbox
-                                checked={selectedEvents.includes(event.id)}
-                                onCheckedChange={() => handleEventSelectionChange(event.id)}
+
+                      return {
+                        name: event.title,
+                        date: formatDate(event.time),
+                        rate: parseFloat(attendanceRate.toFixed(1)),
+                      };
+                    })}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip
+                    formatter={(value) => [`${value}%`, "Attendance Rate"]}
+                    contentStyle={{
+                      backgroundColor: "#1e293b",
+                      color: "#ffffff",
+                      border: "1px solid #475569",
+                      padding: "8px 12px",
+                      borderRadius: "4px",
+                    }}
+                    labelStyle={{
+                      color: "#94a3b8",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                    }}
+                    itemStyle={{ color: "#ffffff" }}
+                  />
+                  <Legend />
+                  <defs>
+                    <linearGradient
+                      id="lineGradient"
+                      x1="0"
+                      y1="0"
+                      x2="1"
+                      y2="0"
+                    >
+                      <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.4} />
+                      <stop
+                        offset="100%"
+                        stopColor="#6366f1"
+                        stopOpacity={0.4}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <Line
+                    type="monotone"
+                    dataKey="rate"
+                    stroke="url(#lineGradient)"
+                    strokeWidth={2.5}
+                    activeDot={{ r: 8 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Events Tab */}
+        <TabsContent value="events">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-medium">Select Events for Analysis</h2>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={selectAllEvents}>
+                Select All
+              </Button>
+              <Button variant="outline" onClick={clearEventSelection}>
+                Clear
+              </Button>
+            </div>
+          </div>
+
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12"></TableHead>
+                    <TableHead>Event Name</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Attendees</TableHead>
+                    <TableHead className="text-right">
+                      Attendance Rate
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {/* Sort events from most recent to oldest */}
+                  {[...events]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.time).getTime() - new Date(a.time).getTime(),
+                    )
+                    .map((event) => {
+                      // Get the list of members who attended this specific event
+                      const attendeesForThisEvent = attendanceData
+                        .filter((record) => record.eventId === event.id)
+                        .map((record) => record.userId);
+
+                      const attendeeCount = attendeesForThisEvent.length;
+
+                      // Calculate effective member count based on includeZeroAttendance setting
+                      let effectiveMemberCount = allMembers.length;
+
+                      // If we're not including zero attendance, adjust the member count
+                      if (!includeZeroAttendance) {
+                        // Get members who have attended at least one event (any event)
+                        const membersWithAnyAttendance = new Set();
+                        attendanceData.forEach((record) => {
+                          membersWithAnyAttendance.add(record.userId);
+                        });
+                        effectiveMemberCount = membersWithAnyAttendance.size;
+                      }
+
+                      const attendanceRate =
+                        effectiveMemberCount > 0
+                          ? (attendeeCount / effectiveMemberCount) * 100
+                          : 0;
+
+                      return (
+                        <TableRow key={event.id}>
+                          <TableCell>
+                            <Checkbox
+                              checked={selectedEvents.includes(event.id)}
+                              onCheckedChange={() =>
+                                handleEventSelectionChange(event.id)
+                              }
+                            />
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {event.title}
+                          </TableCell>
+                          <TableCell>{formatDate(event.time)}</TableCell>
+                          <TableCell className="text-right">
+                            {attendeeCount}/{allMembers.length}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Progress
+                                value={attendanceRate}
+                                className="w-20"
                               />
-                            </TableCell>
-                            <TableCell className="font-medium">{event.title}</TableCell>
-                            <TableCell>{formatDate(event.time)}</TableCell>
-                            <TableCell className="text-right">{attendeeCount}/{allMembers.length}</TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <Progress value={attendanceRate} className="w-20" />
-                                <span>{attendanceRate.toFixed(1)}%</span>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                      
-                      {events.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center py-4">
-                            No events found
+                              <span>{attendanceRate.toFixed(1)}%</span>
+                            </div>
                           </TableCell>
                         </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                      );
+                    })}
+
+                  {events.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="py-4 text-center">
+                        No events found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );

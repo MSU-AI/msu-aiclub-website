@@ -13,14 +13,9 @@ import {
 import { Button } from "~/components/ui/button";
 import { MoreHorizontal, Edit, Trash2, Check } from "lucide-react";
 import { approveProject, deleteProject } from '~/server/actions/project';
+import { Tag } from "~/components/ui/tag";
 
-const TAG_COLORS = [
-  'bg-blue-200 text-blue-800',
-  'bg-green-200 text-green-800',
-  'bg-yellow-200 text-yellow-800',
-  'bg-red-200 text-red-800',
-  'bg-purple-200 text-purple-800',
-];
+
 
 interface ProjectCardProps {
   project: any; // Replace 'any' with your actual Project type
@@ -67,12 +62,12 @@ export function ProjectCard({ project, isAdmin, isMember, onStatusChange }: Proj
         <h2 className="text-xl font-semibold mb-2">{project.name}</h2>
         <div className="overflow-x-auto whitespace-nowrap pb-2">
           {project.skills.map((skill: string, index: number) => (
-            <span 
-              key={index} 
-              className={`inline-block ${TAG_COLORS[index % TAG_COLORS.length]} px-2 py-1 rounded-full text-sm mr-2 mb-2`}
-            >
-              {skill}
-            </span>
+            <div key={index} className="inline-block mr-2 mb-2">
+              <Tag 
+                text={skill}
+                colorIndex={index}
+              />
+            </div>
           ))}
         </div>
       </Link>

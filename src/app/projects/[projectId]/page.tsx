@@ -5,14 +5,7 @@ import { GlobeIcon, GitHubLogoIcon, LinkedInLogoIcon, GlobeIcon as PersonalSiteI
 import '~/app/posts/create/postStyles.css'; // Reuse the styles from the post page
 import Link from 'next/link';
 import { Footer } from '~/components/landing/footer';
-
-const TAG_COLORS = [
-  'bg-blue-200 text-blue-800',
-  'bg-green-200 text-green-800',
-  'bg-yellow-200 text-yellow-800',
-  'bg-red-200 text-red-800',
-  'bg-purple-200 text-purple-800',
-];
+import { Tag } from '~/components/ui/tag';
 
 
 function getYouTubeEmbedUrl(url: string) {
@@ -48,27 +41,29 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
             className="w-full h-full rounded-lg"
           ></iframe>
         </div>
-      ) : project.thumbnailUrl ? (
+      ) : project.thumbnailUrl && typeof project.thumbnailUrl === 'string' ? (
         <div className="mb-6">
           <Image 
             src={project.thumbnailUrl} 
-            alt={project.name}
+            alt={project.name || 'Project thumbnail'}
             width={800}
             height={450}
-            objectFit="cover"
-            className="rounded-lg"
+            className="rounded-lg object-cover"
           />
         </div>
-      ) : null}
+      ) : (
+        <div className="mb-6 h-[450px] w-full bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+          <p className="text-gray-500 dark:text-gray-400">No preview available</p>
+        </div>
+      )}
 
-      <div className="mb-6">
+      <div className="mb-6 flex flex-wrap gap-2">
         {project.projectSkills.map((skill, index) => (
-          <span 
+          <Tag 
             key={index} 
-            className={`inline-block ${TAG_COLORS[index % TAG_COLORS.length]} px-2 py-1 rounded-full text-sm mr-2 mb-2`}
-          >
-            {skill.skillName}
-          </span>
+            text={skill.skillName}
+            colorIndex={index}
+          />
         ))}
       </div>
 
@@ -99,12 +94,18 @@ export default async function ProjectDetailPage({ params }: { params: { projectI
         {project.userProjects.map((member) => (
           <div key={member?.id} className="relative group">
             <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden">
-              <Image 
-                src={`${member?.raw_user_meta_data?.flowerProfile}`}
-                alt={member?.raw_user_meta_data?.full_name} 
-                layout="fill" 
-                objectFit="cover"
-              />
+              {member?.raw_user_meta_data?.flowerProfile ? (
+                <Image 
+                  src={member.raw_user_meta_data.flowerProfile}
+                  alt={member?.raw_user_meta_data?.full_name || 'Team member'} 
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
+                  <p className="text-gray-500 dark:text-gray-400">No image</p>
+                </div>
+              )}
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="text-white text-center">
                   <p className="font-bold">{member?.raw_user_meta_data?.full_name}</p>
