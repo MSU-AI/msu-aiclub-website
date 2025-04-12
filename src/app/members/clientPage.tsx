@@ -432,6 +432,8 @@ export default function MembersPageClient({
                   className="w-64"
                 />
                 <div className="flex items-center gap-2">
+                  {isAdmin && (
+                    <>
                   <Label
                     htmlFor="memberAttendanceThreshold"
                     className="whitespace-nowrap"
@@ -452,6 +454,8 @@ export default function MembersPageClient({
                     />
                     <span className="ml-1">%</span>
                   </div>
+                  </>
+                )}
                 </div>
 
                 {isAdmin && (
