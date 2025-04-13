@@ -342,8 +342,8 @@ export function ProjectSubmissionForm({
                 onClick={triggerFileInput}
                 className={`
                   border-2 border-dashed rounded-lg p-6
-                  ${imageUrl ? 'border-green-500' : 'border-gray-300'}
-                  hover:border-gray-400 cursor-pointer
+                  ${imageUrl ? 'border-green-500' : 'border-input'}
+                  hover:border-muted-foreground cursor-pointer
                   transition-colors duration-200
                   flex flex-col items-center justify-center
                   ${isUploading ? 'opacity-50' : ''}
@@ -351,11 +351,11 @@ export function ProjectSubmissionForm({
               >
                 {!imageUrl && (
                   <div className="text-center">
-                    <LucideImage className="mx-auto mb-4 w-12 h-12 text-gray-400" />
-                    <div className="mb-2 text-sm font-medium">
+                    <LucideImage className="mx-auto mb-4 w-12 h-12 text-muted-foreground" />
+                    <div className="mb-2 text-sm font-medium text-foreground">
                       {isUploading ? 'Uploading...' : 'Click to upload project image'}
                     </div>
-                    <p className="text-xs text-secondary-foreground">
+                    <p className="text-xs text-muted-foreground">
                       PNG, JPG, GIF up to 5MB
                     </p>
                   </div>
@@ -546,22 +546,22 @@ export function ProjectSubmissionForm({
                   placeholder="Search collaborators by name or email"
                   onChange={(e) => setSearchQuery(e.target.value)}
                   value={searchQuery}
-                  startContent={<Search className="h-4 w-4 text-gray-400" />}
+                  startContent={<Search className="h-4 w-4 text-muted-foreground" />}
                   className="mb-2"
                 />
                 
                 <div className="max-h-96 overflow-y-auto border rounded-md">
-                  <div className="p-2 bg-gray-50 dark:bg-gray-800 sticky top-0 z-10 border-b">
+                  <div className="p-2 bg-secondary sticky top-0 z-10 border-b">
                     <p className="text-xs font-medium">Selected Collaborators ({collaborators.length})</p>
                   </div>
                   <div className="p-2 space-y-1">
                     {collaborators.length === 0 ? (
-                      <p className="text-sm text-gray-500 p-2">No collaborators selected</p>
+                      <p className="text-sm text-muted-foreground p-2">No collaborators selected</p>
                     ) : (
                       collaborators.map(user => (
-                        <div key={user.id} className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                        <div key={user.id} className="flex items-center justify-between p-2 bg-secondary/30 rounded">
                           <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-secondary text-foreground flex items-center justify-center">
                               {user.email && typeof user.email === 'string' ? user.email.charAt(0).toUpperCase() : 'U'}
                             </div>
                             <div>
@@ -570,7 +570,7 @@ export function ProjectSubmissionForm({
                                  'full_name' in user.user_metadata && typeof user.user_metadata.full_name === 'string' ? 
                                  user.user_metadata.full_name : 'User'}
                               </p>
-                              <p className="text-xs text-gray-500">{user.email}</p>
+                              <p className="text-xs text-muted-foreground">{user.email}</p>
                             </div>
                           </div>
                           <Button 
@@ -585,21 +585,21 @@ export function ProjectSubmissionForm({
                     )}
                   </div>
                   
-                  <div className="p-2 bg-gray-50 dark:bg-gray-800 sticky top-0 z-10 border-t border-b">
+                  <div className="p-2 bg-secondary sticky top-0 z-10 border-t border-b">
                     <p className="text-xs font-medium">Available Users ({filteredUsers.length})</p>
                   </div>
                   <div className="divide-y">
                     {filteredUsers.length === 0 ? (
-                      <p className="text-sm text-gray-500 p-4 text-center">No users found {searchQuery ? `matching "${searchQuery}"` : ''}</p>
+                      <p className="text-sm text-muted-foreground p-4 text-center">No users found {searchQuery ? `matching "${searchQuery}"` : ''}</p>
                     ) : (
                       filteredUsers.slice(0, 10).map((user) => (
                         <div 
                           key={user.id} 
-                          className="flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                          className="flex items-center justify-between p-3 hover:bg-secondary/50 cursor-pointer rounded-md"
                           onClick={() => handleCollaboratorSelect(user.email)}
                         >
                           <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center">
                               {user.email && typeof user.email === 'string' ? user.email.charAt(0).toUpperCase() : 'U'}
                             </div>
                             <div>
@@ -623,7 +623,7 @@ export function ProjectSubmissionForm({
                   </div>
                 </div>
                 
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Search for users by name or email and click to add them as collaborators
                 </p>
               </div>
@@ -661,20 +661,20 @@ export function ProjectSubmissionForm({
       </Tabs>
 
       {/* Form validation status */}
-      <div className="mt-8 border-t pt-4">
+      <div className="mt-8 border-t border-border pt-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className={`w-4 h-4 rounded-full ${title ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-              <span className="text-sm">Project Details</span>
+              <div className={`w-4 h-4 rounded-full ${title ? 'bg-green-500' : 'bg-muted'}`}></div>
+              <span className="text-sm text-foreground">Project Details</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className={`w-4 h-4 rounded-full ${html ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-              <span className="text-sm">Description</span>
+              <div className={`w-4 h-4 rounded-full ${html ? 'bg-green-500' : 'bg-muted'}`}></div>
+              <span className="text-sm text-foreground">Description</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className={`w-4 h-4 rounded-full ${imageUrl ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-              <span className="text-sm">Project Image</span>
+              <div className={`w-4 h-4 rounded-full ${imageUrl ? 'bg-green-500' : 'bg-muted'}`}></div>
+              <span className="text-sm text-foreground">Project Image</span>
             </div>
           </div>
         </div>
