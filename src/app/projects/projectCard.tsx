@@ -14,6 +14,7 @@ import { Button } from "~/components/ui/button";
 import { MoreHorizontal, Edit, Trash2, Check } from "lucide-react";
 import { approveProject, deleteProject } from '~/server/actions/project';
 import { Tag } from "~/components/ui/tag";
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "~/components/ui/card";
 
 
 
@@ -44,22 +45,29 @@ export function ProjectCard({ project, isAdmin, isMember, onStatusChange }: Proj
   };
 
   return (
-    <div className="p-2 rounded-lg hover:shadow-lg transition-shadow duration-300 relative">
+    <Card className="overflow-hidden h-full flex flex-col relative">
       {isAdmin && project.status === 'pending' && (
         <div className="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-sm z-10">
           Pending
         </div>
       )}
-      <Link href={`/projects/${project.id}`}>
-        <div className="w-full h-48 relative mb-4 rounded-lg overflow-hidden">
-          <Image 
-            src={project.thumbnailUrl || '/placeholder-image.jpg'} 
-            alt={project.name}
-            layout="fill"
-            objectFit="cover"
-          />
-        </div>
-        <h2 className="text-xl font-semibold mb-2">{project.name}</h2>
+      
+      <div className="w-full h-48 relative">
+        <Image 
+          src={project.thumbnailUrl && project.thumbnailUrl.trim() !== '' ? project.thumbnailUrl : 'https://placehold.co/600x400/e2e8f0/475569?text=No+Image+Available'} 
+          alt={project.name}
+          fill
+          className="object-cover"
+        />
+      </div>
+      
+      <CardHeader>
+        <CardTitle className="text-xl hover:text-primary transition-colors">
+          <Link href={`/projects/${project.id}`}>{project.name}</Link>
+        </CardTitle>
+      </CardHeader>
+      
+      <CardContent className="flex-grow">
         <div className="overflow-x-auto whitespace-nowrap pb-2">
           {project.skills.map((skill: string, index: number) => (
             <div key={index} className="inline-block mr-2 mb-2">
@@ -70,12 +78,19 @@ export function ProjectCard({ project, isAdmin, isMember, onStatusChange }: Proj
             </div>
           ))}
         </div>
-      </Link>
+      </CardContent>
+      
+      <CardFooter>
+        <Button variant="outline" asChild className="w-full">
+          <Link href={`/projects/${project.id}`}>View Details</Link>
+        </Button>
+      </CardFooter>
+      
       {(isAdmin || isMember) && (
         <div className="absolute top-2 right-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4 text-foreground" />
               </Button>
@@ -99,6 +114,6 @@ export function ProjectCard({ project, isAdmin, isMember, onStatusChange }: Proj
           </DropdownMenu>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

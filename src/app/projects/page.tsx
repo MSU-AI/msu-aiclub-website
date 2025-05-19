@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { Button } from "~/components/ui/button";
 import { getAllProjects } from '~/server/db/queries/projects';
-import { ProjectCard } from './projectCard';
 import { createClient } from '~/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { isAdmin } from '~/server/actions/auth';
+import { Footer } from '~/components/landing/footer';
+import ProjectList from './projectList';
 
 export default async function ProjectsPage() {
   const supabase = createClient();
@@ -24,25 +25,34 @@ export default async function ProjectsPage() {
   };
 
   return (
-    <div className="max-w-[1024px] mx-auto py-8 px-4 pt-28">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Projects</h1>
-        <Link href="/projects/submit">
-          <Button variant="secondary">Submit a Project</Button>
-        </Link>
-      </div>
+    <div>
+      <main className="flex-grow pt-16">
+        <section className="py-24 bg-secondary/30">
+          <div className="container px-4 mx-auto text-center">
+            <h1 className="text-4xl font-bold mb-6">Projects</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore the innovative projects created by members of the MSU AI Club.
+            </p>
+            <div className="mt-8">
+              <Link href="/projects/submit">
+                <Button>Submit a Project</Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+        
+        <section className="py-16">
+          <div className="container px-4 mx-auto">
+            <ProjectList 
+              projects={projects} 
+              isAdmin={isUserAdmin} 
+              userId={user?.id}
+            />
+          </div>
+        </section>
+      </main>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project) => (
-          <ProjectCard 
-            key={project.id} 
-            project={project} 
-            isAdmin={isUserAdmin}
-            isMember={project.users.some((u: any) => u.id === user?.id)}
-            onStatusChange={handleStatusChange}
-          />
-        ))}
-      </div>
+      <Footer />
     </div>
   );
 }

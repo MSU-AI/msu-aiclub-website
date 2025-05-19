@@ -3,9 +3,10 @@ export interface Event {
   title: string;
   photo?: string | null;
   description?: string;
-  time: Date;
+  time: string | Date; // Allow both string and Date types
   place: string;
   points: number;
+  hidden?: boolean; // Add hidden property
 }
 
 export const eventsData: Event[] = [
