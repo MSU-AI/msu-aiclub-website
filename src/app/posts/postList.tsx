@@ -273,7 +273,7 @@ export default function PostList({ posts: initialPosts, isAdmin, userId }: { pos
                     )}
                     <div className="p-4 flex-grow">
                       <h2 className="text-2xl font-bold mb-2 line-clamp-1 hover:text-primary transition-colors">{post.title}</h2>
-                      <p className="text-muted-foreground mb-4 line-clamp-2">{post.description || getExcerpt(post.content)}</p>
+                      <div className="text-muted-foreground mb-4 line-clamp-2">{post.description || getExcerpt(post.content)}</div>
                       <div className="flex items-center text-sm text-muted-foreground gap-4">
                         <div className="flex items-center gap-1">
                           <UserIcon className="h-4 w-4" />
