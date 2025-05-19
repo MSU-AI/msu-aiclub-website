@@ -1,4 +1,5 @@
 
+import { MailIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -30,7 +31,11 @@ export function Footer() {
                     </ul>
                 </div>
                 <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-                <span className="block text-sm text-gray-500 dark:text-gray-400"><Link href="https://www.linkedin.com/company/imaginemsu/" className="hover:underline">Made in collaboration with Imagine Software</Link> </span>
+
+                <Link className="text-muted-foreground flex items-center gap-2" href="mailto:team@msuaiclub.com">
+                  <MailIcon className="h-4 w-4" />
+                  team@msuaiclub.com
+                </Link>
             </div>
         </footer>
     );

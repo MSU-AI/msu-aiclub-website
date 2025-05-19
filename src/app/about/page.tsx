@@ -40,9 +40,9 @@ export default function AboutPage() {
       <AchievementsCarousel />  
       <h1 className="text-5xl font-semibold mb-8">Our Team</h1>
       <Tabs defaultValue={years[4]}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           {years.map((year) => (
-            <TabsTrigger key={year} value={year}>
+            <TabsTrigger className="text-xs lg:text-md" key={year} value={year}>
               {year}
             </TabsTrigger>
           ))}

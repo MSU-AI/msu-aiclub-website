@@ -1,6 +1,8 @@
 "use client"
 import { PinContainer } from "~/components/ui/3d-pin";
 import { InstagramLogoIcon, LinkedInLogoIcon, DiscordLogoIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { MailIcon } from "lucide-react";
 
 interface Contact {
   name: string;
@@ -39,8 +41,12 @@ export const contacts: Contact[] = [
 
 export function Contacts() {
   return (
-    <div className="py-24">
-    <h1 className="text-2xl lg:text-4xl font-semibold text-center py-20">Connect with us</h1>
+    <div className="py-24 flex flex-col items-center">
+    <h1 className="text-2xl lg:text-4xl font-semibold text-center pt-20 pb-4">Connect with us</h1>
+    <Link className="text-muted-foreground flex items-center gap-2" href="mailto:team@msuaiclub.com">
+      <MailIcon className="h-4 w-4" />
+      team@msuaiclub.com
+    </Link>
     <div className="flex flex-row flex-wrap items-center justify-center gap-16">
       {contacts.map((contact, index) => (
         <PinContainer key={index} title={`${contact.title}`} href={contact.href}>

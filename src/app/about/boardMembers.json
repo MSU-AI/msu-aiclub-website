@@ -1,5 +1,169 @@
 {
   "boardMembers": {
+    "2025/2026": [
+      {
+        "id": "501",
+        "name": "Arafat Khan",
+        "position": "President",
+        "email": "khanaraf@msu.edu",
+        "profilePicture": "/arafat.jpg",
+        "linkedin": "https://www.linkedin.com/in/arafat-khan-121389tt/",
+        "github": "https://github.com/arafat-ar13"
+      },
+      {
+        "id": "515",
+        "name": "Mohammad Alshaikhusain",
+        "position": "Executive Advisor and Web Dev",
+        "email": "alshaik8@msu.edu",
+        "profilePicture": "/malshaik.jpg",
+        "linkedin": "https://linkedin.com/in/malshaik",
+        "github": "https://github.com/malshaik",
+        "personalSite": "https://malshaik.com"
+      },
+      {
+        "id": "505",
+        "name": "Pratham Pradhan",
+        "position": "Outreach Advisor",
+        "email": "pradha11@msu.edu",
+        "profilePicture": "/pratham.jpg",
+        "linkedin": "https://www.linkedin.com/in/prathampradhan/",
+        "github": "https://github.com/Pratt2321"
+      },
+      {
+        "id": "503",
+        "name": "Safa Al-murib",
+        "position": "Secretary",
+        "email": "almuribs@msu.edu",
+        "profilePicture": "/safa.jpeg",
+        "linkedin": "https://www.linkedin.com/in/safa-al-murib-a137a3246/"
+      },
+      {
+        "id": "504",
+        "name": "Rani Dhiman",
+        "position": "Outreach and Treasurer",
+        "email": "dhimanra@msu.edu",
+        "profilePicture": "/rani.jpeg",
+        "linkedin": "https://www.linkedin.com/in/rani-dhiman/"
+      },
+      {
+        "id": "506",
+        "name": "Kajal Modi",
+        "position": "Marketing Director",
+        "email": "modikaja@msu.edu",
+        "profilePicture": "/kajal.jpg",
+        "linkedin": "https://www.linkedin.com/in/kajal-modi28/"
+      },
+      {
+        "id": "507",
+        "name": "Gita Bhupathiraju",
+        "position": "Marketing Coordinator",
+        "email": "bhupath2@msu.edu",
+        "profilePicture": "/gita.jpeg",
+        "linkedin": "https://www.linkedin.com/in/gitabhupathiraju/"
+      },
+   
+      {
+        "id": "508",
+        "name": "Clara Linjewile",
+        "position": "Vice President",
+        "email": "linjewil@msu.edu",
+        "profilePicture": "/clara.jpg",
+        "linkedin": "https://www.linkedin.com/in/clara-linjewile-6969b6192/"
+      },
+      {
+        "id": "509",
+        "name": "Paul Lin",
+        "position": "Project Director",
+        "email": "linpaul1@msu.edu",
+        "profilePicture": "/paul.jpg",
+        "linkedin": "https://www.linkedin.com/in/paul-lin-8b0b62269/",
+        "github": "https://github.com/PaulLin1"
+      },
+      {
+        "id": "510",
+        "name": "Harshill Chidura",
+        "position": "Project Manager",
+        "email": "harshill@msu.edu",
+        "profilePicture": "/harshill.jpeg",
+        "linkedin": "https://www.linkedin.com/in/harshil-chidura-809209229/"
+      },
+      {
+        "id": "511",
+        "name": "Samuel Ardinger",
+        "position": "Project Manager",
+        "email": "ardinger@msu.edu",
+        "profilePicture": "/sam.jpeg",
+        "linkedin": "https://www.linkedin.com/in/samuel-ardinger-8548a8282/"
+      },
+      {
+        "id": "512",
+        "name": "Daniel Helo",
+        "position": "Workshop Advisor",
+        "email": "helodani@msu.edu",
+        "profilePicture": "/daniel.jpg",
+        "github": "https://github.com/Danhelo"
+      },
+      {
+        "id": "513",
+        "name": "Uzair Mohammed",
+        "position": "Graduate Advisor",
+        "email": "moham147@msu.edu",
+        "profilePicture": "/uzair.jpg",
+        "linkedin": "https://www.linkedin.com/in/uzair-m/",
+        "github": "https://github.com/uzairname"
+      },
+      {
+        "id": "514",
+        "name": "Aashish Harishchandre",
+        "position": "Graduate Advisor",
+        "email": "harishch@msu.edu",
+        "profilePicture": "/ashish.jpg",
+        "linkedin": "https://www.linkedin.com/in/aashish-harishchandre/",
+        "github": "https://github.com/AashishH15"
+      },
+      {
+        "id": "502",
+        "name": "Malhar K",
+        "position": "Workshop Director",
+        "email": "khistyma@msu.edu",
+        "profilePicture": "/malhar.jpg",
+        "linkedin": "https://www.linkedin.com/in/malhar-k-181552266/"
+      },
+      {
+        "id": "516",
+        "name": "Laith Assaf",
+        "position": "Workshop Coordinator",
+        "email": "assaflai@msu.edu",
+        "profilePicture": "/laith.jpeg",
+        "linkedin": "https://www.linkedin.com/in/laith-assaf-2b6b6b6b6/"
+      },
+      {
+        "id": "517",
+        "name": "Abdolla Hegazy",
+        "position": "Workshop Coordinator",
+        "email": "hegazyab@msu.edu",
+        "profilePicture": "/abdolla.jpg",
+        "linkedin": "https://www.linkedin.com/in/abdolla-hegazy/"
+      },
+      {
+        "id": "518",
+        "name": "Dirk Colbry",
+        "position": "Faculty Advisor",
+        "email": "colbrydi@msu.edu",
+        "profilePicture": "/dirk.jpg",
+        "linkedin": "https://www.linkedin.com/in/dirkcolbry/",
+        "personalSite": "https://icer.msu.edu/about/directory/colbry"
+      },
+      {
+        "id": "519",
+        "name": "Parisa Kordjamshidi",
+        "position": "Faculty Advisor",
+        "email": "kordjams@msu.edu",
+        "profilePicture": "/parisa.png",
+        "linkedin": "https://linkedin.com/in/parisakordjamshidi",
+        "personalSite": "https://www.cse.msu.edu/~kordjams/"
+      }
+    ],
     "2024/2025": [
       {
         "id": "1",

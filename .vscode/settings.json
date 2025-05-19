@@ -1,0 +1,55 @@
+{
+    "window.commandCenter": true,
+    
+    // Hide the status bar
+    "workbench.statusBar.visible": false,
+    
+    // Hide menu bar (for Windows/Linux)
+    "window.menuBarVisibility": "toggle",
+    
+    // Hide minimap
+    "editor.minimap.enabled": false,
+    
+    // Hide breadcrumbs
+    "breadcrumbs.enabled": false,
+    
+    // Hide line numbers (optional, remove if you need them)
+    "editor.lineNumbers": "off",
+    
+    // Reduce editor tabs height
+    "workbench.editor.tabSizing": "shrink",
+    
+    // Zen mode settings for even more minimal UI when desired
+    "zenMode.hideLineNumbers": true,
+    "zenMode.hideStatusBar": true,
+    "zenMode.fullScreen": false,
+    "zenMode.centerLayout": true,
+    "zenMode.silentNotifications": true,
+    
+    // Hide editor gutter (the area where line numbers and other indicators appear)
+    "editor.glyphMargin": false,
+    "editor.folding": false,
+    
+    // Remove extra scrollbars
+    "editor.scrollbar.vertical": "auto",
+    "editor.scrollbar.horizontal": "auto",
+    
+    // Hide AI tooling UI (for Cursor/Windsurf specific features)
+    "cursor.showToolbar": false,
+    
+    // Enable Vim mode with Neovim behavior
+    "vim.easymotion": true,
+    "vim.useSystemClipboard": false,
+    "vim.handleKeys": {
+        "<space>": false
+    },
+    "vim.insertModeKeyBindingsNonRecursive": [
+        {
+            "before": ["<space>"],
+            "after": ["<space>"]
+        }
+    ],
+    "workbench.activityBar.location": "hidden",
+    "workbench.auxiliaryActivityBar.location": "hidden",
+    "zenMode.showTabs": "single"
+}
