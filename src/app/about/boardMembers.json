@@ -197,9 +197,7 @@
           "id": "4",
           "name": "Darrian Chen",
           "position": "Treasurer",
-          "email": "chendarr@msu.edu",
-          "profilePicture": "/darrian.jpg",
-          "linkedin": "https://www.linkedin.com/in/darrianchen/"
+          "profilePicture": "/darrian.jpg"
       },
       {
           "id": "5",
@@ -433,9 +431,7 @@
             "id": "112",
             "name": "Darrian Chen",
             "position": "Treasurer",
-            "email": "chendarr@msu.edu",
-            "profilePicture": "/darrian.jpg",
-            "linkedin": "https://www.linkedin.com/in/darrianchen/"
+            "profilePicture": "/darrian.jpg"
         }, 
         {
           "id": "117",
@@ -526,9 +522,7 @@
             "id": "209",
             "name": "Darrian Chen",
             "position": "Treasurer",
-            "email": "chendarr@msu.edu",
-            "profilePicture": "/darrian.jpg",
-            "linkedin": "https://www.linkedin.com/in/darrianchen/"
+            "profilePicture": "/darrian.jpg"
         },
         {
             "id": "210",
