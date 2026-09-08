@@ -47,6 +47,21 @@ const ShopCart: React.FC<ShopCartProps> = ({ isOpen: propIsOpen, onClose }) => {
     };
   }, []);
 
+  // Listen for cart:updated events (fired by ProductCard after adding an item)
+  useEffect(() => {
+    const handleCartUpdated = () => {
+      if (isOpen) {
+        fetchCart();
+      }
+    };
+
+    window.addEventListener('cart:updated', handleCartUpdated);
+
+    return () => {
+      window.removeEventListener('cart:updated', handleCartUpdated);
+    };
+  }, [isOpen]);
+
   // Update isOpen if the prop changes
   useEffect(() => {
     if (propIsOpen !== undefined) {

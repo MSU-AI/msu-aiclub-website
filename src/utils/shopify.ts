@@ -3,16 +3,15 @@ export class ShopifyClient {
   private storeDomain: string;
   private storefrontToken: string;
   private apiVersion: string;
-  private checkoutId: string | null = null;
-  private localStorageKey = 'msu_ai_club_checkout_id';
+  private cartId: string | null = null;
+  private localStorageKey = 'msu_ai_club_cart_id';
 
   private constructor() {
     this.storeDomain = process.env.NEXT_PUBLIC_STORE_DOMAIN ?? 'shop.msuaiclub.com';
     this.storefrontToken = process.env.NEXT_PUBLIC_STOREFRONT_API_TOKEN ?? '';
-    this.apiVersion = '2023-10';
-    //
-    // Try to load an existing checkout from localStorage
-    this.loadCheckout();
+    this.apiVersion = '2024-10';
+    // Try to load an existing cart from localStorage
+    this.loadCart();
   }
 
   public static getInstance(): ShopifyClient {
@@ -22,23 +21,30 @@ export class ShopifyClient {
     return ShopifyClient.instance;
   }
 
-  private loadCheckout() {
+  private loadCart() {
     if (typeof window !== 'undefined') {
-      this.checkoutId = localStorage.getItem(this.localStorageKey);
+      this.cartId = localStorage.getItem(this.localStorageKey);
     }
   }
 
-  private saveCheckout(id: string) {
-    this.checkoutId = id;
+  private saveCart(id: string) {
+    this.cartId = id;
     if (typeof window !== 'undefined') {
       localStorage.setItem(this.localStorageKey, id);
+    }
+  }
+
+  private clearCart() {
+    this.cartId = null;
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(this.localStorageKey);
     }
   }
 
   private async fetchStorefront(query: string, variables = {}) {
     try {
       const endpoint = `https://${this.storeDomain}/api/${this.apiVersion}/graphql.json`;
-      
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -57,19 +63,19 @@ export class ShopifyClient {
           status: response.status,
           statusText: response.statusText
         });
-        
+
         let errorText = '';
         try {
           errorText = await response.text();
         } catch (e) {
           errorText = 'Could not get error text';
         }
-        
+
         throw new Error(`API request failed: ${response.status} ${response.statusText}\n${errorText}`);
       }
 
       const result = await response.json();
-      
+
       if (result.errors) {
         console.error('Debug - fetchStorefront: GraphQL errors', result.errors);
         throw new Error(`GraphQL Error: ${result.errors.map((e: any) => e.message).join(', ')}`);
@@ -80,6 +86,110 @@ export class ShopifyClient {
       console.error('Debug - fetchStorefront: Error', error);
       throw error;
     }
+  }
+
+  // Shared fragment used by every Cart mutation/query response so the
+  // formatted shape returned to the UI stays consistent everywhere.
+  private cartFragment = `
+    id
+    checkoutUrl
+    cost {
+      subtotalAmount {
+        amount
+        currencyCode
+      }
+      totalAmount {
+        amount
+        currencyCode
+      }
+    }
+    discountCodes {
+      code
+      applicable
+    }
+    lines(first: 100) {
+      edges {
+        node {
+          id
+          quantity
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+          }
+          merchandise {
+            ... on ProductVariant {
+              id
+              title
+              price {
+                amount
+                currencyCode
+              }
+              image {
+                id
+                url
+                altText
+              }
+              product {
+                id
+                handle
+                title
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  // Reshape a raw Cart object (from the Storefront API) into the flat
+  // shape the rest of the app (ShopCart, ProductCard) already expects.
+  private formatCart(cart: any) {
+    const subtotal = parseFloat(cart.cost.subtotalAmount.amount);
+    const total = parseFloat(cart.cost.totalAmount.amount);
+    const discountAmount = subtotal > total ? (subtotal - total).toFixed(2) : '0.00';
+
+    const discountCodes = (cart.discountCodes || [])
+      .filter((d: any) => d.applicable)
+      .map((d: any) => ({
+        code: d.code,
+        amount: discountAmount,
+        formattedValue: `Discount applied to order`,
+      }));
+
+    return {
+      id: cart.id,
+      webUrl: cart.checkoutUrl,
+      subtotalPrice: cart.cost.subtotalAmount.amount,
+      totalPrice: cart.cost.totalAmount.amount,
+      currencyCode: cart.cost.subtotalAmount.currencyCode,
+      discountCodes,
+      lineItems: cart.lines.edges.map((edge: any) => {
+        const line = edge.node;
+        const variant = line.merchandise;
+        return {
+          id: line.id,
+          title: variant?.product?.title || variant?.title || 'Item',
+          quantity: line.quantity,
+          discounts: [],
+          variant: {
+            id: variant?.id,
+            title: variant?.title,
+            price: variant?.price?.amount,
+            image: variant?.image ? {
+              id: variant.image.id,
+              src: variant.image.url,
+              altText: variant.image.altText
+            } : null,
+            product: {
+              id: variant?.product?.id,
+              handle: variant?.product?.handle
+            }
+          }
+        };
+      })
+    };
   }
 
   // Fetch all products from the store
@@ -133,16 +243,14 @@ export class ShopifyClient {
         }
       `);
 
-      // Check if we have valid response data
       if (!result.data || !result.data.products || !result.data.products.edges) {
         console.error('Debug - fetchAllProducts: Invalid response structure');
         return [];
       }
 
-      // Format the response to be more usable
       const products = result.data.products.edges.map((edge: any) => {
         const product = edge.node;
-        
+
         return {
           id: product.id,
           title: product.title,
@@ -237,7 +345,6 @@ export class ShopifyClient {
         throw new Error(`Product with handle '${handle}' not found`);
       }
 
-      // Format the response
       const product = result.data.product;
       return {
         id: product.id,
@@ -323,322 +430,87 @@ export class ShopifyClient {
     }
   }
 
-  // Create a new checkout
-  public async createCheckout() {
+  // Create a new cart
+  public async createCart() {
     try {
-      const result = await this.fetchStorefront(`
-        mutation CreateCheckout {
-          checkoutCreate(input: {}) {
-            checkout {
-              id
-              webUrl
-            }
-            checkoutUserErrors {
-              code
-              field
-              message
+      const result = await this.fetchStorefront(
+        `
+          mutation CreateCart {
+            cartCreate(input: {}) {
+              cart {
+                ${this.cartFragment}
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
-        }
-      `);
+        `
+      );
 
-      if (result.data.checkoutCreate.checkoutUserErrors && 
-          result.data.checkoutCreate.checkoutUserErrors.length > 0) {
-        throw new Error(result.data.checkoutCreate.checkoutUserErrors[0].message);
+      if (result.data.cartCreate.userErrors && result.data.cartCreate.userErrors.length > 0) {
+        throw new Error(result.data.cartCreate.userErrors[0].message);
       }
 
-      const checkoutId = result.data.checkoutCreate.checkout.id;
-      this.saveCheckout(checkoutId);
-      
-      return result.data.checkoutCreate.checkout;
+      const cart = result.data.cartCreate.cart;
+      this.saveCart(cart.id);
+
+      return this.formatCart(cart);
     } catch (error) {
-      console.error('Error creating checkout:', error);
+      console.error('Error creating cart:', error);
       throw error;
     }
   }
 
-  // Get the current cart/checkout with proper discount handling
+  // Get the current cart, creating one if none exists (or the saved one is stale)
   public async getCart() {
-  try {
-    if (!this.checkoutId) {
-      return await this.createCheckout();
-    }
-
-    const result = await this.fetchStorefront(
-      `
-        query GetCheckout($id: ID!) {
-          node(id: $id) {
-            ... on Checkout {
-              id
-              webUrl
-              completedAt
-              subtotalPrice {
-                amount
-                currencyCode
-              }
-              totalPrice {
-                amount
-                currencyCode
-              }
-              discountApplications(first: 10) {
-                edges {
-                  node {
-                    targetType
-                    allocationMethod
-                    targetSelection
-                    value {
-                      ... on MoneyV2 {
-                        amount
-                        currencyCode
-                      }
-                      ... on PricingPercentageValue {
-                        percentage
-                      }
-                    }
-                    ... on DiscountCodeApplication {
-                      code
-                      applicable
-                    }
-                    ... on AutomaticDiscountApplication {
-                      title
-                    }
-                    ... on ManualDiscountApplication {
-                      title
-                      description
-                    }
-                  }
-                }
-              }
-              lineItems(first: 100) {
-                edges {
-                  node {
-                    id
-                    title
-                    quantity
-                    discountAllocations {
-                      allocatedAmount {
-                        amount
-                        currencyCode
-                      }
-                      discountApplication {
-                        targetType
-                        allocationMethod
-                        targetSelection
-                        ... on DiscountCodeApplication {
-                          code
-                          applicable
-                        }
-                      }
-                    }
-                    variant {
-                      id
-                      title
-                      price {
-                        amount
-                        currencyCode
-                      }
-                      image {
-                        id
-                        url
-                        altText
-                      }
-                      product {
-                        id
-                        handle
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: this.checkoutId }
-    );
-
-    // If checkout is completed or doesn't exist, create a new one
-    if (!result.data.node || result.data.node.completedAt) {
-      return await this.createCheckout();
-    }
-
-    // Format the response
-    const checkout = result.data.node;
-    
-    // Process discount information properly
-    const discounts = checkout.discountApplications?.edges.map((edge: any) => {
-      const discountNode = edge.node;
-      
-      // Determine discount type and value
-      let discountType = 'unknown';
-      let discountValue = '';
-      let discountCode = '';
-      let discountTitle = '';
-      let discountAmount = '0.00';
-      
-      
-      // Extract discount code if available
-      if (discountNode.__typename === 'DiscountCodeApplication') {
-        discountType = 'code';
-        discountCode = discountNode.code;
-      } else if (discountNode.__typename === 'AutomaticDiscountApplication') {
-        discountType = 'automatic';
-        discountTitle = discountNode.title;
-      } else if (discountNode.__typename === 'ManualDiscountApplication') {
-        discountType = 'manual';
-        discountTitle = discountNode.title;
-      }
-      
-      // Extract discount value
-      if (discountNode.value) {
-        if (discountNode.value.__typename === 'MoneyV2') {
-          discountValue = `${discountNode.value.amount} ${discountNode.value.currencyCode}`;
-          discountAmount = discountNode.value.amount;
-        } else if (discountNode.value.__typename === 'PricingPercentageValue') {
-          discountValue = `${discountNode.value.percentage}%`;
-          
-          // Calculate approximate amount based on percentage and subtotal
-          const percentage = parseFloat(discountNode.value.percentage);
-          const subtotal = parseFloat(checkout.subtotalPrice.amount);
-          discountAmount = ((percentage / 100) * subtotal).toFixed(2);
-        }
-      } else {
-        // If value isn't directly available, calculate from subtotal and total
-        const subtotal = parseFloat(checkout.subtotalPrice.amount);
-        const total = parseFloat(checkout.totalPrice.amount);
-        discountAmount = (subtotal - total).toFixed(2);
-        discountValue = `${discountAmount} ${checkout.subtotalPrice.currencyCode}`;
-      }
-      
-      return {
-        type: discountType,
-        code: discountCode,
-        title: discountTitle || discountCode,
-        value: discountValue,
-        amount: discountAmount,
-        targetType: discountNode.targetType,
-        allocationMethod: discountNode.allocationMethod,
-        targetSelection: discountNode.targetSelection
-      };
-    }) || [];
-    
-    // Create a final formatted response with all collected information
-    const formattedResponse = {
-      id: checkout.id,
-      webUrl: checkout.webUrl,
-      subtotalPrice: checkout.subtotalPrice.amount,
-      totalPrice: checkout.totalPrice.amount,
-      currencyCode: checkout.subtotalPrice.currencyCode,
-      discounts: discounts,
-      // Include formatted discount information for easy display
-      discountAmount: discounts.length > 0 ? 
-        discounts.reduce((sum: number, discount: any) => sum + parseFloat(discount.amount), 0).toFixed(2) : 
-        "0.00",
-      discountCodes: discounts
-        .filter((discount: any) => discount.type === 'code')
-        .map((discount: any) => ({
-          code: discount.code,
-          amount: discount.amount,
-          formattedValue: discount.value,
-          targetType: discount.targetType,
-          allocationMethod: discount.allocationMethod,
-          targetSelection: discount.targetSelection
-        })),
-      lineItems: checkout.lineItems.edges.map((edge: any) => {
-        const item = edge.node;
-        
-        // Extract any per-item discount allocations
-        const itemDiscounts = item.discountAllocations?.map((allocation: any) => ({
-          amount: allocation.allocatedAmount.amount,
-          currencyCode: allocation.allocatedAmount.currencyCode,
-          code: allocation.discountApplication?.code || '',
-          targetType: allocation.discountApplication?.targetType,
-          allocationMethod: allocation.discountApplication?.allocationMethod,
-          targetSelection: allocation.discountApplication?.targetSelection
-        })) || [];
-        
-        return {
-          id: item.id,
-          title: item.title,
-          quantity: item.quantity,
-          discounts: itemDiscounts,
-          variant: {
-            id: item.variant.id,
-            title: item.variant.title,
-            price: item.variant.price.amount,
-            image: item.variant.image ? {
-              id: item.variant.image.id,
-              src: item.variant.image.url,
-              altText: item.variant.image.altText
-            } : null,
-            product: {
-              id: item.variant.product.id,
-              handle: item.variant.product.handle
-            }
-          }
-        };
-      })
-    };
-    
-    return formattedResponse;
-  } catch (error) {
-    console.error('Error getting cart:', error);
-    // If there's an error fetching the checkout, create a new one
-    return await this.createCheckout();
-  }
-}
-
-
-
-  // Add an item to the cart
-  public async addToCart(variantId: string, quantity: number) {
     try {
-      // Ensure we have a checkout ID
-      if (!this.checkoutId) {
-        const checkout = await this.createCheckout();
-        this.checkoutId = checkout.id;
+      if (!this.cartId) {
+        return await this.createCart();
       }
 
       const result = await this.fetchStorefront(
         `
-          mutation AddItemToCheckout($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) {
-            checkoutLineItemsAdd(checkoutId: $checkoutId, lineItems: $lineItems) {
-              checkout {
-                id
-                webUrl
-                subtotalPrice {
-                  amount
-                  currencyCode
-                }
-                totalPrice {
-                  amount
-                  currencyCode
-                }
-                lineItems(first: 100) {
-                  edges {
-                    node {
-                      id
-                      title
-                      quantity
-                      variant {
-                        id
-                        title
-                        price {
-                          amount
-                          currencyCode
-                        }
-                        image {
-                          id
-                          url
-                          altText
-                        }
-                      }
-                    }
-                  }
-                }
+          query GetCart($id: ID!) {
+            cart(id: $id) {
+              ${this.cartFragment}
+            }
+          }
+        `,
+        { id: this.cartId }
+      );
+
+      // If the cart is missing/expired (e.g. old checkout ID from before
+      // migration, or a completed/purged cart), create a fresh one.
+      if (!result.data.cart) {
+        this.clearCart();
+        return await this.createCart();
+      }
+
+      return this.formatCart(result.data.cart);
+    } catch (error) {
+      console.error('Error getting cart:', error);
+      this.clearCart();
+      return await this.createCart();
+    }
+  }
+
+  // Add an item to the cart
+  public async addToCart(variantId: string, quantity: number) {
+    try {
+      if (!this.cartId) {
+        await this.createCart();
+      }
+
+      const result = await this.fetchStorefront(
+        `
+          mutation AddCartLines($cartId: ID!, $lines: [CartLineInput!]!) {
+            cartLinesAdd(cartId: $cartId, lines: $lines) {
+              cart {
+                ${this.cartFragment}
               }
-              checkoutUserErrors {
-                code
+              userErrors {
                 field
                 message
               }
@@ -646,95 +518,37 @@ export class ShopifyClient {
           }
         `,
         {
-          checkoutId: this.checkoutId,
-          lineItems: [{ variantId, quantity }]
+          cartId: this.cartId,
+          lines: [{ merchandiseId: variantId, quantity }]
         }
       );
 
-      if (result.data.checkoutLineItemsAdd.checkoutUserErrors &&
-          result.data.checkoutLineItemsAdd.checkoutUserErrors.length > 0) {
-        throw new Error(result.data.checkoutLineItemsAdd.checkoutUserErrors[0].message);
+      if (result.data.cartLinesAdd.userErrors && result.data.cartLinesAdd.userErrors.length > 0) {
+        throw new Error(result.data.cartLinesAdd.userErrors[0].message);
       }
 
-      // Format the response
-      const checkout = result.data.checkoutLineItemsAdd.checkout;
-      return {
-        id: checkout.id,
-        webUrl: checkout.webUrl,
-        subtotalPrice: checkout.subtotalPrice.amount,
-        totalPrice: checkout.totalPrice.amount,
-        currencyCode: checkout.subtotalPrice.currencyCode,
-        lineItems: checkout.lineItems.edges.map((edge: any) => {
-          const item = edge.node;
-          return {
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            variant: {
-              id: item.variant.id,
-              title: item.variant.title,
-              price: item.variant.price.amount,
-              image: item.variant.image ? {
-                id: item.variant.image.id,
-                src: item.variant.image.url,
-                altText: item.variant.image.altText
-              } : null
-            }
-          };
-        })
-      };
+      return this.formatCart(result.data.cartLinesAdd.cart);
     } catch (error) {
       console.error('Error adding item to cart:', error);
       throw error;
     }
   }
-    // Update cart item quantity
+
+  // Update cart item quantity
   public async updateCartItem(lineItemId: string, quantity: number) {
     try {
-      if (!this.checkoutId) {
-        throw new Error('No checkout found');
+      if (!this.cartId) {
+        throw new Error('No cart found');
       }
 
       const result = await this.fetchStorefront(
         `
-          mutation UpdateCheckoutItems($checkoutId: ID!, $lineItems: [CheckoutLineItemUpdateInput!]!) {
-            checkoutLineItemsUpdate(checkoutId: $checkoutId, lineItems: $lineItems) {
-              checkout {
-                id
-                webUrl
-                subtotalPrice {
-                  amount
-                  currencyCode
-                }
-                totalPrice {
-                  amount
-                  currencyCode
-                }
-                lineItems(first: 100) {
-                  edges {
-                    node {
-                      id
-                      title
-                      quantity
-                      variant {
-                        id
-                        title
-                        price {
-                          amount
-                          currencyCode
-                        }
-                        image {
-                          id
-                          url
-                          altText
-                        }
-                      }
-                    }
-                  }
-                }
+          mutation UpdateCartLines($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+            cartLinesUpdate(cartId: $cartId, lines: $lines) {
+              cart {
+                ${this.cartFragment}
               }
-              checkoutUserErrors {
-                code
+              userErrors {
                 field
                 message
               }
@@ -742,42 +556,16 @@ export class ShopifyClient {
           }
         `,
         {
-          checkoutId: this.checkoutId,
-          lineItems: [{ id: lineItemId, quantity }]
+          cartId: this.cartId,
+          lines: [{ id: lineItemId, quantity }]
         }
       );
 
-      if (result.data.checkoutLineItemsUpdate.checkoutUserErrors &&
-          result.data.checkoutLineItemsUpdate.checkoutUserErrors.length > 0) {
-        throw new Error(result.data.checkoutLineItemsUpdate.checkoutUserErrors[0].message);
+      if (result.data.cartLinesUpdate.userErrors && result.data.cartLinesUpdate.userErrors.length > 0) {
+        throw new Error(result.data.cartLinesUpdate.userErrors[0].message);
       }
 
-      const checkout = result.data.checkoutLineItemsUpdate.checkout;
-      return {
-        id: checkout.id,
-        webUrl: checkout.webUrl,
-        subtotalPrice: checkout.subtotalPrice.amount,
-        totalPrice: checkout.totalPrice.amount,
-        currencyCode: checkout.subtotalPrice.currencyCode,
-        lineItems: checkout.lineItems.edges.map((edge: any) => {
-          const item = edge.node;
-          return {
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            variant: {
-              id: item.variant.id,
-              title: item.variant.title,
-              price: item.variant.price.amount,
-              image: item.variant.image ? {
-                id: item.variant.image.id,
-                src: item.variant.image.url,
-                altText: item.variant.image.altText
-              } : null
-            }
-          };
-        })
-      };
+      return this.formatCart(result.data.cartLinesUpdate.cart);
     } catch (error) {
       console.error('Error updating cart item:', error);
       throw error;
@@ -787,50 +575,18 @@ export class ShopifyClient {
   // Remove item from cart
   public async removeCartItem(lineItemId: string) {
     try {
-      if (!this.checkoutId) {
-        throw new Error('No checkout found');
+      if (!this.cartId) {
+        throw new Error('No cart found');
       }
 
       const result = await this.fetchStorefront(
         `
-          mutation RemoveCheckoutItems($checkoutId: ID!, $lineItemIds: [ID!]!) {
-            checkoutLineItemsRemove(checkoutId: $checkoutId, lineItemIds: $lineItemIds) {
-              checkout {
-                id
-                webUrl
-                subtotalPrice {
-                  amount
-                  currencyCode
-                }
-                totalPrice {
-                  amount
-                  currencyCode
-                }
-                lineItems(first: 100) {
-                  edges {
-                    node {
-                      id
-                      title
-                      quantity
-                      variant {
-                        id
-                        title
-                        price {
-                          amount
-                          currencyCode
-                        }
-                        image {
-                          id
-                          url
-                          altText
-                        }
-                      }
-                    }
-                  }
-                }
+          mutation RemoveCartLines($cartId: ID!, $lineIds: [ID!]!) {
+            cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+              cart {
+                ${this.cartFragment}
               }
-              checkoutUserErrors {
-                code
+              userErrors {
                 field
                 message
               }
@@ -838,42 +594,16 @@ export class ShopifyClient {
           }
         `,
         {
-          checkoutId: this.checkoutId,
-          lineItemIds: [lineItemId]
+          cartId: this.cartId,
+          lineIds: [lineItemId]
         }
       );
 
-      if (result.data.checkoutLineItemsRemove.checkoutUserErrors &&
-          result.data.checkoutLineItemsRemove.checkoutUserErrors.length > 0) {
-        throw new Error(result.data.checkoutLineItemsRemove.checkoutUserErrors[0].message);
+      if (result.data.cartLinesRemove.userErrors && result.data.cartLinesRemove.userErrors.length > 0) {
+        throw new Error(result.data.cartLinesRemove.userErrors[0].message);
       }
 
-      const checkout = result.data.checkoutLineItemsRemove.checkout;
-      return {
-        id: checkout.id,
-        webUrl: checkout.webUrl,
-        subtotalPrice: checkout.subtotalPrice.amount,
-        totalPrice: checkout.totalPrice.amount,
-        currencyCode: checkout.subtotalPrice.currencyCode,
-        lineItems: checkout.lineItems.edges.map((edge: any) => {
-          const item = edge.node;
-          return {
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-            variant: {
-              id: item.variant.id,
-              title: item.variant.title,
-              price: item.variant.price.amount,
-              image: item.variant.image ? {
-                id: item.variant.image.id,
-                src: item.variant.image.url,
-                altText: item.variant.image.altText
-              } : null
-            }
-          };
-        })
-      };
+      return this.formatCart(result.data.cartLinesRemove.cart);
     } catch (error) {
       console.error('Error removing cart item:', error);
       throw error;
@@ -881,169 +611,138 @@ export class ShopifyClient {
   }
 
   /**
- * Apply a discount code to the checkout
- * @param discountCode The discount code to apply
- * @returns Success status and error message if applicable
- */
- public async applyDiscountCode(discountCode: string) {
-  try {
-    if (!this.checkoutId) {
-      throw new Error('No checkout found');
-    }
-
-    // Make GraphQL mutation to apply discount
-    const result = await this.fetchStorefront(
-      `
-        mutation ApplyDiscountCode($checkoutId: ID!, $discountCode: String!) {
-          checkoutDiscountCodeApplyV2(checkoutId: $checkoutId, discountCode: $discountCode) {
-            checkout {
-              id
-              discountApplications(first: 10) {
-                edges {
-                  node {
-                    targetType
-                    allocationMethod
-                    targetSelection
-                    value {
-                      ... on MoneyV2 {
-                        amount
-                        currencyCode
-                      }
-                      ... on PricingPercentageValue {
-                        percentage
-                      }
-                    }
-                    ... on DiscountCodeApplication {
-                      code
-                      applicable
-                    }
-                  }
-                }
-              }
-              subtotalPrice {
-                amount
-                currencyCode
-              }
-              totalPrice {
-                amount
-                currencyCode
-              }
-            }
-            checkoutUserErrors {
-              code
-              field
-              message
-            }
-          }
-        }
-      `,
-      {
-        checkoutId: this.checkoutId,
-        discountCode
-      }
-    );
-
-    // Check for errors
-    if (result.data.checkoutDiscountCodeApplyV2.checkoutUserErrors && 
-        result.data.checkoutDiscountCodeApplyV2.checkoutUserErrors.length > 0) {
-      const error = result.data.checkoutDiscountCodeApplyV2.checkoutUserErrors[0];
-      return { 
-        success: false, 
-        error: error.message || 'Failed to apply discount code'
-      };
-    }
-
-    // Check if the discount was actually applied
-    const checkout = result.data.checkoutDiscountCodeApplyV2.checkout;
-    const discountApplications = checkout.discountApplications.edges;
-    
-    if (discountApplications.length === 0) {
-      return { 
-        success: false, 
-        error: 'Discount code is not valid for the items in your cart'
-      };
-    }
-    
-    // For tracking purposes, we should notify our server the code was applied
+   * Apply a discount code to the cart
+   * @param discountCode The discount code to apply
+   * @returns Success status and error message if applicable
+   */
+  public async applyDiscountCode(discountCode: string) {
     try {
-      // Send a request to our server to mark the discount code as applied
-      // This will help update the status in our database
-      await fetch('/api/redemptions/track-usage', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          discountCode,
-          status: 'applied'
-        })
-      });
-    } catch (trackingError) {
-      // Don't fail if tracking fails, just log the error
-      console.error('Error tracking discount code application:', trackingError);
-    }
+      if (!this.cartId) {
+        throw new Error('No cart found');
+      }
 
-    return { success: true };
-  } catch (error) {
-    console.error('Error applying discount code:', error);
-    return { 
-      success: false, 
-      error: 'Failed to apply discount code. Please try again.'
-    };
-  }
-}
+      // Preserve any codes already on the cart, since cartDiscountCodesUpdate
+      // replaces the full list rather than appending to it.
+      const currentCart = await this.getCart();
+      const existingCodes = currentCart.discountCodes.map((d: any) => d.code);
+      const newCodes = Array.from(new Set([...existingCodes, discountCode]));
 
-
-/**
- * Remove a discount code from the checkout
- * @returns Success status
- */
-public async removeDiscountCode() {
-  try {
-    if (!this.checkoutId) {
-      throw new Error('No checkout found');
-    }
-
-    // Make GraphQL mutation to remove discount
-    const result = await this.fetchStorefront(
-      `
-        mutation RemoveDiscountCode($checkoutId: ID!) {
-          checkoutDiscountCodeRemove(checkoutId: $checkoutId) {
-            checkout {
-              id
-            }
-            checkoutUserErrors {
-              code
-              field
-              message
+      const result = await this.fetchStorefront(
+        `
+          mutation ApplyDiscountCodes($cartId: ID!, $discountCodes: [String!]) {
+            cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
+              cart {
+                ${this.cartFragment}
+              }
+              userErrors {
+                field
+                message
+              }
             }
           }
+        `,
+        {
+          cartId: this.cartId,
+          discountCodes: newCodes
         }
-      `,
-      {
-        checkoutId: this.checkoutId
+      );
+
+      if (result.data.cartDiscountCodesUpdate.userErrors &&
+          result.data.cartDiscountCodesUpdate.userErrors.length > 0) {
+        const error = result.data.cartDiscountCodesUpdate.userErrors[0];
+        return {
+          success: false,
+          error: error.message || 'Failed to apply discount code'
+        };
       }
-    );
 
-    // Check for errors
-    if (result.data.checkoutDiscountCodeRemove.checkoutUserErrors && 
-        result.data.checkoutDiscountCodeRemove.checkoutUserErrors.length > 0) {
-      throw new Error(result.data.checkoutDiscountCodeRemove.checkoutUserErrors[0].message);
+      const updatedCart = result.data.cartDiscountCodesUpdate.cart;
+      const appliedCode = (updatedCart.discountCodes || []).find(
+        (d: any) => d.code.toLowerCase() === discountCode.toLowerCase()
+      );
+
+      if (!appliedCode || !appliedCode.applicable) {
+        return {
+          success: false,
+          error: 'Discount code is not valid for the items in your cart'
+        };
+      }
+
+      // Notify our server the code was applied, for tracking purposes.
+      try {
+        await fetch('/api/redemptions/track-usage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            discountCode,
+            status: 'applied'
+          })
+        });
+      } catch (trackingError) {
+        console.error('Error tracking discount code application:', trackingError);
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error applying discount code:', error);
+      return {
+        success: false,
+        error: 'Failed to apply discount code. Please try again.'
+      };
     }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Error removing discount code:', error);
-    throw error;
   }
-}
+
+  /**
+   * Remove a discount code from the cart
+   * @returns Success status
+   */
+  public async removeDiscountCode() {
+    try {
+      if (!this.cartId) {
+        throw new Error('No cart found');
+      }
+
+      // cartDiscountCodesUpdate replaces the whole list, so removing "a"
+      // code (to match the old single-code UI) means clearing them all.
+      const result = await this.fetchStorefront(
+        `
+          mutation RemoveDiscountCodes($cartId: ID!) {
+            cartDiscountCodesUpdate(cartId: $cartId, discountCodes: []) {
+              cart {
+                id
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }
+        `,
+        {
+          cartId: this.cartId
+        }
+      );
+
+      if (result.data.cartDiscountCodesUpdate.userErrors &&
+          result.data.cartDiscountCodesUpdate.userErrors.length > 0) {
+        throw new Error(result.data.cartDiscountCodesUpdate.userErrors[0].message);
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error removing discount code:', error);
+      throw error;
+    }
+  }
 
   // Get the number of items in the cart
   public async getCartItemCount() {
     try {
       const cart = await this.getCart();
       if (!cart.lineItems) return 0;
-      
+
       return cart.lineItems.reduce((total: number, item: any) => total + item.quantity, 0);
     } catch (error) {
       console.error('Error getting cart item count:', error);
@@ -1055,13 +754,12 @@ public async removeDiscountCode() {
   public async checkout() {
     try {
       const cart = await this.getCart();
-      return cart.webUrl; // Return the checkout URL
+      return cart.webUrl; // Cart API's checkoutUrl, returned as webUrl for compatibility
     } catch (error) {
       console.error('Error during checkout:', error);
       throw error;
     }
-  } 
+  }
 }
 
 export default ShopifyClient;
-
