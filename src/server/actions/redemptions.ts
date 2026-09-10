@@ -209,7 +209,18 @@ async function generateShopifyDiscountCode(discountValue: number, expiryDays: nu
           value: {
             percentage: discountValue / 100
           }
-        }
+        },
+        // Explicit is safer than relying on Shopify's default here. Without
+        // this, some Admin API versions create the code non-combinable by
+        // default, which combined with other active/automatic discounts on
+        // the store can make a perfectly valid code appear not to apply.
+        combinesWith: {
+          orderDiscounts: false,
+          productDiscounts: false,
+          shippingDiscounts: false
+        },
+        appliesOncePerCustomer: true,
+        usageLimit: 1
       }
     };
     

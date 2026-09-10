@@ -54,7 +54,12 @@ interface Redemption {
   usedAt: Date | null;
 }
 
-export default function PointsRedemption() {
+interface PointsRedemptionProps {
+  onRedeemSuccess?: () => void;
+  userId: string;
+}
+
+export default function PointsRedemption({ onRedeemSuccess, userId }: PointsRedemptionProps) {
   const [suggestions, setSuggestions] = useState<RedemptionSuggestion[]>([]);
   const [redemptions, setRedemptions] = useState<Redemption[]>([]);
   const [redeemablePoints, setRedeemablePoints] = useState(0);
@@ -173,10 +178,14 @@ export default function PointsRedemption() {
               setDiscountValue(0);
               setCustomPoints("");
 
-              // Call the success callback if provided
-              if (onRedeemSuccess) {
-                  onRedeemSuccess();
-              }
+              // NOTE: we deliberately do NOT call onRedeemSuccess() here.
+              // onRedeemSuccess closes the parent drawer, and the success
+              // dialog below is rendered as a child of this component (which
+              // lives inside that drawer) — closing the drawer immediately
+              // would unmount the dialog before the user can read the code
+              // or click copy. Instead, onRedeemSuccess is called once the
+              // user actually dismisses the success dialog (see
+              // handleCloseSuccessDialog below).
           } else {
               toast({
                   title: "Redemption failed",
@@ -194,6 +203,15 @@ export default function PointsRedemption() {
       } finally {
           setIsRedeeming(false);
       }
+  };
+
+  // Closes the success dialog and lets the parent (RedemptionDrawer) know
+  // it's safe to close the drawer now — called from the dialog's X/backdrop,
+  // "Close", and "Shop Now" so onRedeemSuccess only fires once the user is
+  // actually done looking at the code, never automatically.
+  const handleCloseSuccessDialog = () => {
+    setShowSuccessDialog(false);
+    onRedeemSuccess?.();
   };
 
   const copyToClipboard = (text: string) => {
@@ -433,7 +451,12 @@ export default function PointsRedemption() {
       </Tabs>
       
       {/* Success Dialog */}
-      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+      <Dialog
+        open={showSuccessDialog}
+        onOpenChange={(open) => {
+          if (!open) handleCloseSuccessDialog();
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center">
@@ -485,13 +508,13 @@ export default function PointsRedemption() {
           <DialogFooter className="sm:justify-between">
             <Button 
               variant="outline" 
-              onClick={() => setShowSuccessDialog(false)}
+              onClick={handleCloseSuccessDialog}
             >
               Close
             </Button>
             <Button 
               onClick={() => {
-                setShowSuccessDialog(false);
+                handleCloseSuccessDialog();
                 window.location.href = '/shop';
               }}
             >
